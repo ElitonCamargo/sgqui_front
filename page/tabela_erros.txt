@@ -1,0 +1,16 @@
+{
+    Erro01:'falha ao logar',
+    Erro02:'falha ao carregar page/nav',
+    Erro03:'falha ao carregar page/home',
+    Erro04:'falha ao carregar page/footer',
+    Erro05:'falha api carregar tabela elementos',
+    Erro06:'falha api carregar tabela nutrientes',
+    Erro07:'falha api editar nutrientes',
+    Erro08:'falha api carregar tabela materia prima',
+    Erro09: 'falha api editar nutrientes',
+    Erro10: 'falha api cadastrar garantia',
+    Erro11: 'falha api deletar garantia',
+    Erro12: 'Erro autocomplete cadastrar garantia',
+    Erro13: 'Erro ao selecionar valor da garantia',
+    Erro14: 'Erro ao buscar no autocomplete',
+}

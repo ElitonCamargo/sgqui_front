@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto Detalhado</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .etapa-list, .nutrientes-por-etapa {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        .etapa-list > li {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f8f9fa;
+        }
+        .nutrientes-por-etapa > li {
+            margin: 5px 0;
+            padding: 5px;
+            border: 1px solid #aaa;
+            background-color: #e9ecef;
+        }
+        .card {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body class="container">
+    <h1 class="my-4">Projeto: Fertilizante natural</h1>
+    <p>Descrição: Projeto Teste</p>
+    <ul id="etapa-list" class="etapa-list list-group"></ul>
+
+    <script>
+        const projetoDetalhado = {
+            "id": 9,
+            "nome": "Fertilizante natural",
+            "descricao": "Projeto Teste",
+            "data_inicio": "2024-05-03T03:00:00.000Z",
+            "data_termino": "2024-06-03T03:00:00.000Z",
+            "densidade": 1.2,
+            "ph": "5.8 - 5.9",
+            "tipo": "Organomineral",
+            "aplicacao": "Foliar",
+            "natureza_fisica": "Fluído",
+            "etapas": [
+                {
+                    "id": 1,
+                    "descricao": "Disolver elementos sólidos",
+                    "ordem": 1,
+                    "nutrientes": [
+                        {
+                            "id": 1,
+                            "percentual": 15,
+                            "nome": "Nitrogênio"
+                        },
+                        {
+                            "id": 2,
+                            "percentual": 20,
+                            "nome": "Fósforo"
+                        },
+                    ]
+                },
+                {
+                    "id": 2,
+                    "descricao": "Adicionar elementos líquidos",
+                    "ordem": 2,
+                    "nutrientes": [
+                        {
+                            "id": 3,
+                            "percentual": 30,
+                            "nome": "Água"
+                        },
+                        {
+                            "id": 4,
+                            "percentual": 20,
+                            "nome": "Ácido Sulfúrico"
+                        },
+                    ]
+                },
+                {
+                    "id": 3,
+                    "descricao": "Adicionar corantes",
+                    "ordem": 3,
+                    "nutrientes": [
+                        {
+                            "id": 5,
+                            "percentual": 5,
+                            "nome": "Corante Natural"
+                        },
+                        {
+                            "id": 6,
+                            "percentual": 10,
+                            "nome": "Corante Vermelho"
+                        },
+                    ]
+                },
+            ]
+        };
+
+        // Renderizar etapas e nutrientes
+        projetoDetalhado.etapas.forEach(etapa => {
+            const etapaItem = `
+                <li class="list-group-item" data-id="${etapa.id}">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">${etapa.descricao}</h5>
+                            <ul class="nutrientes-por-etapa list-group" data-id="${etapa.id}">
+                                ${etapa.nutrientes.map(nutriente => `
+                                    <li class="list-group-item" id="nutriente_${nutriente.id}" data-id="${nutriente.id}">${nutriente.nome} - ${nutriente.percentual}%</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            `;
+            $('#etapa-list').append(etapaItem);
+        });
+
+        $(function () {
+            // Ordenação das listas pai (etapas)
+            $("#etapa-list").sortable({
+                opacity: 0.8,
+                cursor: 'move',
+                update: function () {
+                    let etapa_ordem = [];
+                    $('#etapa-list > li').each(function (index) {
+                        let etapa = {
+                            "etapa_id": $(this).data('id'),
+                            "ordem": index + 1
+                        };
+                        etapa_ordem.push(etapa);
+                    });
+                    console.log('Exemplo modificar etapa:\n', etapa_ordem);
+                }
+            });
+
+            // Ordenação das sublistas (nutrientes) e permitir mover itens entre sublistas
+            $(".nutrientes-por-etapa").sortable({
+                connectWith: ".nutrientes-por-etapa",
+                opacity: 0.8,
+                cursor: 'move',
+                update: function (event, ui) {
+                    let nutrientes_por_etapa = [];
+                    $(".nutrientes-por-etapa").each(function () {
+                        let etapa = {
+                            "etapa_id": $(this).data('id'),
+                            "nutriente_ordem": []
+                        };
+                        $(this).children('li').each(function (index) {
+                            let nutriente = {
+                                "nutriente_id": $(this).data('id'),
+                                "ordem": index + 1
+                            };
+                            etapa.nutriente_ordem.push(nutriente);
+                        });
+                        nutrientes_por_etapa.push(etapa);
+                    });
+                    console.log('Mover nutriente entre etapas \n', nutrientes_por_etapa);
+                }
+            }).disableSelection();
+        });
+    </script>
+</body>
+</html>

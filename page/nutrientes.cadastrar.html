@@ -1,0 +1,69 @@
+<h2>Cadastrar Nutriente</h2>
+<div id="msgResult">
+
+</div>
+<form class="container mt-5" id="formCadastrarNutriente">
+  <div class="row">
+    <div class="col-md-6">
+      <label for="nome" class="form-label">Nome</label>
+      <input type="text" class="form-control" id="nome" name="nome" required>
+    </div>
+
+    <div class="col-md-6">
+      <label for="nome" class="form-label">Fórmula</label>
+      <input type="text" class="form-control" id="formula" name="formula" required>
+    </div>
+
+  </div>
+  <button class="btn btn-primary" type="submit" id="compostoCadastrar">Cadastrar</button>
+</form>
+
+<!-- Modal de Confirmação de Cadastro -->
+<div class="modal fade" id="confirmacaoCadastroModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirma Cadastro</h5>
+        <button type="button" class="btn-close btn-fecha-modal" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-fecha-modal" data-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  $(function () {
+
+
+    // Adicionar evento de submit para o formulário de edição do nutriente
+    $('#formCadastrarNutriente').on('submit', function (event) {
+
+      event.preventDefault(); // Impedir o envio padrão do formulário
+      const jsonData = serializadoParaJSON($(this).serialize());
+      req_INSERT(opt.urlNutriente, jsonData)
+        .then(result => {
+          // Exibir resposta da API no console
+
+          if (result.success === true) {
+            $('#confirmacaoCadastroModal .modal-body').html(`<b>${result.data[0].nome}</b> cadastrado com sucesso!`);
+            $('#confirmacaoCadastroModal').modal('show');
+            $(this)[0].reset();
+
+          } else {
+            $('#confirmacaoCadastroModal .modal-body').html(`Erro: ${result.erro.message}`);
+            $('#confirmacaoCadastroModal').modal('show');
+          }
+        });
+    });
+
+    $(".modal").on("click", ".btn-fecha-modal", function () {
+      $('.modal').modal('hide');
+    })
+
+  });
+
+</script>
