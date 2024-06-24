@@ -91,31 +91,26 @@ const req_UPDATE = async (url = "", data = {}) => {
     }
 }
 
+
+
 const req_INSERT = async (url = "", data = {}) => {
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            mode: "cors",
-            cache: "no-cache",
-            credentials: "omit",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": getSessionData('tk')
-            },
-            redirect: "follow",
-            referrerPolicy: "no-referrer",
-            body: JSON.stringify(data)
-        });
-        const data = await response.json();
-        data.status = response.status
-        return data;
-    } catch (error) {
-        return {
-            status: 'error',
-            data: null,
-            message: error.message
-        };
-    }
+    console.log(url, data)
+
+    const response = await fetch(url, {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "omit",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": getSessionData('tk')
+        },
+        redirect: "follow",
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify(data)
+    });
+    return response.json();
+
 }
 
 const req_DELETE = async (url = '') => {

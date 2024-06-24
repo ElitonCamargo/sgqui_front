@@ -131,6 +131,8 @@
               req_INSERT(opt.urlGarantia, data)
                 .then(result => {
 
+
+                    console.log(result)
                     // Exibir resposta da API no console
                     if (result.success === true) {
                         carregaGarantias();
