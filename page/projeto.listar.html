@@ -117,8 +117,9 @@
               render: function (data, type, row) {
                 return `
                           <button class="btn btn-outline-secondary btn-sm btn-detalhes-editar" data-id="${row.id}" data-toggle="modal" data-target="#detalhesModal" title="Ver/Editar"><i class="fa-solid fa-eye"></i>/<i class="fa-solid fa-pen-to-square"></i></button>
+                          <button class="btn btn-outline-secondary btn-sm btn-etapas" data-id="${row.id}" data-nome="${row.nome}" title="Etapas"><i class="fa-solid fa-tasks"></i></button>
                           <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" title="Excluir"><i class="fa-solid fa-ban"></i></button>
-                      `;
+                          `;
               }
             }
           ],
@@ -168,7 +169,7 @@
       function exibirDetalhes(projeto) {
         let select = `<select class="form-select" id="status" name="status" disabled>`;
         let optionStatus = ''
-        
+
 
         $.each(statusProjeto, function (k, v) {
           let selected = ''
@@ -182,7 +183,7 @@
         select += optionStatus;
         select += `</select>`;
 
-     
+
 
         let html = `
                 <div class="form-group">
@@ -247,7 +248,6 @@
 
         req_UPDATE(opt.urlProjeto + "/" + jsonData.id, jsonData)
           .then(result => {
-
             console.log(result.status);
             // Exibir resposta da API no console
             if (result.success) {
@@ -255,7 +255,6 @@
               $('#detalhesModal #btnSalvar').hide();
               alterado = 1
             } else {
-
               alert(`Erro07: ${res.erro.message}`);
               if (res.erro.code === 1 || res.erro.code === 3) {
                 destroySession('tk');
@@ -292,7 +291,7 @@
 
       // Evento ao clicar no botão "Confirmar Exclusão" no modal de confirmação
       $('#confirmarExclusao').on('click', function () {
-        let urlExclusao = opt.urlNutriente + "/" + id;
+        let urlExclusao = opt.urlProjeto + "/" + id;
         req_DELETE(urlExclusao).then((data) => {
           if (data.success) {
             // Fecha o modal de confirmação de exclusão

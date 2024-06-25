@@ -79,9 +79,7 @@ const req_UPDATE = async (url = "", data = {}) => {
             referrerPolicy: "no-referrer",
             body: JSON.stringify(data)
         });
-        const data = await response.json();
-        data.status = response.status
-        return data;
+        return response.json();
     } catch (error) {
         return {
             status: 'error',
