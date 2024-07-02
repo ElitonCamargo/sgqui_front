@@ -117,7 +117,7 @@
 
         // se conexao com api erro
       } else {
-        alert(`Erro06: ${res.erro.message}`);
+        alert(`Erro06: ${res.message}`);
         if (res.status === 498) {
           destroySession('tk');
           destroySession('us');

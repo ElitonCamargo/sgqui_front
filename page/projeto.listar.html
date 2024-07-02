@@ -11,7 +11,7 @@
       <th>Aplicação</th>
       <th>Natureza Física</th>
       <th>Status</th>
-      <th>Ações</th>
+      <th style="width: 160px;">Ações</th>
     </tr>
   </thead>
   <tbody>
@@ -117,7 +117,7 @@
               render: function (data, type, row) {
                 return `
                           <button class="btn btn-outline-secondary btn-sm btn-detalhes-editar" data-id="${row.id}" data-toggle="modal" data-target="#detalhesModal" title="Ver/Editar"><i class="fa-solid fa-eye"></i>/<i class="fa-solid fa-pen-to-square"></i></button>
-                          <button class="btn btn-outline-secondary btn-sm btn-etapas" data-id="${row.id}" data-nome="${row.nome}" title="Etapas"><i class="fa-solid fa-tasks"></i></button>
+                          <a href="/projetos/etapa?id=${row.id}" class="btn btn-outline-secondary btn-sm btn-etapas" title="Etapas"><i class="fa-solid fa-tasks"></i></a>
                           <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" title="Excluir"><i class="fa-solid fa-ban"></i></button>
                           `;
               }
@@ -147,12 +147,8 @@
 
         // se conexao com api erro
       } else {
-        alert(`Erro15: ${res.erro.message}`);
-        if (res.status === 498) {
-          destroySession('tk');
-          destroySession('us');
-          window.location.reload(true);
-        }
+        console.log(data)
+        showError(15,data.status);
       }
 
 
@@ -248,7 +244,7 @@
 
         req_UPDATE(opt.urlProjeto + "/" + jsonData.id, jsonData)
           .then(result => {
-            console.log(result.status);
+          
             // Exibir resposta da API no console
             if (result.success) {
               $('#detalhesModal .modal-body').html(`${jsonData.nome} atualizado com sucesso!`);

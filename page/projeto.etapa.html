@@ -1,0 +1,45 @@
+<h3 id="etapaId">Etapas para o projeto: <span></span></h3>
+
+<p class="d-inline-flex gap-1">
+    <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
+        aria-controls="collapseExample">
+        Detalhes do Projeto
+    </a>
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample"
+        aria-expanded="false" aria-controls="collapseExample">
+        Tabela de nutrientes
+    </button>
+</p>
+<div class="collapse" id="collapseExample">
+    <div class="card card-body">
+        Detalhes
+    </div>
+</div>
+
+
+<script>
+
+
+    let getParam = getAllUrlParams()
+    let idProjeto = getParam['id']
+
+    req_GET(opt.urlProjeto + `/detalhado/${idProjeto}`).then((res) => {
+
+        if (res.success) {
+
+            data = res.data[0]
+            addNomeProjeto(data.nome)
+
+
+        } else {
+            showError(20, data.status)
+        }
+
+    })
+
+    const addNomeProjeto = (nome) => {
+        $("#etapaId span").html(nome);
+    }
+
+
+</script>

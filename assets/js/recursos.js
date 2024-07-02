@@ -40,6 +40,9 @@ $(function () {
 })
 
 const req_GET = async (url = "") => {
+
+    // Mostra o preload antes de fazer a requisição
+    showPreload();
     try {
         const response = await fetch(url, {
             method: "GET",
@@ -52,19 +55,23 @@ const req_GET = async (url = "") => {
             },
             redirect: "follow",
         });
-        const data = await response.json();
-        data.status = response.status
-        return data;
+
+        // Remove o preload após completar a requisição
+        hidePreload();
+        return response.json();
     } catch (error) {
+        let result = await response.json();
         return {
-            status: 'error',
-            data: null,
-            message: error.message
+            status: result.status,
+            message: result.erro,
+            data: null
         };
     }
 }
 
 const req_UPDATE = async (url = "", data = {}) => {
+    // Mostra o preload antes de fazer a requisição
+    showPreload();
     try {
         const response = await fetch(url, {
             method: "PUT",
@@ -79,12 +86,16 @@ const req_UPDATE = async (url = "", data = {}) => {
             referrerPolicy: "no-referrer",
             body: JSON.stringify(data)
         });
+
+        // Remove o preload após completar a requisição
+        hidePreload();
         return response.json();
     } catch (error) {
+        let result = await response.json();
         return {
-            status: 'error',
-            data: null,
-            message: error.message
+            status: result.status,
+            message: result.erro,
+            data: null
         };
     }
 }
@@ -92,26 +103,40 @@ const req_UPDATE = async (url = "", data = {}) => {
 
 
 const req_INSERT = async (url = "", data = {}) => {
-    console.log(url, data)
+    // Mostra o preload antes de fazer a requisição
+    showPreload();
+    try {
 
-    const response = await fetch(url, {
-        method: "POST",
-        mode: "cors",
-        cache: "no-cache",
-        credentials: "omit",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": getSessionData('tk')
-        },
-        redirect: "follow",
-        referrerPolicy: "no-referrer",
-        body: JSON.stringify(data)
-    });
-    return response.json();
+        const response = await fetch(url, {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "omit",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": getSessionData('tk')
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify(data)
+        });
 
+        // Remove o preload após completar a requisição
+        hidePreload();
+        return response.json();
+    } catch (error) {
+        let result = await response.json();
+        return {
+            status: result.status,
+            message: result.erro,
+            data: null
+        };
+    }
 }
 
 const req_DELETE = async (url = '') => {
+    // Mostra o preload antes de fazer a requisição
+    showPreload();
     try {
         const response = await fetch(url, {
             method: "DELETE",
@@ -125,17 +150,39 @@ const req_DELETE = async (url = '') => {
             redirect: "follow",
             referrerPolicy: "no-referrer"
         });
-        const data = await response.json();
-        data.status = response.status
-        return data;
+
+        // Remove o preload após completar a requisição
+        hidePreload();
+        return response.json();
     } catch (error) {
+        let result = await response.json();
         return {
-            status: 'error',
-            data: null,
-            message: error.message
+            status: result.status,
+            message: result.erro,
+            data: null
         };
     }
 }
+
+// Função para mostrar o preload (pode ser uma spinner, mensagem, etc.)
+const showPreload = () => {
+    // Exemplo simples: mostrando uma mensagem de "Carregando..."
+    const preloadElement = document.getElementById('preload');
+    if (preloadElement) {
+        preloadElement.classList.remove('d-none'); // Remove a classe d-none para mostrar o elemento
+        preloadElement.classList.add('d-block'); // Adiciona a classe d-block para garantir que o elemento seja exibido
+    }
+};
+
+// Função para esconder o preload após a requisição
+const hidePreload = () => {
+    const preloadElement = document.getElementById('preload');
+    if (preloadElement) {
+        preloadElement.classList.remove('d-block'); // Remove a classe d-block para esconder o elemento
+        preloadElement.classList.add('d-none'); // Adiciona a classe d-none para garantir que o elemento seja ocultado
+    }
+};
+
 
 //Função para criar uma sessão com dados
 const setSessionData = (key, value) => {
@@ -178,7 +225,7 @@ const formatarDataPtBr = (dataString) => {
 }
 
 //Função para formatar data para Mysql
-function formatarDataMysql(data) {
+const formatarDataMysql = (data) => {
     // Dividir a string da data em dia, mês e ano
     const partes = data.split('/');
     const dia = partes[0];
@@ -191,7 +238,47 @@ function formatarDataMysql(data) {
     return dataFormatada;
 }
 
+//função para pegar paramentros da url, retorna array
+const getAllUrlParams = () => {
+    var queryString = window.location.search.slice(1);
+    var params = {};
 
+    if (queryString) {
+        var pairs = queryString.split('&');
+
+        pairs.forEach(function (pair) {
+            var keyValue = pair.split('=');
+            var key = decodeURIComponent(keyValue[0]);
+            var value = decodeURIComponent(keyValue[1] || '');
+
+            // Se a chave já existir, converte o valor para um array
+            if (params[key]) {
+                if (!Array.isArray(params[key])) {
+                    params[key] = [params[key]];
+                }
+                params[key].push(value);
+            } else {
+                params[key] = value;
+            }
+        });
+    }
+
+    return params;
+}
+
+const showError = (codErro, Status) => {
+
+    alert(codErro, '-',Status)
+
+    // alert(`Erro15: ${res.erro.message}`);
+    // if (res.status === 498) {
+    //     destroySession('tk');
+    //     destroySession('us');
+    //     window.location.reload(true);
+}
+
+
+// inicia paginas
 async function start() {
     if (!getSessionData('tk')) {
         document.getElementById('nav').innerHTML = '';

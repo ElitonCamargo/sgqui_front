@@ -38,6 +38,10 @@ const rotas = [
     {
         'path': '/projeto/listar',
         'component': '/page/projeto.listar.html'
+    },
+    {
+        'path': '/projetos/etapa',
+        'component': '/page/projeto.etapa.html'
     }
 ];
 
