@@ -19,7 +19,7 @@ $(function () {
             redirect: 'follow'
         };
 
-        fetch(opt.urlApi + "/usuario/login", requestOptions)
+        fetch(opt.urlLogar, requestOptions)
             .then(response => response.json())
             .then(response => {
                 if (response.success) {
@@ -34,9 +34,9 @@ $(function () {
                     $('#loginErro').show(); // Mostra a div de erro
                 }
             })
-            .catch(error => console.error('Erro:', error));
     });
     // FIM LOGAR
+
 })
 
 const req_GET = async (url = "") => {
@@ -266,17 +266,16 @@ const getAllUrlParams = () => {
     return params;
 }
 
-const showError = (codErro, Status) => {
+const showError = (codErro, codStatus) => {
 
-    alert(codErro, '-',Status)
+    alert(`Erro ${codErro}: ${erro[codErro]}`);
 
-    // alert(`Erro15: ${res.erro.message}`);
-    // if (res.status === 498) {
-    //     destroySession('tk');
-    //     destroySession('us');
-    //     window.location.reload(true);
+    if (codStatus === 498) {
+        destroySession('tk');
+        destroySession('us');
+        window.location.reload(true);
+    }
 }
-
 
 // inicia paginas
 async function start() {

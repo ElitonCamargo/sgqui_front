@@ -116,12 +116,8 @@
         // se conexao com api erro
       } else {
         
-        alert(`Erro05: ${res.erro}`);
-        if(res.erro == 'Token de autenticação inválido'){
-          destroySession('tk');
-          destroySession('us');
-          window.location.reload(true);
-        }
+        showError(5, res.status);
+
       }
 
 

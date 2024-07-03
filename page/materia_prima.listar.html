@@ -145,13 +145,7 @@
 
         // se conexao com api erro
       } else {
-
-        alert(`Erro08: ${res.erro.message}`);
-        if (res.status === 498) {
-          destroySession('tk');
-          destroySession('us');
-          window.location.reload(true);
-        }
+          showError(8, res.status)
       }
 
 

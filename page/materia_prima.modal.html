@@ -128,7 +128,7 @@
 
         function cadastraGarantia(data) {
 
-              req_INSERT(opt.urlGarantia, data)
+            req_INSERT(opt.urlGarantia, data)
                 .then(result => {
 
 
@@ -149,7 +149,7 @@
                     if (result.success === true) {
                         carregaGarantias();
                     } else {
-                        alert(`Erro11:falha api deletar garantia`)
+                        showError(11, result.status);
                     }
                 })
         }

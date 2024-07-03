@@ -178,13 +178,7 @@
               $('#detalhesModal #btnSalvar').hide();
               alterado = 1
             } else {
-
-              alert(`Erro07: ${res.erro.message}`);
-              if (res.erro.code === 1 || res.erro.code === 3) {
-                destroySession('tk');
-                destroySession('us');
-                window.location.reload(true);
-              }
+              showError(7, result.status);
             }
           });
       });
