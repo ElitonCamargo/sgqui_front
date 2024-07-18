@@ -4,18 +4,23 @@
 </div>
 <form class="container mt-5" id="formCadastrarNutriente">
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-4">
       <label for="nome" class="form-label">Nome</label>
       <input type="text" class="form-control" id="nome" name="nome" required>
     </div>
 
-    <div class="col-md-6">
-      <label for="nome" class="form-label">Fórmula</label>
-      <input type="text" class="form-control" id="formula" name="formula" required>
+    <div class="col-md-4">
+      <label for="login" class="form-label">Login</label>
+      <input type="text" class="form-control" id="login" name="email" required>
+    </div>
+    
+    <div class="col-md-4">
+      <label for="senha" class="form-label">Senha</label>
+      <input type="text" class="form-control" id="senha" name="senha" required>
     </div>
 
   </div>
-  <button class="btn btn-primary" type="submit" id="compostoCadastrar">Cadastrar</button>
+  <button class="btn btn-primary" type="submit" id="usuarioCadastrar">Cadastrar</button>
 </form>
 
 <!-- Modal de Confirmação de Cadastro -->
@@ -44,7 +49,7 @@
 
       event.preventDefault(); // Impedir o envio padrão do formulário
       const jsonData = serializadoParaJSON($(this).serialize());
-      req_INSERT(opt.urlMateriaPrima, jsonData)
+      // req_INSERT(opt.urlMateriaPrima, jsonData)
         .then(result => {
           // Exibir resposta da API no console
 
