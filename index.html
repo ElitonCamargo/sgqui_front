@@ -14,16 +14,17 @@
 
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
     <button id="theme-toggle"><i class="fas fa-lightbulb"></i></button>
+
     <header id="nav"></header>
 
 
     <!-- ********************* -->
-    <section class="container mt-4" id="root"></section>
+    <section class="container flex-grow-1" id="root"></section>
     <!-- ********************** -->
 
-    <footer class="footer" id="footer"></footer>
+    <footer class="footer py-3 border-top mt-auto" id="footer"></footer>
 
 
     <script src="/assets/vendor/jquery-3.7.0.min.js"></script>
@@ -38,11 +39,12 @@
     <script src='/assets/js/roteamento.js'></script>
     <script src='/assets/js/tema.js'></script>
     <script>
-        start();
+        document.addEventListener("DOMContentLoaded", start);
     </script>
 
     <!-- Div para a máscara que cobre toda a tela -->
-    <div  id="preload" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-dark opacity-75 d-flex align-items-center justify-content-center">
+    <div id="preload"
+        class="d-none position-fixed top-0 start-0 w-100 h-100 bg-dark opacity-75 d-flex align-items-center justify-content-center">
         <!-- Div centralizada com mensagem de "Aguarde" -->
         <div class="text-light text-center">
             <h3>Aguarde...</h3>

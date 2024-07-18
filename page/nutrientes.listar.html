@@ -21,7 +21,7 @@
         <button type="button" class="btn-close btn-fecha-modal" data-dismiss="modal" aria-label="Close"></button>
       </div>
       <form id="formEditarNutriente">
-        <div class="modal-body" id="detalhesNutriente">
+        <div class="modal-body" id="detalhesMateriaPrima">
           <!-- Detalhes do nutriente serão exibidos aqui -->
         </div>
         <div class="modal-footer">
@@ -147,11 +147,11 @@
                       <label for="formula">Fórmula:</label>
                       <input type="text" class="form-control" id="formula" name="formula" value="${nutriente.formula}" readonly>
                     </div>
-                    <input type="hidden" id="nutrienteId" name="id" value="${nutriente.id}">
+                    <input type="hidden" id="id" name="id" value="${nutriente.id}"
                 </div>
         `;
 
-        $('#detalhesNutriente').html(html);
+        $('#detalhesMateriaPrima').html(html);
         $('#detalhesModal').modal('show');
       }
 
@@ -171,7 +171,6 @@
         req_UPDATE(opt.urlNutriente + "/" + jsonData.id, jsonData)
           .then(result => {
 
-            console.log(result.status);
             // Exibir resposta da API no console
             if (result.success) {
               $('#detalhesModal .modal-body').html(`${jsonData.nome} atualizado com sucesso!`);
@@ -185,7 +184,7 @@
 
       //Limpa modal ao fechar
       $('#detalhesModal').on('hidden.bs.modal', function () {
-        $('#detalhesNutriente').empty(); // Limpar o conteúdo do nutriente com id 'detalhesNutriente'
+        $('#detalhesMateriaPrima').empty(); // Limpar o conteúdo do nutriente com id 'detalhesMateriaPrima'
         $('#btnSalvar').addClass('d-none'); // Ocultar o botão "Salvar"
         $('#btnEditar').removeClass('d-none'); // Exibir o botão "Editar"
       });

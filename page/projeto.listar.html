@@ -11,7 +11,7 @@
       <th>Aplicação</th>
       <th>Natureza Física</th>
       <th>Status</th>
-      <th style="width: 160px;">Ações</th>
+      <th style="width: 210px;">Ações</th>
     </tr>
   </thead>
   <tbody>
@@ -44,6 +44,26 @@
   </div>
 </div>
 
+<!-- Modal de Confirmação de Clonar -->
+<div class="modal fade" id="clonarProjeto" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmar clone do projeto</h5>
+        <button type="button" class="btn-close btn-fecha-modal" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Deseja realmente clonar o projeto <b id="nomeClone"></b>?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger confirmarClone">Confirmar Clone</button>
+        <button type="button" class="btn btn-secondary btn-fecha-modal" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <!-- Modal de Confirmação de Exclusão -->
 <div class="modal fade" id="confirmacaoExclusaoModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -72,11 +92,11 @@
     //variavel de controle se algo foi alterado
     let alterado = 0;
 
-    req_GET(opt.urlProjeto).then((res) => {
+    req_GET(opt.urlProjeto).then((result) => {
 
-      data = res.data;
+      data = result.data;
 
-      if (res.success) {
+      if (result.success) {
 
         // INICIA DATATABLE
         table = $('#tabela-projetos').DataTable({
@@ -117,6 +137,7 @@
               render: function (data, type, row) {
                 return `
                           <button class="btn btn-outline-secondary btn-sm btn-detalhes-editar" data-id="${row.id}" data-toggle="modal" data-target="#detalhesModal" title="Ver/Editar"><i class="fa-solid fa-eye"></i>/<i class="fa-solid fa-pen-to-square"></i></button>
+                          <button class="btn btn-outline-secondary btn-sm btn-clonar" data-id="${row.id}" data-nome="${row.nome}" data-toggle="modal" data-target="#clonarProjeto" title="Clonar Projeto"><i class="fa-solid fa-clone"></i></button>
                           <a href="/projetos/etapa?id=${row.id}" class="btn btn-outline-secondary btn-sm btn-etapas" title="Etapas"><i class="fa-solid fa-tasks"></i></a>
                           <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" title="Excluir"><i class="fa-solid fa-ban"></i></button>
                           `;
@@ -147,7 +168,7 @@
 
         // se conexao com api erro
       } else {
-        showError(15,data.status);
+        showError(15, data.status);
       }
 
 
@@ -218,7 +239,6 @@
                       <label for="descricao">Descrição:</label>
                       <textarea type="text" class="form-control" id="descricao" name="descricao" readonly>${projeto.descricao}</textarea>
                     </div>
-
                     <input type="hidden" id="id" name="id" value="${projeto.id}">
                 </div>
         `;
@@ -243,19 +263,14 @@
 
         req_UPDATE(opt.urlProjeto + "/" + jsonData.id, jsonData)
           .then(result => {
-          
+
             // Exibir resposta da API no console
             if (result.success) {
               $('#detalhesModal .modal-body').html(`${jsonData.nome} atualizado com sucesso!`);
               $('#detalhesModal #btnSalvar').hide();
               alterado = 1
             } else {
-              alert(`Erro07: ${res.erro.message}`);
-              if (res.erro.code === 1 || res.erro.code === 3) {
-                destroySession('tk');
-                destroySession('us');
-                window.location.reload(true);
-              }
+              showErrors(7, result.status)
             }
           });
       });
@@ -268,6 +283,20 @@
       });
 
 
+      // Adicionar evento de clique para o botão "Clonar"
+      $('#tabela-projetos').on('click', '.btn-clonar', function () {
+        const id = $(this).data('id');
+        const nome = $(this).data('nome');
+        // Exibe o modal de confirmação de exclusão com o nome do item
+        $('#nomeClone').text(nome);
+        $('#clonarProjeto').modal('show');
+
+        $('#clonarProjeto').on('click', ".confirmarClone", function () {
+          clonarProjeto(id)
+        });
+
+      });
+
       // Adicionar evento de clique para o botão "Excluir"
       $('#tabela-projetos').on('click', '.btn-excluir', function () {
         const id = $(this).data('id');
@@ -279,6 +308,23 @@
     });//FIM GETAPI
 
     // FUNCOES AUXILIARES
+
+    function clonarProjeto(id) {
+
+      let urlClonar = opt.urlProjeto + "/" + id;
+      req_INSERT(urlClonar).then((data) => {
+        if (data.success) {
+          // fecha modal
+          $("#clonarProjeto").modal('hide')
+          alterado = 1;
+        } else {
+          $('#clonarProjeto .modal-body').html(`Erro: ${data.erro.message}`);
+          $('#clonarProjeto').modal("show");
+        }
+      });
+
+    }
+
     function excluiProjeto(id, nome) {
       // Exibe o modal de confirmação de exclusão com o nome do item
       $('#nomeExclui').text(nome);
@@ -307,7 +353,11 @@
 
     $('.modal').on('hidden.bs.modal', function (e) {
       if (alterado !== 0) {
-        window.location.reload(true);
+        req_GET(opt.urlProjeto).then((res) => {
+          data = result.data; // Atualiza os dados com a resposta da requisição
+          table.clear().rows.add(data).draw(); // Limpa a tabela, adiciona os novos dados e redesenha
+        });
+
       }
     })
 

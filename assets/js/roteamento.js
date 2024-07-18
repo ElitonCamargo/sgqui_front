@@ -42,7 +42,15 @@ const rotas = [
     {
         'path': '/projetos/etapa',
         'component': '/page/projeto.etapa.html'
-    }
+    },
+    {
+        'path': '/usuario/cadastrar',
+        'component': '/page/usuario.cadastrar.html'
+    },
+    {
+        'path': '/usuario/listar',
+        'component': '/page/usuario.listar.html'
+    },
 ];
 
 const rotear = (rotaUrl = window.location.pathname) => {
@@ -52,10 +60,10 @@ const rotear = (rotaUrl = window.location.pathname) => {
 
 
 $(function () {
-    
+
     let rota = rotear();
-    
-      if (getSessionData('tk')) {
+
+    if (getSessionData('tk')) {
         if (rota) {
             $("#root").empty();
             $("#root").load(rota.component);

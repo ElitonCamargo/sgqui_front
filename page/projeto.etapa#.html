@@ -1,0 +1,119 @@
+<h3 id="etapaId">Etapas para o projeto: <span></span></h3>
+<div class="row">
+
+
+
+    <div class="col-md-6">
+        <button class="btn dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#detalhesProjeto" role="button"
+            aria-expanded="false" aria-controls="collapseExample">
+            Detalhes do Projeto
+        </button>
+        <div class="collapse" id="detalhesProjeto">
+            <div class="card card-body">
+                Detalhes
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <button class="btn dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#tabelaNutrientes"
+            aria-expanded="false" aria-controls="collapseExample">
+            Tabela de nutrientes
+        </button>
+        <div class="collapse" id="tabelaNutrientes">
+            <div class="card card-body">
+                tabela
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<table class="table" id="tableComposicaoProjeto">
+    <thead>
+        <tr>
+            <th scope="col">Ordem</th>
+            <th scope="col">Matéria Prima</th>
+            <th scope="col">Percentual</th>
+            <th scope="col">Tempo de Agitação</th>
+            <th scope="col">Observação</th>
+            <th scope="col">Ação</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+    <tfoot>
+        <tr>
+            <td scope="col" colspan="5">
+                <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#myModal"><i
+                        class="bi bi-plus-circle"></i></button>
+            </td>
+        </tr>
+        <tr>
+            <th scope="col" colspan="2">Total</th>
+            <th scope="col" id="total">0%</th>
+            <th scope="col">0</th>
+            <th scope="col"></th>
+        </tr>
+        <tr>
+            <th scope="col" colspan="2">Densidade</th>
+            <th scope="col">1,2kg/l</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+    </tfoot>
+</table>
+
+
+
+<script>
+
+    let getParam = getAllUrlParams()
+    let idProjeto = getParam['id']
+
+    req_GET(opt.urlProjeto + `/detalhado/${idProjeto}`).then((res) => {
+
+        console.log(res);
+
+        if (res.success) {
+
+            data = res.data[0]
+            addNomeProjeto(data.nome)
+            addDetalhesProjeto(data)
+
+        } else {
+            showError(20, data.status)
+        }
+
+    })
+
+
+    // FUNÇOES
+    const addNomeProjeto = (nome) => {
+        $("#etapaId span").html(nome);
+    }
+
+    const addDetalhesProjeto = (data) => {
+        let html = `
+        <ul class="list-group list-group-flush">
+              <li class="list-group-item"><strong>ID:</strong>              <span id="detalhesPojeto_id">${data.id}</span></li>
+              <li class="list-group-item"><strong>Nome:</strong>            <span id="detalhesPojeto_nome">${data.nome}</span></li>
+              <li class="list-group-item"><strong>Data de Início:</strong>  <span id="detalhesPojeto_data_inicio">${formatarDataPtBr(data.data_inicio)}</span></li>
+              <li class="list-group-item"><strong>Data de Término:</strong> <span id="detalhesPojeto_data_termino">${formatarDataPtBr(data.data_termino)}</span></li>
+              <li class="list-group-item"><strong>Descrição:</strong>       <span id="detalhesPojeto_descricao">${data.descricao}</span></li>
+              <li class="list-group-item"><strong>Status:</strong>          <span id="detalhesPojeto_status">${data.status[0].status} - ${formatarDataPtBr(data.status[0].data_alteracao)}</span></li>
+        </ul>
+        `
+        $("#detalhesProjeto .card").html(html);
+    }
+    const addTabelaNutricional = (data) => {
+        let html = `
+
+        `
+        $("#detalhesProjeto .card").html(html);
+    }
+
+
+</script>

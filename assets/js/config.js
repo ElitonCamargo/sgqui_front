@@ -12,6 +12,9 @@ const opt = {
   "urlGarantia": `${urlApi}/garantia`,
   "urlGarantiaMateriaPrima": `${urlApi}/garantia/materia_prima`,
   "urlProjeto": `${urlApi}/projeto`,
+  "urlUsuario": `${urlApi}/usuario`,
+  "urlEtapa": `${urlApi}/etapa`,
+  "urlEtapaMp": `${urlApi}/etapa_mp`,
 } 
 
 
@@ -24,13 +27,15 @@ const erro = {
   6: 'falha api carregar tabela nutrientes',
   7: 'falha api editar nutrientes',
   8: 'falha api carregar tabela materia prima',
-  9: 'falha api editar nutrientes',
+  9: 'falha api editar materia prima',
   10: 'falha api cadastrar garantia',
   11: 'falha api deletar garantia',
   12: 'Erro autocomplete cadastrar garantia',
   13: 'Erro ao selecionar valor da garantia',
   14: 'Erro ao buscar no autocomplete',
   15: 'Falha ao carregar API Projetos',
+  16: 'Falha ao carregar API Usuários',
+  17: 'Falha ao alterar usuário',
 }
 
 const statusProjeto = [

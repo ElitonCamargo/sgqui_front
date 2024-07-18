@@ -1,21 +1,43 @@
-<h2>Cadastrar Nutriente</h2>
+<h2>Cadastrar Materia Prima</h2>
 <div id="msgResult">
 
 </div>
-<form class="container mt-5" id="formCadastrarNutriente">
+<form class="container mt-5" id="formCadastrarMateriaPrima">
+ 
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-2">
+      <label for="codigo" class="form-label">Código</label>
+      <input type="number" class="form-control" id="codigo" name="codigo" required>
+    </div>
+
+    <div class="col-md-10">
       <label for="nome" class="form-label">Nome</label>
       <input type="text" class="form-control" id="nome" name="nome" required>
     </div>
+  </div>
 
-    <div class="col-md-6">
-      <label for="nome" class="form-label">Fórmula</label>
+  <div class="row">
+    <div class="col-md-4">
+      <label for="formula" class="form-label">Fórmula</label>
       <input type="text" class="form-control" id="formula" name="formula" required>
     </div>
-
+    <div class="col-md-4">
+      <label for="cas_number" class="form-label">CAS Number</label>
+      <input type="text" class="form-control" id="cas_number" name="cas_number" required>
+    </div>
+    <div class="col-md-4">
+      <label for="densidade" class="form-label">Densidade</label>
+      <input type="number" class="form-control" id="densidade" name="densidade" step="any" required>
+    </div>
   </div>
-  <button class="btn btn-primary" type="submit" id="compostoCadastrar">Cadastrar</button>
+
+  <div class="row">
+    <div class="col-md-12">
+      <label for="descricao" class="form-label">Descrição</label>
+      <textarea class="form-control" id="descricao" name="descricao"></textarea>
+    </div>
+  </div>
+  <button class="btn btn-primary pull-left" type="submit" id="compostoCadastrar">Cadastrar</button>
 </form>
 
 <!-- Modal de Confirmação de Cadastro -->
@@ -40,7 +62,7 @@
 
 
     // Adicionar evento de submit para o formulário de edição do nutriente
-    $('#formCadastrarNutriente').on('submit', function (event) {
+    $('#formCadastrarMateriaPrima').on('submit', function (event) {
 
       event.preventDefault(); // Impedir o envio padrão do formulário
       const jsonData = serializadoParaJSON($(this).serialize());

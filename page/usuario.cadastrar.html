@@ -1,4 +1,4 @@
-<h2>Cadastrar Nutriente</h2>
+<h2>Cadastrar Usuário</h2>
 <div id="msgResult">
 
 </div>
@@ -15,7 +15,7 @@
     </div>
 
   </div>
-  <button class="btn btn-primary" type="submit" id="nutrienteCadastrar">Cadastrar</button>
+  <button class="btn btn-primary" type="submit" id="compostoCadastrar">Cadastrar</button>
 </form>
 
 <!-- Modal de Confirmação de Cadastro -->
@@ -44,7 +44,7 @@
 
       event.preventDefault(); // Impedir o envio padrão do formulário
       const jsonData = serializadoParaJSON($(this).serialize());
-      req_INSERT(opt.urlNutriente, jsonData)
+      req_INSERT(opt.urlMateriaPrima, jsonData)
         .then(result => {
           // Exibir resposta da API no console
 

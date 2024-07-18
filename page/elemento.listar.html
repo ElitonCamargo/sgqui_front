@@ -67,11 +67,11 @@
     //variavel de controle se algo foi alterado
     let alterado = 0;
 
-    req_GET(opt.urlElemento).then((res) => {
+    req_GET(opt.urlElemento).then((result) => {
 
-      data = res.data;
+      data = result.data;
 
-      if (res.success) {
+      if (result.success) {
 
         // INICIA DATATABLE
         table = $('#tabela-elementos').DataTable({
@@ -116,7 +116,7 @@
         // se conexao com api erro
       } else {
         
-        showError(5, res.status);
+        showError(5, result.status);
 
       }
 

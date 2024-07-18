@@ -88,11 +88,11 @@
     //variavel de controle se algo foi alterado
     let alterado = 0;
 
-    req_GET(opt.urlMateriaPrima).then((res) => {
+    req_GET(opt.urlMateriaPrima).then((result) => {
 
-      data = res.data;
+      data = result.data;
 
-      if (res.success) {
+      if (result.success) {
 
         // INICIA DATATABLE
         table = $('#tabela-materiaPrima').DataTable({
@@ -145,7 +145,7 @@
 
         // se conexao com api erro
       } else {
-          showError(8, res.status)
+        showError(8, result.status)
       }
 
 
@@ -186,7 +186,7 @@
                       <label for="descricao">Descrição:</label>
                       <textarea class="form-control" id="descricao" name="descricao" readonly>${materia_prima.descricao}</textarea>
                     </div>
-                    <input type="hidden" id="nutrienteId" name="id" value="${materia_prima.id}">
+                    <input type="hidden" id="id" name="id" value="${materia_prima.id}">
                 </div>
         `;
 
@@ -216,13 +216,7 @@
               $('#detalhesModal #btnSalvar').hide();
               alterado = 1
             } else {
-
-              alert(`Erro09: ${res.erro.message}`);
-              if (res.erro.code === 1 || res.erro.code === 3) {
-                destroySession('tk');
-                destroySession('us');
-                window.location.reload(true);
-              }
+              showError(9,result.status)
             }
           });
       });
@@ -241,17 +235,17 @@
         const id = $(this).data('id');
         const nome = $(this).data('nome');
         // Faça algo com o ID, como confirmar a exclusão do materia_prima
-        excluiNutriente(id, nome);
+        excluirMateriaPrima(id, nome);
       });
 
-      function excluiNutriente(id, nome) {
+      function excluirMateriaPrima(id, nome) {
         // Exibe o modal de confirmação de exclusão com o nome do item
         $('#nomeExclui').text(nome);
         $('#confirmacaoExclusaoModal').modal('show');
 
         // Evento ao clicar no botão "Confirmar Exclusão" no modal de confirmação
         $('#confirmarExclusao').on('click', function () {
-          let urlExclusao = opt.urlNutriente + "/" + id;
+          let urlExclusao = opt.urlMateriaPrima + "/" + id;
           req_DELETE(urlExclusao).then((data) => {
             if (data.success) {
               // Fecha o modal de confirmação de exclusão
@@ -298,7 +292,10 @@
 
     $('.modal').on('hidden.bs.modal', function () {
       if (alterado !== 0) {
-        window.location.reload(true);
+        req_GET(opt.urlMateriaPrima).then((result) => {
+          data = result.data; // Atualiza os dados com a resposta da requisição
+          table.clear().rows.add(data).draw(); // Limpa a tabela, adiciona os novos dados e redesenha
+        });
       }
     })
   })

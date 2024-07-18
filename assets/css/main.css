@@ -31,6 +31,8 @@
     /* ajuste o tamanho conforme necessário */
 }
 
+.nav .navbar-toggler{margin-left: 50px;}
+
 /* fim botão tema */
 
 table th input::placeholder {
@@ -38,7 +40,7 @@ table th input::placeholder {
 }
 
 footer {
-    position: fixed;
+    /* position: fixed; */
     left: 0;
     bottom: 0;
     width: 100%;
@@ -55,4 +57,13 @@ footer {
     border-color: #8afe86;
     outline: 0;
     box-shadow: 0 0 0 .25rem rgba(13, 253, 33, 0.25);
+}
+
+/* Adiciona uma borda aos ícones dos cards */
+.cards-home {margin-top: 70px !important;}
+.cards-home .card i {
+    border: 2px solid #dee2e6;
+    padding: 10px;
+    border-radius: 50%;
+    background-color: #f8f9fa;
 }
