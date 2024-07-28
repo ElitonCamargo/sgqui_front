@@ -35,7 +35,7 @@
                     "url": "/materia_prima/listar"
                 }
             ],
-            "icon": "fa-cup",
+            "icon": "fa-flask-vial",
             "text": "Cadastre e gerencie a matéria prima utilizada.",
             "buttonText": "Ver Matéria Prima"
         },

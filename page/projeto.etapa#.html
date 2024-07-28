@@ -1,26 +1,49 @@
 <style>
-    .fa-arrows-up-down-left-right {
-        cursor: move;
+    .etapa-list,
+    .nutrientes-por-etapa {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
     }
 
-    .toggle-icon {
-        font-size: 15px;
+    .etapa-list>li {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        background-color: #f8f9fa;
+    }
+
+    .nutrientes-por-etapa>li {
+        margin: 5px 0;
+        padding: 5px;
+        border: 1px solid #aaa;
+        background-color: #e9ecef;
+    }
+
+    .card {
+        margin-bottom: 10px;
+    }
+
+    .etapa-list .fa-arrow {
+        cursor: pointer;
     }
 </style>
 
 <h2 id="tituloProjeto"></h2>
-<hr>
 <!-- ********************************** Detalhes ********************************** -->
-<ul class="list-group">
-    <li class="list-group-item" style="border: none; padding: 0;">
-        <h4 type="button" class="list-group-item" data-bs-toggle="collapse" data-bs-target="#projetoDetalhes"
-            data-bs-toggle="collapse" aria-expanded="false" onclick="toggleIcon(this)">
-            Detalhes do Projeto
-            <i class="fa fa-chevron-down ms-2 toggle-icon" style="float:right"></i>
-        </h4>
-        <div id="projetoDetalhes" class="row collapse">
-            <div class="col-md-6">
-                <div class="card">
+<div class="accordion" id="accordionPanelsStayOpenExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
+                aria-controls="panelsStayOpen-collapseTwo">
+                Detalhes do Projeto
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+            <div class="accordion-body row">
+                <div class="col-md-6">
+
                     <div class="card-body">
                         <h5 class="card-title">Detalhes do Projeto</h5>
                         <ul class="list-group list-group-flush">
@@ -55,80 +78,46 @@
                         </ul>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-md-6">
-                <div class="card" id="tabelaNutrientes">
-                    <div class="card-body">
-                        <h5 class="card-title">Tabela de nutrientes</h5>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Nutriente</th>
-                                    <th>Fórmula</th>
-                                    <th>Percentual</th>
-                                    <th>Origem</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbody_nutricional"></tbody>
-                        </table>
+                <div class="col-md-6">
+                    <div class="card" id="tabelaNutrientes">
+                        <div class="card-body">
+                            <h5 class="card-title">Tabela de nutrientes</h5>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nutriente</th>
+                                        <th>Fórmula</th>
+                                        <th>Percentual</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody_nutricional"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </li>
-</ul>
+    </div>
+</div>
 
 <hr>
-<h4>Composição total</h4>
+<strong>Composição total</strong>
 <div class="progress" id="percentual_total">
     <!-- Inclusão do percentual concluido aqui -->
 </div>
 <hr>
-<button id="cadastraEtapa" class="btn btn-outline-secondary" data-toggle="modal" data-target="#modalEtapas">Cadastrar
-    Etapa</button>
-<hr>
+<div class="row mt-5">
+    <p class="fs-5 mt-2" style="display: flex; flex-direction: row; justify-content: space-between;">
+        Cadastrar etapas
+        <button type="button" class="btn btn-link btn-sm" data-bs-toggle="collapse" data-bs-target="#collapseExample"
+            aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-plus"></i></button>
+    </p>
 
-<ul id="etapa-list" class="etapa-list list-group"></ul>
+    <div id="etapa-list" class="accordion accordion-flush etapa-list"></div>
 
-
-<!-- Modal de Cadastro de Etapas -->
-<div class="modal modal-xl fade" id="modalEtapas" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Cadastrar Etapa</h5>
-                <button type="button" class="btn-close btn-fecha-modal" data-dismiss="modal"
-                    aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-                <form class="container" id="formCadastrarEtapaProjeto">
-
-                    <div class="row">
-                        <div class="col">
-                            <label for="nome" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="nome" name="nome" required>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col">
-                            <label for="descricao" class="form-label">Descrição</label>
-                            <textarea type="text" class="form-control" id="descricao" name="descricao"
-                                required></textarea>
-                        </div>
-                    </div>
-                    <br>
-                    <button class="btn btn-primary pull-left" type="submit" id="etapaCadastrar">Cadastrar</button>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-fecha-modal" data-dismiss="modal">Fechar</button>
-            </div>
-        </div>
-    </div>
 </div>
+
 
 <script>
     $(function () {
@@ -202,11 +191,20 @@
         });
     });
 
+    const formatarData = (dateString) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês de 0 a 11, precisa adicionar 1
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
     //*********** Função auto-executável para consultar os detalhes de um projeto  ********************************************    
     ((id_projeto = parseInt(getAllUrlParams()['id'])) => {
 
         //Consultar projetos detalhados......
         req_GET(opt.urlProjeto + `/detalhado/${id_projeto}`).then(results => {
+
 
 
             if (results.success) {
@@ -215,8 +213,8 @@
                 $('#detalhesPojeto_id').text(projeto_detalhado.id);
                 $('#detalhesPojeto_nome').text(projeto_detalhado.nome);
                 $('#tituloProjeto').text(`Projeto: ${projeto_detalhado.nome}`);
-                $('#detalhesPojeto_data_inicio').text(formatarDataPtBr(projeto_detalhado.data_inicio));
-                $('#detalhesPojeto_data_termino').text(formatarDataPtBr(projeto_detalhado.data_termino));
+                $('#detalhesPojeto_data_inicio').text(formatarData(projeto_detalhado.data_inicio));
+                $('#detalhesPojeto_data_termino').text(formatarData(projeto_detalhado.data_termino));
                 $('#detalhesPojeto_status').text(projeto_detalhado.status[0].status);
                 $('#detalhesPojeto_descricao').text(projeto_detalhado.descricao);
                 $('#detalhesPojeto_aplicacao').text(projeto_detalhado.aplicacao);
@@ -261,8 +259,7 @@
         $('#tbody_nutricional').append(linhaNutriente);
     }
 
-    // Função complementar para a função addDadosTableNutricional
-    const origemDoNutriente = (origens) => {
+    const origemDoNutriente = (origens) => { // Função complementar para a função addDadosTableNutricional
         let result = '';
         for (origem of origens) {
             result += `
@@ -279,7 +276,7 @@
     const exibirPercentualConcluido = (percentual) => {
         let cor = (percentual > 100) ? "bg-warning" : "bg-primary"; // Projeto estourado fica amarelo. 
         let dados = `
-            <div class="progress-bar progress-bar-striped ${cor}" role="progressbar" style="width: ${percentual.toFixed(2)}%;" aria-valuenow="${percentual.toFixed(2)}" aria-valuemin="0" aria-valuemax="100">${percentual.toFixed(2)}%</div>
+            <div class="progress-bar ${cor}" role="progressbar" style="width: ${percentual.toFixed(2)}%;" aria-valuenow="${percentual.toFixed(2)}" aria-valuemin="0" aria-valuemax="100">${percentual.toFixed(2)}%</div>
             <div class="progress-bar bg-secondary" role="progressbar" style="width: ${(100 - percentual).toFixed(2)}%;" aria-valuenow="${(100 - percentual).toFixed(2)}" aria-valuemin="0" aria-valuemax="100"></div>
           `;
         $('#percentual_total').append(dados);
@@ -288,40 +285,41 @@
     // ****************************** Função responsável por criar o visual das etapas do projeto **************************************
     const criarEtapa = (etapa) => {
         const etapaItem = `
-        <li class="list-group-item" data-id="${etapa.id}">
-            <h5 type="button" data-bs-toggle="collapse" data-bs-target="#etapa-${etapa.id}" onclick="toggleIcon(this)">
-                <i class="fa fa-arrows moverEtapa me-2"></i> ${etapa.nome} 
-                <i class="fa fa-chevron-down ms-2 toggle-icon" style="float:right"></i>
-            </h5>
-            <div class="card collapse multi-collapse" id="etapa-${etapa.id}">
-                <div class="card-body">
-                    <h6 class="card-title">${etapa.descricao}</h6>
-                    <p class="fs-5 mt-2" style="display: flex; flex-direction: row; justify-content: space-between;">
-                        Adicionar matéria prima
-                        <button type="button" class="btn btn-link btn-sm"><i class="fa fa-plus"></i></button>
-                    </p>
-                    <table class="table" id="tableComposicaoEtapa${etapa.id}">
-                        <thead>
-                            <tr>
-                                <th scope="col">Ordem</th>
-                                <th scope="col">Matéria Prima</th>
-                                <th scope="col">Percentual</th>
-                                <th scope="col">Tempo de Agitação</th>
-                                <th scope="col">Observação</th>
-                                <th scope="col">Ação</th>
-                            </tr>
-                        </thead>
-                        <tbody class="nutrientes-por-etapa" data-id="${etapa.id}">
-                            ${addMateriaPria(etapa.etapa_mp)}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </li>
-    `;
+                        <div class="accordion-item moverEtapa" data-id="${etapa.id}">
+                            <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                               <i class="fa fa-arrows moverEtapa me-2"></i>${etapa.nome}
+                            </button>
+                            </h2>
+                            <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="">
+                                <div class="accordion-body">
+                                    <h6 class="card-title">${etapa.descricao}</h6>
+                                    <p class="fs-5 mt-2" style="display: flex; flex-direction: row; justify-content: space-between;">
+                                        Adicionar matéria prima
+                                        <button type="button" class="btn btn-link btn-sm "><i class="fa fa-plus"></i></button>
+                                    </p>                       
+                             
+                                    <table class="table" id="tableComposicaoEtapa${etapa.id}">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Ordem</th>
+                                                <th scope="col">Matéria Prima</th>
+                                                <th scope="col">Percentual</th>
+                                                <th scope="col">Tempo de Agitação</th>
+                                                <th scope="col">Observação</th>
+                                                <th scope="col">Ação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody  class="nutrientes-por-etapa" data-id="${etapa.id}">      
+                                            ${addMateriaPria(etapa.etapa_mp)}           
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+          `;
         $('#etapa-list').append(etapaItem);
-    };
-
+    }
 
     // ****************************** Função responsável por adicionar os matérias primas de cada etapa ********************************
     const addMateriaPria = (etapa_mp) => {
@@ -347,59 +345,4 @@
                 </tr>`;
         return cols;
     };
-
-    // Adicionar evento de submit para o formulário de cadastro de etapa
-    $('#formCadastrarEtapaProjeto').on('submit', function (event) {
-
-        event.preventDefault(); // Impedir o envio padrão do formulário
-
-        const jsonData = serializadoParaJSON($(this).serialize());
-
-        id_projeto = parseInt(getAllUrlParams()['id']);
-        jsonData.projeto = id_projeto;
-
-
-        jsonData.ordem = 0
-        
-        console.log(jsonData)
-
-        req_INSERT(opt.urlEtapa, jsonData)
-            .then(result => {
-                // Exibir resposta da API no console
-                console.log(result)
-
-                // if (result.success === true) {
-                //     $('#confirmacaoCadastroModal .modal-body').html(`<b>${result.data[0].nome}</b> cadastrado com sucesso!`);
-                //     $('#confirmacaoCadastroModal').modal('show');
-
-                // } else {
-                //     $('#confirmacaoCadastroModal .modal-body').html(`Erro: ${result.erro.message}`);
-                //     $('#confirmacaoCadastroModal').modal('show');
-                // }
-            });
-    });
-
-
-
-
-
-    // abre modal cadastra etapa
-    $("#cadastraEtapa").on('click', function () {
-        $("#modalEtapas").modal("show")
-    })
-
-    //fecha modal
-    $(".modal").on("click", ".btn-fecha-modal", function () {
-        $('.modal').modal('hide');
-    })
-    const toggleIcon = (element) => {
-        const icon = element.querySelector('.toggle-icon');
-        if (icon.classList.contains('fa-chevron-down')) {
-            icon.classList.remove('fa-chevron-down');
-            icon.classList.add('fa-chevron-up');
-        } else {
-            icon.classList.remove('fa-chevron-up');
-            icon.classList.add('fa-chevron-down');
-        }
-    }
 </script>

@@ -326,7 +326,7 @@ const showError = (codErro, codStatus) => {
 
 
 async function start() {
-    console.log("Start function called");
+    // console.log("Start function called");
     if (!getSessionData('tk')) {
         document.getElementById('nav').innerHTML = '';
         document.getElementById('footer').innerHTML = '';
@@ -338,20 +338,20 @@ async function start() {
             })
             .catch(error => console.error('Erro01:', error));
     } else {
-        await loadNavigation();
-        await loadHomePageIfNoDirectories();
-        await loadFooter();
-        await loadMenuAndCards();
+        await carregaMenu();
+        await carregaHome();
+        await carregaRodape();
+        await carregaCardsHome();
     }
 }
 
-async function loadNavigation() {
+async function carregaMenu() {
     try {
         await fetch('/page/nav.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('nav').innerHTML = data;
-                console.log("Nav loaded");
+                // console.log("Nav loaded");
             })
             .catch(error => console.error('Erro02:', error));
     } catch (error) {
@@ -359,7 +359,7 @@ async function loadNavigation() {
     }
 }
 
-async function loadHomePageIfNoDirectories() {
+async function carregaHome() {
     try {
         const hasNoDirectories = window.location.pathname.split('/').filter(segment => segment.trim() !== '').length === 0;
         if (hasNoDirectories) {
@@ -376,13 +376,13 @@ async function loadHomePageIfNoDirectories() {
     }
 }
 
-async function loadFooter() {
+async function carregaRodape() {
     try {
         await fetch('/page/footer.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('footer').innerHTML = data;
-                console.log("Footer loaded");
+                // console.log("Footer loaded");
             })
             .catch(error => console.error('Erro04:', error));
     } catch (error) {
@@ -390,7 +390,7 @@ async function loadFooter() {
     }
 }
 
-async function loadMenuAndCards() {
+async function carregaCardsHome() {
     try {
         // Carrega o conteúdo do menu e dos cards do nav.json
         const response = await fetch('/page/nav.json'); // Atualize o caminho para nav.json
@@ -442,30 +442,33 @@ async function loadMenuAndCards() {
             }
         });
 
-        // Adiciona os cards à página
-        const cardsContainer = document.getElementById('cards-home');
-        if (cardsContainer) {
-
-            menu.forEach(item => {
-                const cardElement = document.createElement('div');
-                cardElement.className = 'col-md-4 mb-3';
-                cardElement.innerHTML = `
-                        <div class="card shadow">
-                            <a class="card-body text-center" href="${getCardUrl(item)}" style="
-                            text-decoration:none;
-                            line-height: 3.5em;
-                            ">
-                                <i class="fa-solid fa-2xl ${item.icon}"></i>
-                                <h5 class="card-title">${item.title}</h5>
-                                <p class="card-text">${item.text}</p>
-                            </a>
-                        </div>
-                `;
-                cardsContainer.appendChild(cardElement);
-            });
-        } else {
-            console.error('Elemento #cards-container não encontrado.');
+        // Função para criar os cards
+        function criarCards() {
+            const cardsContainer = document.getElementById('cards-home');
+            if (cardsContainer) {
+                menu.forEach(item => {
+                    const cardElement = document.createElement('div');
+                    cardElement.className = 'col-md-4 mb-3';
+                    cardElement.innerHTML = `
+                    <div class="card shadow">
+                        <a class="card-body text-center" href="${getCardUrl(item)}" style="
+                        text-decoration:none;
+                        line-height: 3.5em;
+                        ">
+                            <i class="fa-solid fa-2xl ${item.icon}"></i>
+                            <h5 class="card-title">${item.title}</h5>
+                            <p class="card-text">${item.text}</p>
+                        </a>
+                    </div>
+            `;
+                    cardsContainer.appendChild(cardElement);
+                });
+            }
         }
+        if (document.getElementById('cards-home')) {
+            criarCards();
+        }
+
 
         // Adiciona o listener para o botão de logoff, se estiver presente
         const logoffButton = document.getElementById('btnLogoff');
