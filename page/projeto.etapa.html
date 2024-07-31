@@ -9,11 +9,16 @@
 
     /* Estilizar o widget do auto-complete */
     .ui-autocomplete {
-        background: #000000d0; /* Cor de fundo branco */
-        border: 1px solid #757575; /* Borda cinza clara */
-        max-height: 200px; /* Altura máxima da lista */
-        overflow-y: auto; /* Adiciona rolagem vertical se necessário */
-        z-index: 9999; /* Garantir que o auto-complete fique sobre outros elementos */
+        background: #000000d0;
+        /* Cor de fundo branco */
+        border: 1px solid #757575;
+        /* Borda cinza clara */
+        max-height: 200px;
+        /* Altura máxima da lista */
+        overflow-y: auto;
+        /* Adiciona rolagem vertical se necessário */
+        z-index: 9999;
+        /* Garantir que o auto-complete fique sobre outros elementos */
     }
 </style>
 
@@ -90,7 +95,7 @@
 
 <hr>
 <h4>Composição total</h4>
-<div class="progress" id="percentual_total">
+<div class="progress" id="percentual_total" style="text-shadow: 1px 1px 2px #000000d0; font-weight: bold; height: 23px; font-size: 16px;">
     <!-- Inclusão do percentual concluido aqui -->
 </div>
 <hr>
@@ -172,7 +177,7 @@
                         </tr>
                     </thead>
                     <tbody id="addComposicaoProjeto">
-                        
+
                     </tbody>
                 </table>
             </div>
@@ -282,9 +287,9 @@
 
                     // *************** Tabela de nutrientes *****************************************************************               
                     $('#tbody_nutricional').empty();  // Limpa o conteúdo da tabela antes de adicionar os novos dados
-                    
+
                     projeto.nutrientes.forEach(addDadosTableNutricional); // For usado para adicionar os nutrientes que compoem o projeto
-                    
+
                     // *************** Carregar etapas e nutrientes das etapas **********************************************
                     $('#etapa-list').empty();  // Limpa listas de conteúdo
                     projeto.etapas.forEach(criarEtapa);
@@ -335,9 +340,9 @@
             let cor = (percentual > 100) ? "bg-warning" : "bg-primary"; // Projeto estourado fica amarelo. 
             let dados = `
                 <div class="progress-bar progress-bar-striped ${cor}" role="progressbar" style="width: ${percentual.toFixed(2)}%;" aria-valuenow="${percentual.toFixed(2)}" aria-valuemin="0" aria-valuemax="100">${percentual.toFixed(2)}%</div>
-                <div class="progress-bar bg-secondary" role="progressbar" style="width: ${(100 - percentual).toFixed(2)}%;" aria-valuenow="${(100 - percentual).toFixed(2)}" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-secondary" role="progressbar" style="width: ${(100 - percentual).toFixed(2)}%;" aria-valuenow="${(100 - percentual).toFixed(2)}" aria-valuemin="0" aria-valuemax="100">${((100 - percentual).toFixed(2) < 0)?"": (100 - percentual).toFixed(2)+'%'}</div>
             `;
-            $('#percentual_total').append(dados);
+            $('#percentual_total').html(dados);
         }
 
         //** Função responsável por criar o visual das etapas do projeto ************************************************************
@@ -462,7 +467,7 @@
                 let percentual = $('#modal_percentual').val().replace(/[^0-9.]/g, ''); // Permitir números e ponto/virgula
 
                 //Consultar as máterias primas que atendem a necessidade. 
-                req_GET(opt.urlMateriaPrima+`?nutriente=${id_nutriente}&percentual=${percentual}`).then(results => {
+                req_GET(opt.urlMateriaPrima + `?nutriente=${id_nutriente}&percentual=${percentual}`).then(results => {
                     if (results.success) {
                         let dados = results.data;
                         dados.forEach(addPossivelComposicao);
@@ -473,10 +478,10 @@
 
 
 
-        const addPossivelComposicao = (composicao)=>{
-            let {mp_id, mp_nome, percentual, mp_formula} = composicao;
+        const addPossivelComposicao = (composicao) => {
+            let { mp_id, mp_nome, percentual, mp_formula } = composicao;
             let newRow = $('<tr>');
-            let cols= `
+            let cols = `
                 <td style="display: none;">${mp_id}</td>
                 <td style="display: none;">${mp_formula}</td>
                 <td>${mp_nome}</td>
@@ -488,15 +493,15 @@
         }
 
         // Função responsável por Adicionar matéria prima a uma etap.
-        $('#addComposicaoProjeto').on('click', '.add', function() {        
-            let linha = $(this).closest('tr');        
-            let etapa_mp_data =    {
-                "etapa":id_etapa,
-                "mp":linha.find('td:eq(0)').text(),
-                "percentual":linha.find('td:eq(3)').text(),
-                "tempo_agitacao":0,
-                "observacao":"",
-                "ordem":"0"
+        $('#addComposicaoProjeto').on('click', '.add', function () {
+            let linha = $(this).closest('tr');
+            let etapa_mp_data = {
+                "etapa": id_etapa,
+                "mp": linha.find('td:eq(0)').text(),
+                "percentual": linha.find('td:eq(3)').text(),
+                "tempo_agitacao": 0,
+                "observacao": "",
+                "ordem": "0"
             }
 
             req_INSERT(opt.urlEtapaMp, etapa_mp_data).then(results => {
@@ -508,14 +513,14 @@
 
 
         });
-    
+
         // Função para a colocar o percentual em % *********************************************************************************
-        $('#modal_percentual').on('blur', function() {
+        $('#modal_percentual').on('blur', function () {
             let value = $(this).val().replace(/[^0-9.,]/g, ''); // Permitir números e ponto/virgula
             if (value) {
                 // Substituir vírgulas por pontos
                 value = value.replace(',', '.');
-                
+
                 // Converte para número e fixa 2 casas decimais
                 let numericValue = parseFloat(value);
                 if (!isNaN(numericValue)) {
@@ -530,10 +535,10 @@
         });
 
     });
-    
+
     let id_etapa;
-    const btn_AddMpNutriente = (id, nome)=>{
-        id_etapa = id;        
+    const btn_AddMpNutriente = (id, nome) => {
+        id_etapa = id;
         $('#titulo_Etapa').text(nome);
         $('#modal_percentual').val("");
         $('#modal_nutriente').val("");
@@ -561,10 +566,5 @@
             }
         }).catch(error => console.error('Erro capturado:', error));
     })();
-
-
-
-
-
 
 </script>
