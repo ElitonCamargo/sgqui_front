@@ -6,6 +6,15 @@
     .toggle-icon {
         font-size: 15px;
     }
+
+    /* Estilizar o widget do auto-complete */
+    .ui-autocomplete {
+        background: #000000d0; /* Cor de fundo branco */
+        border: 1px solid #757575; /* Borda cinza clara */
+        max-height: 200px; /* Altura máxima da lista */
+        overflow-y: auto; /* Adiciona rolagem vertical se necessário */
+        z-index: 9999; /* Garantir que o auto-complete fique sobre outros elementos */
+    }
 </style>
 
 <h2 id="tituloProjeto"></h2>
@@ -85,7 +94,8 @@
     <!-- Inclusão do percentual concluido aqui -->
 </div>
 <hr>
-<button id="cadastraEtapa" class="btn btn-outline-secondary" data-toggle="modal" data-target="#modalEtapas">Cadastrar
+<button id="cadastraEtapa" class="btn btn-outline-secondary" data-bs-toggle="modal"
+    data-bs-target="#modalEtapas">Cadastrar
     Etapa</button>
 <hr>
 
@@ -130,10 +140,54 @@
     </div>
 </div>
 
-<script>
-    $(function () {
+<!-- Modal de Cadastro de Matéria prima -->
+<div class="modal modal-xl fade" id="modalMpNutriente" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="titulo_Etapa"></h5>
+                <button type="button" class="btn-close btn-fecha-modal" data-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulário -->
+                <form id="comporProjeto">
+                    <div class="row">
+                        <div class="col-4 mb-3">
+                            <input type="text" class="form-control" id="modal_percentual" placeholder="Percentual">
+                        </div>
+                        <div class="col-8 mb-3">
+                            <input type="text" class="form-control ui-autocomplete-input" id="modal_nutriente"
+                                placeholder="Nutriente" autocomplete="off">
+                        </div>
+                    </div>
+                </form>
+                <!-- Tabela -->
+                <table class="table mt-3">
+                    <thead>
+                        <tr>
+                            <th>Matéria Prima</th>
+                            <th>Percentual</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="addComposicaoProjeto">
+                        
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-fecha-modal" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-        // Ordenação das listas pai (etapas)
+<script>
+
+    //** Função resposável por esperar a DOM ser carregada **************************************************************************
+    $(function () {
+        //** Ordenação das listas pai (etapas) **************************************************************************************
         $("#etapa-list").sortable({
             handle: ".moverEtapa", // Só permite arrastar ao clicar no ícone de mover
             opacity: 0.8,
@@ -156,7 +210,7 @@
             }
         });
 
-        // Adicionando suporte ao sortable para as linhas das tabelas
+        //** Adicionando suporte ao sortable para as linhas das tabelas *************************************************************
         $(document).on('mouseenter', '.nutrientes-por-etapa', function () {
             $(this).sortable({
                 handle: ".moverNutriente", // Só permite arrastar ao clicar no ícone de mover
@@ -200,198 +254,292 @@
                 }
             }).disableSelection();
         });
-    });
 
-    //*********** Função auto-executável para consultar os detalhes de um projeto  ********************************************    
-    ((id_projeto = parseInt(getAllUrlParams()['id'])) => {
+        //** Função responsável por buscar os detalhes do projeto *********************************************************    
+        const projeto_detalhado = (id_projeto = parseInt(getAllUrlParams()['id'])) => {
 
-        //Consultar projetos detalhados......
-        req_GET(opt.urlProjeto + `/detalhado/${id_projeto}`).then(results => {
+            //Consultar projetos detalhados......
+            req_GET(opt.urlProjeto + `/detalhado/${id_projeto}`).then(results => {
 
 
-            if (results.success) {
-                // *************** Detalhes do Projeto ****************************************************************
-                let projeto_detalhado = results.data[0];
-                $('#detalhesPojeto_id').text(projeto_detalhado.id);
-                $('#detalhesPojeto_nome').text(projeto_detalhado.nome);
-                $('#tituloProjeto').text(`Projeto: ${projeto_detalhado.nome}`);
-                $('#detalhesPojeto_data_inicio').text(formatarDataPtBr(projeto_detalhado.data_inicio));
-                $('#detalhesPojeto_data_termino').text(formatarDataPtBr(projeto_detalhado.data_termino));
-                $('#detalhesPojeto_status').text(projeto_detalhado.status[0].status);
-                $('#detalhesPojeto_descricao').text(projeto_detalhado.descricao);
-                $('#detalhesPojeto_aplicacao').text(projeto_detalhado.aplicacao);
-                $('#detalhesPojeto_tipo').text(projeto_detalhado.tipo);
-                $('#detalhesPojeto_natureza_fisica').text(projeto_detalhado.natureza_fisica);
-                $('#detalhesPojeto_dencidade_estimada').text(projeto_detalhado.dencidade_estimada.toFixed(2));
-                $('#detalhesPojeto_dencidade_real').text(projeto_detalhado.dencidade);
-                $('#detalhesPojeto_ph').text(projeto_detalhado.ph);
-                exibirPercentualConcluido(projeto_detalhado.percentual_concluido);
+                if (results.success) {
+                    // *************** Detalhes do Projeto ****************************************************************
+                    let projeto = results.data[0];
+                    $('#detalhesPojeto_id').text(projeto.id);
+                    $('#detalhesPojeto_nome').text(projeto.nome);
+                    $('#tituloProjeto').text(`Projeto: ${projeto.nome}`);
+                    $('#detalhesPojeto_data_inicio').text(formatarDataPtBr(projeto.data_inicio));
+                    $('#detalhesPojeto_data_termino').text(formatarDataPtBr(projeto.data_termino));
+                    $('#detalhesPojeto_status').text(projeto.status[0].status);
+                    $('#detalhesPojeto_descricao').text(projeto.descricao);
+                    $('#detalhesPojeto_aplicacao').text(projeto.aplicacao);
+                    $('#detalhesPojeto_tipo').text(projeto.tipo);
+                    $('#detalhesPojeto_natureza_fisica').text(projeto.natureza_fisica);
+                    $('#detalhesPojeto_dencidade_estimada').text(projeto.dencidade_estimada.toFixed(2));
+                    $('#detalhesPojeto_dencidade_real').text(projeto.dencidade);
+                    $('#detalhesPojeto_ph').text(projeto.ph);
+                    exibirPercentualConcluido(projeto.percentual_concluido);
 
-                // *************** Tabela de nutrientes *****************************************************************               
-                $('#tbody_nutricional').empty();  // Limpa o conteúdo da tabela antes de adicionar os novos dados
+                    // *************** Tabela de nutrientes *****************************************************************               
+                    $('#tbody_nutricional').empty();  // Limpa o conteúdo da tabela antes de adicionar os novos dados
+                    
+                    projeto.nutrientes.forEach(addDadosTableNutricional); // For usado para adicionar os nutrientes que compoem o projeto
+                    
+                    // *************** Carregar etapas e nutrientes das etapas **********************************************
+                    $('#etapa-list').empty();  // Limpa listas de conteúdo
+                    projeto.etapas.forEach(criarEtapa);
+                }
+            })
+                .catch(error => console.error('Erro capturado:', error));
+        };
+        projeto_detalhado();
 
-                projeto_detalhado.nutrientes.forEach(addDadosTableNutricional); // For usado para adicionar os nutrientes que compoem o projeto
-
-                // *************** Carregar etapas e nutrientes das etapas **********************************************
-                projeto_detalhado.etapas.forEach(criarEtapa);
-            }
-        })
-            .catch(error => console.error('Erro capturado:', error));
-    })();
-
-    // ******************************* Função para compor a "Tabela de nutrientes"********************************************************
-    const addDadosTableNutricional = (nutriente, index) => {
-        let linhaNutriente = `
-          <tr data-bs-toggle="collapse" data-bs-target="#row${index}" aria-expanded="false" aria-controls="row${index}">
-            <td>${nutriente.nome}</td>
-            <td>${nutriente.formula}</td>
-            <td>${nutriente.percentual.toFixed(2)}%</td>
-            <td>
-              <button class="btn btn-link"><i class="fa fa-eye"></i></button>
-              </td>
-              </tr>
-              <tr class="collapse" id="row${index}">
-                <td colspan="4">
-                  <table class="table">
-                    ${origemDoNutriente(nutriente.origem)}
-                    </table>
-                    </td>
-                    </tr>
-                    `;
-        $('#tbody_nutricional').append(linhaNutriente);
-    }
-
-    // Função complementar para a função addDadosTableNutricional
-    const origemDoNutriente = (origens) => {
-        let result = '';
-        for (origem of origens) {
-            result += `
-                      <tr>
-                        <td class="text-info">${origem.mp}</td>
-                        <td class="text-info">${origem.percentual.toFixed(2)} %</td>
-                        </tr>                  
+        //** Função para compor a "Tabela de nutrientes"*****************************************************************************
+        const addDadosTableNutricional = (nutriente, index) => {
+            let linhaNutriente = `
+            <tr data-bs-toggle="collapse" data-bs-target="#row${index}" aria-expanded="false" aria-controls="row${index}">
+                <td>${nutriente.nome}</td>
+                <td>${nutriente.formula}</td>
+                <td>${nutriente.percentual.toFixed(2)}%</td>
+                <td>
+                <button class="btn btn-link"><i class="fa fa-eye"></i></button>
+                </td>
+                </tr>
+                <tr class="collapse" id="row${index}">
+                    <td colspan="4">
+                    <table class="table">
+                        ${origemDoNutriente(nutriente.origem)}
+                        </table>
+                        </td>
+                        </tr>
                         `;
+            $('#tbody_nutricional').append(linhaNutriente);
         }
-        return result;
-    }
 
-    // ****************************** Função responsável por exibir o percentual de conclusão do projeto******************************
-    const exibirPercentualConcluido = (percentual) => {
-        let cor = (percentual > 100) ? "bg-warning" : "bg-primary"; // Projeto estourado fica amarelo. 
-        let dados = `
-            <div class="progress-bar progress-bar-striped ${cor}" role="progressbar" style="width: ${percentual.toFixed(2)}%;" aria-valuenow="${percentual.toFixed(2)}" aria-valuemin="0" aria-valuemax="100">${percentual.toFixed(2)}%</div>
-            <div class="progress-bar bg-secondary" role="progressbar" style="width: ${(100 - percentual).toFixed(2)}%;" aria-valuenow="${(100 - percentual).toFixed(2)}" aria-valuemin="0" aria-valuemax="100"></div>
-          `;
-        $('#percentual_total').append(dados);
-    }
+        // Função complementar para a função addDadosTableNutricional ***************************************************************
+        const origemDoNutriente = (origens) => {
+            let result = '';
+            for (origem of origens) {
+                result += `
+                        <tr>
+                            <td class="text-info">${origem.mp}</td>
+                            <td class="text-info">${origem.percentual.toFixed(2)} %</td>
+                            </tr>                  
+                            `;
+            }
+            return result;
+        }
 
-    // ****************************** Função responsável por criar o visual das etapas do projeto **************************************
-    const criarEtapa = (etapa) => {
-        const etapaItem = `
-        <li class="list-group-item" data-id="${etapa.id}">
-            <h5 type="button" data-bs-toggle="collapse" data-bs-target="#etapa-${etapa.id}" onclick="toggleIcon(this)">
-                <i class="fa fa-arrows moverEtapa me-2"></i> ${etapa.nome} 
-                <i class="fa fa-chevron-down ms-2 toggle-icon" style="float:right"></i>
-            </h5>
-            <div class="card collapse multi-collapse" id="etapa-${etapa.id}">
-                <div class="card-body">
-                    <h6 class="card-title">${etapa.descricao}</h6>
-                    <p class="fs-5 mt-2" style="display: flex; flex-direction: row; justify-content: space-between;">
-                        Adicionar matéria prima
-                        <button type="button" class="btn btn-link btn-sm"><i class="fa fa-plus"></i></button>
-                    </p>
-                    <table class="table" id="tableComposicaoEtapa${etapa.id}">
-                        <thead>
-                            <tr>
-                                <th scope="col">Ordem</th>
-                                <th scope="col">Matéria Prima</th>
-                                <th scope="col">Percentual</th>
-                                <th scope="col">Tempo de Agitação</th>
-                                <th scope="col">Observação</th>
-                                <th scope="col">Ação</th>
-                            </tr>
-                        </thead>
-                        <tbody class="nutrientes-por-etapa" data-id="${etapa.id}">
-                            ${addMateriaPria(etapa.etapa_mp)}
-                        </tbody>
-                    </table>
+        //** Função responsável por exibir o percentual de conclusão do projeto *****************************************************
+        const exibirPercentualConcluido = (percentual) => {
+            let cor = (percentual > 100) ? "bg-warning" : "bg-primary"; // Projeto estourado fica amarelo. 
+            let dados = `
+                <div class="progress-bar progress-bar-striped ${cor}" role="progressbar" style="width: ${percentual.toFixed(2)}%;" aria-valuenow="${percentual.toFixed(2)}" aria-valuemin="0" aria-valuemax="100">${percentual.toFixed(2)}%</div>
+                <div class="progress-bar bg-secondary" role="progressbar" style="width: ${(100 - percentual).toFixed(2)}%;" aria-valuenow="${(100 - percentual).toFixed(2)}" aria-valuemin="0" aria-valuemax="100"></div>
+            `;
+            $('#percentual_total').append(dados);
+        }
+
+        //** Função responsável por criar o visual das etapas do projeto ************************************************************
+        const criarEtapa = (etapa) => {
+            const etapaItem = `
+            <li class="list-group-item" data-id="${etapa.id}">
+                <h5 type="button" data-bs-toggle="collapse" data-bs-target="#etapa-${etapa.id}" onclick="toggleIcon(this)">
+                    <i class="fa fa-arrows moverEtapa me-2"></i> ${etapa.nome} 
+                    <i class="fa fa-chevron-down ms-2 toggle-icon" style="float:right"></i>
+                </h5>
+                <div class="card collapse multi-collapse" id="etapa-${etapa.id}">
+                    <div class="card-body">
+                        <h6 class="card-title">${etapa.descricao}</h6>
+                        <p class="fs-5 mt-2" style="display: flex; flex-direction: row; justify-content: space-between;">
+                            Adicionar matéria prima
+                            <button onclick="btn_AddMpNutriente(${etapa.id}, '${etapa.nome}')" type="button" class="btn btn-link btn-sm" data-bs-toggle="modal" data-bs-target="#modalMpNutriente"><i class="fa fa-plus"></i></button>
+                        </p>
+                        <table class="table" id="tableComposicaoEtapa${etapa.id}">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Ordem</th>
+                                    <th scope="col">Matéria Prima</th>
+                                    <th scope="col">Percentual</th>
+                                    <th scope="col">Tempo de Agitação</th>
+                                    <th scope="col">Observação</th>
+                                    <th scope="col">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody class="nutrientes-por-etapa" data-id="${etapa.id}">
+                                ${addMateriaPria(etapa.etapa_mp)}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-        </li>
-    `;
-        $('#etapa-list').append(etapaItem);
-    };
+            </li>
+        `;
+            $('#etapa-list').append(etapaItem);
+        };
 
-
-    // ****************************** Função responsável por adicionar os matérias primas de cada etapa ********************************
-    const addMateriaPria = (etapa_mp) => {
-        let linhasEtapaEp = "";
-        etapa_mp.forEach(e => {
-            linhasEtapaEp += criarLinhaEtapaMp(e.id, e.materia_prima, e.percentual, e.tempo_agitacao, e.observacao);
-        });
-        return linhasEtapaEp;
-    };
-
-    const criarLinhaEtapaMp = (idMp, nomeMp, percentualMp, tempoAgitacao, observacao) => {
-        let cols = `
-                <tr id="nutriente_${idMp}" data-id="${idMp}">
-                    <td><i class="fa fa-arrows moverNutriente"></i></td>
-                    <td>${nomeMp}</td>
-                    <td>${percentualMp}</td>
-                    <td contenteditable="true">${tempoAgitacao}</td>
-                    <td contenteditable="true">${observacao}</td>              
-                    <td style="width:100px">
-                        <button type="button" class="btn btn-danger btn-sm deleteComposicao" data-id="${idMp}"><i class="fa fa-ban"></i></button>
-                        <button type="button" class="btn btn-primary btn-sm salvarComposicao" data-id="${idMp}"><i class="fa fa-floppy-o"></i></button>
-                    </td>
-                </tr>`;
-        return cols;
-    };
-
-    // Adicionar evento de submit para o formulário de cadastro de etapa
-    $('#formCadastrarEtapaProjeto').on('submit', function (event) {
-
-        event.preventDefault(); // Impedir o envio padrão do formulário
-
-        const jsonData = serializadoParaJSON($(this).serialize());
-
-        id_projeto = parseInt(getAllUrlParams()['id']);
-        jsonData.projeto = id_projeto;
-
-
-        jsonData.ordem = 0
-        
-        console.log(jsonData)
-
-        req_INSERT(opt.urlEtapa, jsonData)
-            .then(result => {
-                // Exibir resposta da API no console
-                console.log(result)
-
-                // if (result.success === true) {
-                //     $('#confirmacaoCadastroModal .modal-body').html(`<b>${result.data[0].nome}</b> cadastrado com sucesso!`);
-                //     $('#confirmacaoCadastroModal').modal('show');
-
-                // } else {
-                //     $('#confirmacaoCadastroModal .modal-body').html(`Erro: ${result.erro.message}`);
-                //     $('#confirmacaoCadastroModal').modal('show');
-                // }
+        //** Função responsável por adicionar os matérias primas de cada etapa ******************************************************
+        const addMateriaPria = (etapa_mp) => {
+            let linhasEtapaEp = "";
+            etapa_mp.forEach(e => {
+                linhasEtapaEp += criarLinhaEtapaMp(e.id, e.materia_prima, e.percentual, e.tempo_agitacao, e.observacao);
             });
+            return linhasEtapaEp;
+        };
+
+        //** Função responsável por criar as linhas para a função  addMateriaPria() *************************************************
+        const criarLinhaEtapaMp = (idMp, nomeMp, percentualMp, tempoAgitacao, observacao) => {
+            let cols = `
+                    <tr id="nutriente_${idMp}" data-id="${idMp}">
+                        <td><i class="fa fa-arrows moverNutriente"></i></td>
+                        <td>${nomeMp}</td>
+                        <td>${percentualMp}</td>
+                        <td contenteditable="true">${tempoAgitacao}</td>
+                        <td contenteditable="true">${observacao}</td>              
+                        <td style="width:100px">
+                            <button type="button" class="btn btn-danger btn-sm deleteComposicao" data-id="${idMp}"><i class="fa fa-ban"></i></button>
+                            <button type="button" class="btn btn-primary btn-sm salvarComposicao" data-id="${idMp}"><i class="fa fa-floppy-o"></i></button>
+                        </td>
+                    </tr>`;
+            return cols;
+        };
+
+        //** Adicionar evento de submit para o formulário de cadastro de etapa ******************************************************
+        $('#formCadastrarEtapaProjeto').on('submit', function (event) {
+
+            event.preventDefault(); // Impedir o envio padrão do formulário
+
+            const jsonData = serializadoParaJSON($(this).serialize());
+
+            id_projeto = parseInt(getAllUrlParams()['id']);
+            jsonData.projeto = id_projeto;
+
+
+            jsonData.ordem = 0
+
+            console.log(jsonData)
+
+            req_INSERT(opt.urlEtapa, jsonData)
+                .then(result => {
+                    // Exibir resposta da API no console
+                    console.log(result)
+
+                    // if (result.success === true) {
+                    //     $('#confirmacaoCadastroModal .modal-body').html(`<b>${result.data[0].nome}</b> cadastrado com sucesso!`);
+                    //     $('#confirmacaoCadastroModal').modal('show');
+
+                    // } else {
+                    //     $('#confirmacaoCadastroModal .modal-body').html(`Erro: ${result.erro.message}`);
+                    //     $('#confirmacaoCadastroModal').modal('show');
+                    // }
+                });
+        });
+
+        //** Fecha modal ************************************************************************************************************
+        $(".modal").on("click", ".btn-fecha-modal", function () {
+            $('.modal').modal('hide');
+        })
+
+        // Função para a Inicialização do auto-complete *****************************************************************************
+        $('#modal_nutriente').autocomplete({
+            source: function (request, response) {
+                // Filtrar os itens com base no texto digitado
+                const matches = listaDeNutriente.filter(nutriente =>
+                    nutriente.nome.toLowerCase().startsWith(request.term.toLowerCase())
+                );
+
+                // Mapear os itens para o formato esperado pelo autocomplete
+                response(matches.map(nutriente => ({
+                    label: `(${nutriente.formula}) ${nutriente.nome}`, // Texto exibido na lista
+                    value: `(${nutriente.formula}) ${nutriente.nome}`, // Valor exibido no campo de entrada ao selecionar
+                    id: nutriente.id       // ID do item
+                })));
+            },
+            select: function (event, ui) {
+                $('#addComposicaoProjeto').empty(); // Limpar a tabela
+
+                // Aqui você pode usar o item selecionado (ui.item) para atualizar a tabela ou qualquer outra lógica
+                let id_nutriente = ui.item.id
+                let percentual = $('#modal_percentual').val().replace(/[^0-9.]/g, ''); // Permitir números e ponto/virgula
+
+                //Consultar as máterias primas que atendem a necessidade. 
+                req_GET(opt.urlMateriaPrima+`?nutriente=${id_nutriente}&percentual=${percentual}`).then(results => {
+                    if (results.success) {
+                        let dados = results.data;
+                        dados.forEach(addPossivelComposicao);
+                    }
+                }).catch(error => console.error('Erro capturado:', error));
+            }
+        }).autocomplete("widget").css("z-index", "9999");
+
+
+
+        const addPossivelComposicao = (composicao)=>{
+            let {mp_id, mp_nome, percentual, mp_formula} = composicao;
+            let newRow = $('<tr>');
+            let cols= `
+                <td style="display: none;">${mp_id}</td>
+                <td style="display: none;">${mp_formula}</td>
+                <td>${mp_nome}</td>
+                <td>${percentual}</td>
+                <td><button type="button" class="btn btn-link add" data-id="${mp_id}"><i class="fa fa-plus-circle"></i></button></td>
+            `;
+            newRow.append(cols);
+            $('#addComposicaoProjeto').append(newRow);
+        }
+
+        // Função responsável por Adicionar matéria prima a uma etap.
+        $('#addComposicaoProjeto').on('click', '.add', function() {        
+            let linha = $(this).closest('tr');        
+            let etapa_mp_data =    {
+                "etapa":id_etapa,
+                "mp":linha.find('td:eq(0)').text(),
+                "percentual":linha.find('td:eq(3)').text(),
+                "tempo_agitacao":0,
+                "observacao":"",
+                "ordem":"0"
+            }
+
+            req_INSERT(opt.urlEtapaMp, etapa_mp_data).then(results => {
+                if (results.success) {
+                    console.log(results);
+                    projeto_detalhado();
+                }
+            }).catch(error => console.error('Erro ao compor etapa:', error));
+
+
+        });
+    
+        // Função para a colocar o percentual em % *********************************************************************************
+        $('#modal_percentual').on('blur', function() {
+            let value = $(this).val().replace(/[^0-9.,]/g, ''); // Permitir números e ponto/virgula
+            if (value) {
+                // Substituir vírgulas por pontos
+                value = value.replace(',', '.');
+                
+                // Converte para número e fixa 2 casas decimais
+                let numericValue = parseFloat(value);
+                if (!isNaN(numericValue)) {
+                    // Exibe o valor com até 2 casas decimais e adiciona o símbolo de porcentagem
+                    $(this).val(numericValue + '%');
+                } else {
+                    $(this).val('');
+                }
+            } else {
+                $(this).val('');
+            }
+        });
+
     });
+    
+    let id_etapa;
+    const btn_AddMpNutriente = (id, nome)=>{
+        id_etapa = id;        
+        $('#titulo_Etapa').text(nome);
+        $('#modal_percentual').val("");
+        $('#modal_nutriente').val("");
+        $('#addComposicaoProjeto').empty(); //** Limpar consulta de nutrientes e percentual
+    }
 
-
-
-
-
-    // abre modal cadastra etapa
-    $("#cadastraEtapa").on('click', function () {
-        $("#modalEtapas").modal("show")
-    })
-
-    //fecha modal
-    $(".modal").on("click", ".btn-fecha-modal", function () {
-        $('.modal').modal('hide');
-    })
     const toggleIcon = (element) => {
         const icon = element.querySelector('.toggle-icon');
         if (icon.classList.contains('fa-chevron-down')) {
@@ -402,4 +550,21 @@
             icon.classList.add('fa-chevron-down');
         }
     }
+
+    //** Função auto-executável para buscar todos os nutrientes cadastrados  ******************************************************  
+    let listaDeNutriente;
+    (() => {
+        //Consultar projetos detalhados......
+        req_GET(opt.urlNutriente).then(results => {
+            if (results.success) {
+                listaDeNutriente = results.data;
+            }
+        }).catch(error => console.error('Erro capturado:', error));
+    })();
+
+
+
+
+
+
 </script>
