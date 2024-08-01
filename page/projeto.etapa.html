@@ -20,6 +20,47 @@
         z-index: 9999;
         /* Garantir que o auto-complete fique sobre outros elementos */
     }
+    
+    ul.timeline {
+        list-style-type: none;
+        position: relative;
+    }
+    ul.timeline:before {
+        content: ' ';
+        background: #d4d9df;
+        display: inline-block;
+        position: absolute;
+        left: 29px;
+        width: 2px;
+        height: 100%;
+        z-index: 400;
+    }
+    ul.timeline > li {
+        padding-left: 20px;
+        display: flex;
+        height: 30px;
+    }
+    ul.timeline > li > p {
+        padding-inline-end: 20px;
+        margin-top: -3px;
+    }
+    ul.timeline > li:before {
+        content: ' ';
+        background: white;
+        display: inline-block;
+        position: absolute;
+        border-radius: 50%;
+        border: 3px solid #22c0e8;
+        left: 20px;
+        width: 20px;
+        height: 20px;
+        z-index: 400;
+    }
+
+    tbody#addComposicaoProjeto > tr >td {
+        padding-top: 4;
+        padding-bottom: 0;
+    }
 </style>
 
 <h2 id="tituloProjeto"></h2>
@@ -478,18 +519,40 @@
 
 
 
-        const addPossivelComposicao = (composicao) => {
-            let { mp_id, mp_nome, percentual, mp_formula } = composicao;
+        const addPossivelComposicao = (recomendacao) => {
+            let { mp_id, mp_nome, percentual, mp_formula, composicao } = recomendacao;
             let newRow = $('<tr>');
             let cols = `
                 <td style="display: none;">${mp_id}</td>
                 <td style="display: none;">${mp_formula}</td>
-                <td>${mp_nome}</td>
-                <td>${percentual}</td>
-                <td><button type="button" class="btn btn-link add" data-id="${mp_id}"><i class="fa fa-plus-circle"></i></button></td>
+                <td  style="border-bottom: none;">${mp_nome}</td>
+                <td  style="border-bottom: none;">${percentual}</td>
+                <td  style="border-bottom: none;"><button type="button" class="btn btn-link add" data-id="${mp_id}"><i class="fa fa-plus-circle"></i></button></td>
             `;
+            let newRowOrigem = $('<tr>');
+            let colsOrigem = `
+                <td colspan="3" style="border-top: none;">
+                    <ul class="timeline">
+                    ${addOrigemComposicao(composicao)}
+                    </ul>
+                </td>
+            `; 
             newRow.append(cols);
+            newRowOrigem.append(colsOrigem);
             $('#addComposicaoProjeto').append(newRow);
+            $('#addComposicaoProjeto').append(newRowOrigem);
+        }
+
+        const addOrigemComposicao = (origem)=>{
+            let li = '';
+            console.log(origem);
+            origem.forEach(nutri=>{
+                li += `<li>
+                    <p>${nutri.percentual.toFixed(2)}%</p><p>-</p>
+                    <p class="float-right">${nutri.nutriente}</>
+                </li>`;
+            });
+            return li;
         }
 
         // Função responsável por Adicionar matéria prima a uma etap.
