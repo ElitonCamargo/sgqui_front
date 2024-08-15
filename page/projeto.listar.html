@@ -11,7 +11,7 @@
       <th>Aplicação</th>
       <th>Natureza Física</th>
       <th>Status</th>
-      <th style="width: 210px;">Ações</th>
+      <th style="width: 255px;">Ações</th>
     </tr>
   </thead>
   <tbody>
@@ -139,6 +139,7 @@
                           <button class="btn btn-outline-secondary btn-sm btn-detalhes-editar" data-id="${row.id}" data-toggle="modal" data-target="#detalhesModal" title="Ver/Editar"><i class="fa-solid fa-eye"></i>/<i class="fa-solid fa-pen-to-square"></i></button>
                           <button class="btn btn-outline-secondary btn-sm btn-clonar" data-id="${row.id}" data-nome="${row.nome}" data-toggle="modal" data-target="#clonarProjeto" title="Clonar Projeto"><i class="fa-solid fa-clone"></i></button>
                           <a href="/projetos/etapa?id=${row.id}" class="btn btn-outline-secondary btn-sm btn-etapas" title="Etapas"><i class="fa-solid fa-tasks"></i></a>
+                          <a href="/page/projeto_impressao.html?id=${row.id}"  class="btn btn-outline-secondary btn-sm btn-imprimir" title="Imprimir"><i class="fa-solid fa-print"></i></a>
                           <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" title="Excluir"><i class="fa-solid fa-ban"></i></button>
                           `;
               }
@@ -187,7 +188,7 @@
         let optionStatus = ''
 
 
-        $.each(statusProjeto, function (k, v) {
+        $.each(selectsProjeto.status, function (k, v) {
           let selected = ''
           if (v === projeto.status[0].status) {
             selected = 'selected'

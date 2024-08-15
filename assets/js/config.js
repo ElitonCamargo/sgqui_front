@@ -15,7 +15,7 @@ const opt = {
   "urlUsuario": `${urlApi}/usuario`,
   "urlEtapa": `${urlApi}/etapa`,
   "urlEtapaMp": `${urlApi}/etapa_mp`,
-} 
+}
 
 
 const erro = {
@@ -42,16 +42,32 @@ const erro = {
   21: 'Falha ao deletar Etapa',
 }
 
-const statusProjeto = [
-  "Não Iniciado",
-  'Inicializando',
-  "Em Andamento",
-  "Finalizado"
-]
 
-// const naturezaFisica = [
-
-// ]
+const selectsProjeto = {
+  status: [
+    "Não Iniciado",
+    'Inicializando',
+    "Em Andamento",
+    "Finalizado"
+  ],
+  natureza: [
+    "Fluido (Solução)",
+    "Fluido (Suspensão)",
+    "Susp. Concentrada",
+    "Sólido"
+  ],
+  tipoFertilizante: [
+    "Mineral Misto/Simples",
+    "Organomineral"
+  ],
+  modoAplicacao: [
+    "Foliar",
+    "Fertirrigação",
+    "Solo",
+    "Hidroponia",
+    "Semente"
+  ]
+};
 
 
 // anotar e excluir materia prima dentro das etapas -- ok

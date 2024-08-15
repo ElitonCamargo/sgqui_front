@@ -48,20 +48,20 @@
     </div>
     <div class="col-md-3">
       <div class="mb-3">
-        <label for="tipo" class="form-label">Tipo</label>
-        <input class="form-control" id="tipo" name="tipo">
+        <label for="tipo" class="form-label">Tipo de fertilizante</label>
+        <select class="form-select" id="tipo" name="tipo"><option>Selecione</option></select>
       </div>
     </div>
     <div class="col-md-2">
       <div class="mb-3">
-        <label for="aplicacao" class="form-label">Aplicação</label>
-        <input class="form-control" id="aplicacao" name="aplicacao">
+        <label for="aplicacao" class="form-label">Modo de Aplicação</label>
+        <select class="form-select" id="aplicacao" name="aplicacao"><option>Selecione</option></select>
       </div>
     </div>
     <div class="col-md-3">
       <div class="mb-3">
         <label for="natureza_fisica" class="form-label">Natureza Física</label>
-        <input class="form-control" id="natureza_fisica" name="natureza_fisica">
+        <select class="form-select" id="natureza_fisica" name="natureza_fisica"><option>Selecione</option></select>
       </div>
     </div>
   </div>
@@ -101,14 +101,14 @@
       event.preventDefault();
       const jsonData = serializadoParaJSON($(this).serialize());
 
-      console.log(jsonData)
-      console.log(opt.urlProjeto)
+      // console.log(jsonData)
+      // console.log(opt.urlProjeto)
 
 
       req_INSERT(opt.urlProjeto, jsonData).then(result => {
         
         // Exibir resposta da API no console
-        console.log(result)
+        // console.log(result)
        
         if (result.success === true) {
           $('#confirmacaoCadastroModal .modal-body').html(`<b>${result.data[0].nome}</b> cadastrado com sucesso!`);
@@ -123,12 +123,31 @@
 
     });
 
+
     //adiciona options no select do config.js
     optionStatus = ''
-    $.each(statusProjeto, function (k, v) {
+    $.each(selectsProjeto.status, function (k, v) {
       optionStatus += `<option value="${v}">${v}</option>`
     })
     $('#status').append(optionStatus);
+    
+    optionStatus = ''
+    $.each(selectsProjeto.natureza, function (k, v) {
+      optionStatus += `<option value="${v}">${v}</option>`
+    })
+    $('#natureza_fisica').append(optionStatus);
+    
+    optionStatus = ''
+    $.each(selectsProjeto.tipoFertilizante, function (k, v) {
+      optionStatus += `<option value="${v}">${v}</option>`
+    })
+    $('#tipo').append(optionStatus);
+    
+    optionStatus = ''
+    $.each(selectsProjeto.modoAplicacao, function (k, v) {
+      optionStatus += `<option value="${v}">${v}</option>`
+    })
+    $('#aplicacao').append(optionStatus);
 
   })
 </script>

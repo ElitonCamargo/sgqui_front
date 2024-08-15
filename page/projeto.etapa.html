@@ -475,37 +475,7 @@
             return cols;
         };
 
-        //** Adicionar evento de submit para o formulário de cadastro de etapa ******************************************************
-        // $('#formCadastrarEtapaProjeto').on('submit', function (event) {
-
-        //     event.preventDefault(); // Impedir o envio padrão do formulário
-
-        //     const jsonData = serializadoParaJSON($(this).serialize());
-
-        //     id_projeto = parseInt(getAllUrlParams()['id']);
-        //     jsonData.projeto = id_projeto;
-
-
-        //     jsonData.ordem = 0
-
-        //     console.log(jsonData)
-
-        //     req_INSERT(opt.urlEtapa, jsonData)
-        //         .then(result => {
-        //             // Exibir resposta da API no console
-        //             console.log(result)
-
-        //             // if (result.success === true) {
-        //             //     $('#confirmacaoCadastroModal .modal-body').html(`<b>${result.data[0].nome}</b> cadastrado com sucesso!`);
-        //             //     $('#confirmacaoCadastroModal').modal('show');
-
-        //             // } else {
-        //             //     $('#confirmacaoCadastroModal .modal-body').html(`Erro: ${result.erro.message}`);
-        //             //     $('#confirmacaoCadastroModal').modal('show');
-        //             // }
-        //         });
-        // });
-
+        
         //** Fecha modal ************************************************************************************************************
         $(".modal").on("click", ".btn-fecha-modal", function () {
             $('.modal').modal('hide');
@@ -713,12 +683,13 @@
                     }
                 });
         }
-        
-        // edita etapa
-        function initModalEtapas(id = null) {
-            // Limpa o formulário
+    }
+
+    // edita etapa
+    function initModalEtapas(id = null) {
+        // Limpa o formulário
         $('#formCadastrarEtapaProjeto').trigger("reset");
-        
+
         if (id) {
             // Se o ID for fornecido, configura o modal para edição
             $('#modalEtapas .modal-title').text('Editar Etapa');
@@ -730,7 +701,7 @@
 
                     $('#nome').val(data.nome);
                     $('#descricao').val(data.descricao);
-                    
+
                     // Altera o botão "Cadastrar" para "Atualizar"
                     $('#etapaCadastrar').text('Atualizar').data('action', 'editar').data('id', id);
                 }
@@ -746,17 +717,17 @@
             // Mostra o modal para cadastro
             $('#modalEtapas').modal('show');
         }
-        
+
         // Submissão do formulário
         $('#formCadastrarEtapaProjeto').off('submit').on('submit', function (e) {
             e.preventDefault();
-            
+
             const action = $('#etapaCadastrar').data('action');
             const id = $('#etapaCadastrar').data('id');
-            
+
             // Serializa os dados do formulário em uma string URL-encoded
             let formData = $(this).serializeArray();
-            
+
             // Converte a string serializada em um objeto JSON
             let jsonData = {};
             formData.forEach(function (item) {
@@ -766,7 +737,7 @@
             if (action === 'editar') {
                 // Envia requisição de atualização
                 req_UPDATE(opt.urlEtapa + `/${id}`, jsonData)
-                .then(result => {
+                    .then(result => {
                         if (result.success) {
                             console.log(result);
                         } else {
@@ -778,14 +749,14 @@
             } else {
                 // Envia requisição de criação
                 req_INSERT(opt.urlEtapa, jsonData)
-                .then(result => {
+                    .then(result => {
                         console.log(result);
                         // Fecha o modal após o cadastro
                         $('#modalEtapas').modal('hide');
                     });
             }
         });
-        
+
         // Reseta o formulário e o título do modal quando o modal é fechado
         $('#modalEtapas').on('hidden.bs.modal', function () {
             $('#formCadastrarEtapaProjeto').trigger("reset");
@@ -793,26 +764,24 @@
             $('#modalEtapas .modal-title').text('Cadastrar Etapa');
         });
     }
-    
-    
-    
-}    function excluirEtapa(idEt) {
-    // Exibe uma caixa de confirmação para o usuário
-    const confirmar = window.confirm("Tem certeza de que deseja excluir esta etapa?");
 
-    // Se o usuário confirmar
-    if (confirmar) {
+    function excluirEtapa(idEt) {
+        // Exibe uma caixa de confirmação para o usuário
+        const confirmar = window.confirm("Tem certeza de que deseja excluir esta etapa?");
 
-        req_DELETE(opt.urlEtapa + `/${idEt}`)
-            .then(result => {
-                // Exibir resposta da API no console
-                if (result.success) {
-                    console.log(result)
-                    // location.reload();
-                } else {
-                    showErrors(21, result.status);
-                }
-            });
+        // Se o usuário confirmar
+        if (confirmar) {
+
+            req_DELETE(opt.urlEtapa + `/${idEt}`)
+                .then(result => {
+                    // Exibir resposta da API no console
+                    if (result.success) {
+                        console.log(result)
+                        // location.reload();
+                    } else {
+                        showErrors(21, result.status);
+                    }
+                });
+        }
     }
-}
 </script>

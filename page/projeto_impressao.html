@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,192 +12,238 @@
             margin: 20px;
             color: #333;
         }
-        h1, h2, h3 {
+
+        h1,
+        h2,
+        h3 {
             color: #006E00;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
         }
+
         .section {
             margin-bottom: 30px;
         }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            height: 24px;
+        }
+
+        .progress {
+            height: 100%;
+            text-align: center;
+            line-height: 24px;
+            color: white;
+            background-color: #006E00;
+        }
     </style>
 </head>
-<body>
 
-    <h1>Projeto: Projeto adubo Etec</h1>
+<body>
+    <button id="back-button" onclick="goBack()">Voltar</button>
+    <h1 id="project-name"></h1>
 
     <div class="section">
         <h2>Detalhes do Projeto</h2>
         <table>
-            <tr>
-                <th>ID</th>
-                <td>39</td>
-            </tr>
-            <tr>
-                <th>Nome</th>
-                <td>Projeto adubo Etec</td>
-            </tr>
-            <tr>
-                <th>Data de Início</th>
-                <td>30/07/2024 21:00:00</td>
-            </tr>
-            <tr>
-                <th>Data de Término</th>
-                <td>09/08/2024 21:00:00</td>
-            </tr>
-            <tr>
-                <th>Descrição</th>
-                <td>Teste</td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td>Inicializando</td>
-            </tr>
-            <tr>
-                <th>Aplicação</th>
-                <td>Jardim Etec</td>
-            </tr>
-            <tr>
-                <th>Tipo</th>
-                <td>Orgânico</td>
-            </tr>
-            <tr>
-                <th>Natureza Física</th>
-                <td>Orgânico</td>
-            </tr>
-            <tr>
-                <th>pH</th>
-                <td>0</td>
-            </tr>
-            <tr>
-                <th>Densidade Real</th>
-                <td></td>
-            </tr>
-            <tr>
-                <th>Densidade Estimada</th>
-                <td>0.6025004185968633</td>
-            </tr>
+            <tbody id="project-details"></tbody>
         </table>
     </div>
 
     <div class="section">
         <h2>Tabela de Nutrientes</h2>
         <table>
-            <tr>
-                <th>Nutriente</th>
-                <th>Fórmula</th>
-                <th>Percentual</th>
-                <th>Origem</th>
-            </tr>
-            <tr>
-                <td>Nitrogênio</td>
-                <td>N</td>
-                <td>25.00%</td>
-                <td>
-                    Fosfato Diamonico (DAP cristal) - 5.00%<br>
-                    Amômia Anidra - 10.00%<br>
-                    Uréia - 10.00%
-                </td>
-            </tr>
-            <tr>
-                <td>Pentóxido de Fósforo</td>
-                <td>P2O5</td>
-                <td>13.16%</td>
-                <td>Fosfato Diamonico (DAP cristal) - 13.16%</td>
-            </tr>
+            <thead>
+                <tr>
+                    <th>Nutriente</th>
+                    <th>Fórmula</th>
+                    <th>Percentual</th>
+                    <th>Origem</th>
+                </tr>
+            </thead>
+            <tbody id="nutrients-table"></tbody>
         </table>
     </div>
 
     <div class="section">
         <h2>Composição Total</h2>
-        <table>
-            <tr>
-                <th>Percentual Concluído</th>
-                <td>60.25%</td>
-            </tr>
-            <tr>
-                <th>Percentual Restante</th>
-                <td>39.75%</td>
-            </tr>
-        </table>
+        <div class="progress-bar">
+            <div id="completed-percentage" class="progress"></div>
+        </div>
+        <div class="progress-bar" style="margin-top: 5px;">
+            <div id="remaining-percentage" class="progress" style="background-color: #333;"></div>
+        </div>
     </div>
 
     <div class="section">
         <h2>Preparo</h2>
         <table>
-            <tr>
-                <th>Ordem</th>
-                <th>Matéria Prima</th>
-                <th>Percentual</th>
-                <th>Tempo de Agitação</th>
-                <th>Observação</th>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>Fosfato Diamonico (DAP cristal)</td>
-                <td>26.32%</td>
-                <td>0</td>
-                <td></td>
-            </tr>
+            <thead>
+                <tr>
+                    <th>Ordem</th>
+                    <th>Matéria Prima</th>
+                    <th>Percentual</th>
+                    <th>Tempo de Agitação</th>
+                    <th>Observação</th>
+                </tr>
+            </thead>
+            <tbody id="preparo-table"></tbody>
         </table>
     </div>
 
     <div class="section">
         <h2>Coloração</h2>
         <table>
-            <tr>
-                <th>Ordem</th>
-                <th>Matéria Prima</th>
-                <th>Percentual</th>
-                <th>Tempo de Agitação</th>
-                <th>Observação</th>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>Amômia Anidra</td>
-                <td>12.20%</td>
-                <td>0</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Uréia</td>
-                <td>21.74%</td>
-                <td>0</td>
-                <td></td>
-            </tr>
+            <thead>
+                <tr>
+                    <th>Ordem</th>
+                    <th>Matéria Prima</th>
+                    <th>Percentual</th>
+                    <th>Tempo de Agitação</th>
+                    <th>Observação</th>
+                </tr>
+            </thead>
+            <tbody id="coloracao-table"></tbody>
         </table>
     </div>
 
     <div class="section">
         <h2>Moagem</h2>
         <table>
-            <tr>
-                <th>Ordem</th>
-                <th>Matéria Prima</th>
-                <th>Percentual</th>
-                <th>Tempo de Agitação</th>
-                <th>Observação</th>
-            </tr>
-            <tr>
-                <td colspan="5">Nenhum dado disponível</td>
-            </tr>
+            <thead>
+                <tr>
+                    <th>Ordem</th>
+                    <th>Matéria Prima</th>
+                    <th>Percentual</th>
+                    <th>Tempo de Agitação</th>
+                    <th>Observação</th>
+                </tr>
+            </thead>
+            <tbody id="moagem-table"></tbody>
         </table>
     </div>
-    
-<script>
 
-</script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src='/assets/js/config.js'></script>
+    <script src='/assets/js/recursos.js'></script>
+
+    <script>
+
+        let param = getAllUrlParams()
+
+        req_GET(opt.urlProjeto + `/detalhado/${param.id}`).then((result) => {
+            if (result.success) {
+
+
+                let data = result
+
+
+
+                // Função para preencher os detalhes do projeto
+                function preencherDetalhesDoProjeto(data) {
+                    const detalhes = `
+                <tr><th>ID</th><td>${data.id}</td></tr>
+                <tr><th>Nome</th><td>${data.nome}</td></tr>
+                <tr><th>Data de Início</th><td>${new Date(data.data_inicio).toLocaleString()}</td></tr>
+                <tr><th>Data de Término</th><td>${new Date(data.data_termino).toLocaleString()}</td></tr>
+                <tr><th>Descrição</th><td>${data.descricao}</td></tr>
+                <tr><th>Status</th><td>${data.status[0].status}</td></tr>
+                <tr><th>Aplicação</th><td>${data.aplicacao}</td></tr>
+                <tr><th>Tipo</th><td>${data.tipo}</td></tr>
+                <tr><th>Natureza Física</th><td>${data.natureza_fisica}</td></tr>
+                <tr><th>pH</th><td>${data.ph}</td></tr>
+                <tr><th>Densidade Real</th><td>${data.densidade}</td></tr>
+                <tr><th>Densidade Estimada</th><td>${data.dencidade_estimada}</td></tr>
+            `;
+                    document.getElementById('project-details').innerHTML = detalhes;
+                    document.getElementById('project-name').innerText = data.nome;
+                }
+
+                // Função para preencher a tabela de nutrientes
+                function preencherTabelaDeNutrientes(nutrientes) {
+                    let tabela = '';
+                    nutrientes.forEach(nutriente => {
+                        let origem = nutriente.origem.map(o => `${o.mp} - ${o.percentual}%`).join('<br>');
+                        tabela += `
+                    <tr>
+                        <td>${nutriente.nome}</td>
+                        <td>${nutriente.formula}</td>
+                        <td>${nutriente.percentual.toFixed(2)}%</td>
+                        <td>${origem}</td>
+                    </tr>
+                `;
+                    });
+                    document.getElementById('nutrients-table').innerHTML = tabela;
+                }
+
+                // Função para preencher a barra de composição total
+                function preencherBarraDeComposicao(total) {
+                    document.getElementById('completed-percentage').style.width = `${total.percentual_concluido}%`;
+                    document.getElementById('completed-percentage').innerText = `${total.percentual_concluido.toFixed(2)}% Concluído`;
+
+                    document.getElementById('remaining-percentage').style.width = `${total.percentual_restante}%`;
+                    document.getElementById('remaining-percentage').innerText = `${total.percentual_restante.toFixed(2)}% Restante`;
+                }
+
+                // Função para preencher as etapas de Preparo, Coloração e Moagem
+                function preencherEtapas(etapas, idTabela) {
+                    let tabela = '';
+                    if (etapas.length > 0) {
+                        etapas.forEach((etapa, index) => {
+                            tabela += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${etapa.materia_prima}</td>
+                            <td>${etapa.percentual.toFixed(2)}%</td>
+                            <td>${etapa.tempo_agitacao}</td>
+                            <td>${etapa.observacao || ''}</td>
+                        </tr>
+                    `;
+                        });
+                    } else {
+                        tabela += '<tr><td colspan="5">Nenhum dado disponível</td></tr>';
+                    }
+                    document.getElementById(idTabela).innerHTML = tabela;
+                }
+
+                // Preenchendo os dados dinamicamente
+                const projeto = data.data[0];
+                preencherDetalhesDoProjeto(projeto);
+                preencherTabelaDeNutrientes(projeto.nutrientes);
+                preencherBarraDeComposicao(projeto);
+                preencherEtapas(projeto.etapas[0].etapa_mp, 'preparo-table');
+                preencherEtapas(projeto.etapas[1].etapa_mp, 'coloracao-table');
+                preencherEtapas(projeto.etapas[2].etapa_mp, 'moagem-table');
+
+            }
+        })
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+
 </body>
+
 </html>
