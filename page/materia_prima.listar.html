@@ -112,8 +112,8 @@
               render: function (data, type, row) {
                 return `
                           <button class="btn btn-outline-secondary btn-sm btn-detalhes-editar" data-id="${row.id}" data-bs-toggle="modal" data-bs-target="#detalhesModal" title="Ver/Editar"><i class="fa-solid fa-eye"></i>/<i class="fa-solid fa-pen-to-square"></i></button>
-                          <button class="btn btn-outline-secondary btn-sm btn-garantias" data-id="${row.id}" data-nome="${row.nome}" title="Garantias"><i class="fa-solid fa-award"></i></button>
-                          <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" title="Excluir"><i class="fa-solid fa-ban"></i></button>
+                          <button class="btn btn-outline-secondary btn-sm btn-garantias" data-id="${row.id}" data-nome="${row.nome}" data-bs-toggle="modal" data-bs-target="#modalGarantias" title="Garantias"><i class="fa-solid fa-award"></i></button>
+                          <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" data-bs-toggle="modal" data-bs-target="#confirmacaoExclusaoModal" title="Excluir"><i class="fa-solid fa-ban"></i></button>
                       `;
               }
             }
@@ -286,9 +286,9 @@
 
     // FUNCOES AUXILIARES
 
-    // $(".modal").on("click", ".btn-fecha-modal", function () {
-    //   $('.modal').modal('hide');
-    // })
+    $(".modal").on("click", ".btn-fecha-modal", function () {
+      $('.modal').modal('hide');
+    })
 
     $('.modal').on('hidden.bs.modal', function () {
       if (alterado !== 0) {

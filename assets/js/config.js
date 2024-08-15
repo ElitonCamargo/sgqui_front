@@ -36,6 +36,10 @@ const erro = {
   15: 'Falha ao carregar API Projetos',
   16: 'Falha ao carregar API Usuários',
   17: 'Falha ao alterar usuário',
+  18: 'Falha ao salvar Composição da etapa',
+  19: 'Falha ao deletar Composição da etapa',
+  20: 'Falha ao alterar Etapa',
+  21: 'Falha ao deletar Etapa',
 }
 
 const statusProjeto = [
@@ -44,4 +48,18 @@ const statusProjeto = [
   "Em Andamento",
   "Finalizado"
 ]
+
+// const naturezaFisica = [
+
+// ]
+
+
+// anotar e excluir materia prima dentro das etapas -- ok
+//crud das etapas
+//criar o PDF
+//COLOCAR NOME LOGADO
+//gravar video aulas
+
+
+
 
