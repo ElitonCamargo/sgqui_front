@@ -342,6 +342,7 @@ async function start() {
         await carregaHome();
         await carregaRodape();
         await carregaCardsHome();
+        await inserirNomeLogado();
     }
 }
 
@@ -495,3 +496,23 @@ async function carregaCardsHome() {
         return '#'; // Caso contrário, retorna uma URL padrão ou "#" (página atual)
     }
 }
+
+async function inserirNomeLogado() {
+    try {
+        // Assume que getSessionData é uma função assíncrona
+        let sessionUs = await getSessionData('us');
+
+        // Verifique se o nome do usuário existe e não está vazio
+        if (sessionUs && sessionUs.usuario && sessionUs.usuario.nome.length > 0) {
+            document.getElementById('nomeLogado').innerText = sessionUs.usuario.nome + ' logado';
+        } else {
+            console.log('Nome de usuário não encontrado ou está vazio.');
+        }
+    } catch (error) {
+        console.error('Erro ao obter os dados da sessão:', error);
+    }
+}
+
+// Chama a função assíncrona para inserir o nome do usuário
+inserirNomeLogado();
+
