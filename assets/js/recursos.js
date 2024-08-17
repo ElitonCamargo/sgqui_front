@@ -326,7 +326,6 @@ const showError = (codErro, codStatus) => {
 
 
 async function start() {
-    // console.log("Start function called");
     if (!getSessionData('tk')) {
         document.getElementById('nav').innerHTML = '';
         document.getElementById('footer').innerHTML = '';
@@ -334,7 +333,6 @@ async function start() {
             .then(response => response.text())
             .then(data => {
                 document.getElementById('root').innerHTML = data;
-                console.log("Login page loaded");
             })
             .catch(error => console.error('Erro01:', error));
     } else {
@@ -352,7 +350,6 @@ async function carregaMenu() {
             .then(response => response.text())
             .then(data => {
                 document.getElementById('nav').innerHTML = data;
-                // console.log("Nav loaded");
             })
             .catch(error => console.error('Erro02:', error));
     } catch (error) {
@@ -368,7 +365,6 @@ async function carregaHome() {
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('root').innerHTML = data;
-                    console.log("Home page loaded");
                 })
                 .catch(error => console.error('Erro03:', error));
         }
@@ -383,7 +379,6 @@ async function carregaRodape() {
             .then(response => response.text())
             .then(data => {
                 document.getElementById('footer').innerHTML = data;
-                // console.log("Footer loaded");
             })
             .catch(error => console.error('Erro04:', error));
     } catch (error) {
@@ -506,7 +501,7 @@ async function inserirNomeLogado() {
         if (sessionUs && sessionUs.usuario && sessionUs.usuario.nome.length > 0) {
             document.getElementById('nomeLogado').innerText = sessionUs.usuario.nome + ' logado';
         } else {
-            console.log('Nome de usuário não encontrado ou está vazio.');
+            console.error('Nome de usuário não encontrado ou está vazio.');
         }
     } catch (error) {
         console.error('Erro ao obter os dados da sessão:', error);
