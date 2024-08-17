@@ -512,7 +512,3 @@ async function inserirNomeLogado() {
         console.error('Erro ao obter os dados da sessão:', error);
     }
 }
-
-// Chama a função assíncrona para inserir o nome do usuário
-inserirNomeLogado();
-
