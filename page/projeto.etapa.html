@@ -402,53 +402,55 @@
 
     //** Função responsável por criar o visual das etapas do projeto ************************************************************
     const criarEtapa = (etapa) => {
-        const etapaItem = `
-            <li class="list-group-item" data-id="${etapa.id}">
-                <div class="row">
-                    <div class="col-2">
-                        <h5 type="button" class="float-start">
-                            <i class="fa fa-arrows moverEtapa me-2 "></i> <span  data-bs-toggle="collapse" data-bs-target="#etapa-${etapa.id}">${etapa.nome}</span> 
-                        </h5>
+        if(etapa.id != null){
+            const etapaItem = `
+                <li class="list-group-item" data-id="${etapa.id}">
+                    <div class="row">
+                        <div class="col-2">
+                            <h5 type="button" class="float-start">
+                                <i class="fa fa-arrows moverEtapa me-2 "></i> <span  data-bs-toggle="collapse" data-bs-target="#etapa-${etapa.id}">${etapa.nome}</span> 
+                            </h5>
+                        </div>
+                        <div class="col-2"></div>
+                        <div class="col-2"></div>
+                        <div class="col-2"></div>
+                        <div class="col-2"></div>
+                        <div class="col-2">
+                            <i class="fa fa-chevron-down ms-2 toggle-icon float-end" style="float:right; cursor:pointer" data-bs-toggle="collapse" data-bs-target="#etapa-${etapa.id}"></i> 
+                            <button class="btn btn-outline-secondary btn-sm" data-id="${etapa.id}" title="excluir" style="float:right; cursor:pointer" onclick="excluirEtapa(${etapa.id})"><i class="fa fa-ban"></i></button> 
+                            <button class="btn btn-outline-secondary btn-sm" data-id="${etapa.id}" title="editar" style="float:right; cursor:pointer" onclick="initModalEtapas(${etapa.id})"><i class="fa fa-edit"></i></button> 
+                        </div>
+    
                     </div>
-                    <div class="col-2"></div>
-                    <div class="col-2"></div>
-                    <div class="col-2"></div>
-                    <div class="col-2"></div>
-                    <div class="col-2">
-                        <i class="fa fa-chevron-down ms-2 toggle-icon float-end" style="float:right; cursor:pointer" data-bs-toggle="collapse" data-bs-target="#etapa-${etapa.id}"></i> 
-                        <button class="btn btn-outline-secondary btn-sm" data-id="${etapa.id}" title="excluir" style="float:right; cursor:pointer" onclick="excluirEtapa(${etapa.id})"><i class="fa fa-ban"></i></button> 
-                        <button class="btn btn-outline-secondary btn-sm" data-id="${etapa.id}" title="editar" style="float:right; cursor:pointer" onclick="initModalEtapas(${etapa.id})"><i class="fa fa-edit"></i></button> 
+    
+                    <div class="card collapse multi-collapse" id="etapa-${etapa.id}">
+                        <div class="card-body">
+                            <h6 class="card-title">${etapa.descricao}</h6>
+                            <p class="fs-5 mt-2" style="display: flex; flex-direction: row; justify-content: space-between;">
+                                
+                                <button onclick="btn_AddMpNutriente(${etapa.id}, '${etapa.nome}')" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalMpNutriente">Adicionar matéria prima</button>
+                            </p>
+                            <table class="table" id="tableComposicaoEtapa${etapa.id}">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Ordem</th>
+                                        <th scope="col">Matéria Prima</th>
+                                        <th scope="col">Percentual</th>
+                                        <th scope="col">Tempo de Agitação</th>
+                                        <th scope="col">Observação</th>
+                                        <th scope="col">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="nutrientes-por-etapa" data-id="${etapa.id}">
+                                    ${addMateriaPria(etapa.etapa_mp)}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-
-                </div>
-
-                <div class="card collapse multi-collapse" id="etapa-${etapa.id}">
-                    <div class="card-body">
-                        <h6 class="card-title">${etapa.descricao}</h6>
-                        <p class="fs-5 mt-2" style="display: flex; flex-direction: row; justify-content: space-between;">
-                            
-                            <button onclick="btn_AddMpNutriente(${etapa.id}, '${etapa.nome}')" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalMpNutriente">Adicionar matéria prima</button>
-                        </p>
-                        <table class="table" id="tableComposicaoEtapa${etapa.id}">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Ordem</th>
-                                    <th scope="col">Matéria Prima</th>
-                                    <th scope="col">Percentual</th>
-                                    <th scope="col">Tempo de Agitação</th>
-                                    <th scope="col">Observação</th>
-                                    <th scope="col">Ação</th>
-                                </tr>
-                            </thead>
-                            <tbody class="nutrientes-por-etapa" data-id="${etapa.id}">
-                                ${addMateriaPria(etapa.etapa_mp)}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </li>
-        `;
-        $('#etapa-list').append(etapaItem);
+                </li>
+            `;
+            $('#etapa-list').append(etapaItem);
+        }
     };
 
     //** Função responsável por adicionar os matérias primas de cada etapa ******************************************************
@@ -573,7 +575,7 @@
 
     });
 
-    // Função para a colocar o percentual em % *********************************************************************************
+    // Função para colocar o percentual em % *********************************************************************************
     $('#modal_percentual').on('blur', function () {
         let value = $(this).val().replace(/[^0-9.,]/g, ''); // Permitir números e ponto/virgula
         if (value) {
