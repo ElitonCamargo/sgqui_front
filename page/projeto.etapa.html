@@ -438,6 +438,7 @@
                                         <th scope="col">Percentual</th>
                                         <th scope="col">Tempo de Agitação</th>
                                         <th scope="col">Observação</th>
+                                        <th scope="col">Lote</th>
                                         <th scope="col">Ação</th>
                                     </tr>
                                 </thead>
@@ -457,20 +458,21 @@
     const addMateriaPria = (etapa_mp) => {
         let linhasEtapaEp = "";
         etapa_mp.forEach(e => {
-            linhasEtapaEp += criarLinhaEtapaMp(e.id, e.materia_prima, e.percentual, e.tempo_agitacao, e.observacao);
+            linhasEtapaEp += criarLinhaEtapaMp(e.id, e.materia_prima, e.percentual, e.tempo_agitacao, e.observacao, e.lote);
         });
         return linhasEtapaEp;
     };
 
     //** Função responsável por criar as linhas para a função  addMateriaPria() *************************************************
-    const criarLinhaEtapaMp = (idMp, nomeMp, percentualMp, tempoAgitacao, observacao) => {
+    const criarLinhaEtapaMp = (idMp, nomeMp, percentualMp, tempoAgitacao, observacao, lote) => {
         let cols = `
                     <tr id="nutriente_${idMp}" data-id="${idMp}">
                         <td><i class="fa fa-arrows moverNutriente"></i></td>
                         <td>${nomeMp}</td>
                         <td><input type="text" class="percentualMp" value="${percentualMp}"></td>
                         <td><input type="text" class="tempoAgitacao" value="${tempoAgitacao}"></td>
-                        <td><input type="text" class="observacao" value="${observacao}"></td>             
+                        <td><input type="text" class="observacao" value="${observacao}"></td>
+                        <td><input type="text" class="observacao" value="${lote}"></td>
                         <td style="width:100px">
                             <button type="button" class="btn btn-outline-secondary btn-sm salvarComposicao" title="salvar" data-id="${idMp}" onclick="salvaComposicao(${idMp})"><i class="far fa-save"></i></button>
                             <button type="button" class="btn btn-outline-secondary btn-sm deleteComposicao" title="excluir" data-id="${idMp}" onclick="excluiComposicao(${idMp})"><i class="fa fa-ban"></i></button>
