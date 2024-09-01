@@ -66,8 +66,10 @@ const req_GET = async (url = "") => {
         hidePreload();
 
         if (!response.ok) {
-            console.log(response)
-            throw new Error('Failed to fetch');
+            if(response.status == 404){
+                alert("Nenhum registro encontrado!");
+            }
+            // throw new Error('Failed to fetch');
         }
         return await response.json();
     } catch (error) {

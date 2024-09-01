@@ -22,7 +22,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Detalhes do materia_prima</h5>
-        <button type="button" class="btn-close btn-fecha-modal" data-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close btn-fecha-modal" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form id="formEditarMateriaPrima">
         <div class="modal-body" id="detalhesNutriente">
@@ -30,11 +30,11 @@
         </div>
         <div class="modal-footer">
           <button type="button" id="btnEditar" class="btn btn-outline-secondary btn-sm"
-            data-dismiss="modal">Editar</button>
+            data-bs-dismiss="modal">Editar</button>
           <button type="submit" id="btnSalvar" class="btn btn-outline-secondary btn-sm d-none">Salvar
             Alterações</button>
           <button type="button" class="btn btn-outline-secondary btn-sm btn-fecha-modal"
-            data-dismiss="modal">Fechar</button>
+            data-bs-dismiss="modal">Fechar</button>
         </div>
       </form>
     </div>
@@ -47,14 +47,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title"></h5>
-        <button type="button" class="btn-close btn-fecha-modal" data-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close btn-fecha-modal" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
 
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-fecha-modal" data-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-secondary btn-fecha-modal" data-bs-dismiss="modal">Fechar</button>
       </div>
     </div>
   </div>
@@ -66,14 +66,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Confirmar Exclusão</h5>
-        <button type="button" class="btn-close btn-fecha-modal" data-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close btn-fecha-modal" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <p>Deseja realmente excluir o item <b id="nomeExclui"></b>?</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" id="confirmarExclusao">Confirmar Exclusão</button>
-        <button type="button" class="btn btn-secondary btn-fecha-modal" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-secondary btn-fecha-modal" data-bs-dismiss="modal">Cancelar</button>
       </div>
     </div>
   </div>
@@ -97,7 +97,9 @@
         // INICIA DATATABLE
         table = $('#tabela-materiaPrima').DataTable({
           data: data,
+          order: [[1, 'desc']],
           columns: [
+            { title: 'Update', data: 'updatedAt', visible:false },
             { title: 'Código', data: 'codigo' },
             { title: 'Nome', data: 'nome' },
             { title: 'Fórmula', data: 'formula' },

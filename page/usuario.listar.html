@@ -30,7 +30,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Detalhes do usuario</h5>
-                <button type="button" class="btn-close btn-fecha-modal" data-dismiss="modal"
+                <button type="button" class="btn-close btn-fecha-modal" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
             <form id="formEditarUsuario">
@@ -39,11 +39,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="btnEditar" class="btn btn-outline-secondary btn-sm"
-                        data-dismiss="modal">Editar</button>
+                        data-bs-dismiss="modal">Editar</button>
                     <button type="submit" id="btnSalvar" class="btn btn-outline-secondary btn-sm d-none">Salvar
                         Alterações</button>
                     <button type="button" class="btn btn-outline-secondary btn-sm btn-fecha-modal"
-                        data-dismiss="modal">Fechar</button>
+                        data-bs-dismiss="modal">Fechar</button>
                 </div>
             </form>
         </div>
@@ -57,7 +57,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Confirmar Exclusão</h5>
-                <button type="button" class="btn-close btn-fecha-modal" data-dismiss="modal"
+                <button type="button" class="btn-close btn-fecha-modal" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -65,7 +65,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" id="confirmarExclusao">Confirmar Exclusão</button>
-                <button type="button" class="btn btn-secondary btn-fecha-modal" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary btn-fecha-modal"
+                    data-bs-dismiss="modal">Cancelar</button>
             </div>
         </div>
     </div>
@@ -82,13 +83,14 @@
         req_GET(opt.urlUsuario).then((result) => {
 
             data = result.data;
-
+  
             if (result.success) {
-
                 // INICIA DATATABLE
                 table = $('#tabela-usuario').DataTable({
                     data: data,
+                    order: [[1, 'desc']],
                     columns: [
+                        { title: 'Update', data: 'updatedAt', visible: false },
                         { title: 'Nome', data: 'nome' },
                         { title: 'Login', data: 'email' },
                         { // Coluna para os botões de ação
@@ -191,7 +193,7 @@
                             alterado = 1
                         } else {
                             console.log(result)
-                            showError(17,result.status)
+                            showError(17, result.status)
                         }
                     });
             });
