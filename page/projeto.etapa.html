@@ -73,7 +73,8 @@
         <h2 id="tituloProjeto"></h2>
     </div>
     <div class="col-2">
-        <a href="" class="btn btn-outline-secondary btn-imprimir float-end" title="Imprimir"><i class="fa-solid fa-print"></i> Imprimir</a>
+        <a href="" class="btn btn-outline-secondary btn-imprimir float-end" title="Imprimir"><i
+                class="fa-solid fa-print"></i> Imprimir</a>
     </div>
 </div>
 <hr>
@@ -392,17 +393,29 @@
 
     //** Função responsável por exibir o percentual de conclusão do projeto *****************************************************
     const exibirPercentualConcluido = (percentual) => {
+        if (percentual == null || percentual <= 0) {
+            percentual = 0;
+        }
+
         let cor = (percentual > 100) ? "bg-warning" : "bg-primary"; // Projeto estourado fica amarelo. 
-        let dados = `
-                <div class="progress-bar progress-bar-striped ${cor}" role="progressbar" style="width: ${percentual.toFixed(2)}%;" aria-valuenow="${percentual.toFixed(2)}" aria-valuemin="0" aria-valuemax="100">${percentual.toFixed(2)}%</div>
-                <div class="progress-bar bg-secondary" role="progressbar" style="width: ${(100 - percentual).toFixed(2)}%;" aria-valuenow="${(100 - percentual).toFixed(2)}" aria-valuemin="0" aria-valuemax="100">${((100 - percentual).toFixed(2) < 0) ? "" : (100 - percentual).toFixed(2) + '%'}</div>
-            `;
+        let barraProgressoPrincipal = `
+        <div class="progress-bar progress-bar-striped ${cor}" role="progressbar" style="width: ${percentual.toFixed(2)}%;" aria-valuenow="${percentual.toFixed(2)}" aria-valuemin="0" aria-valuemax="100">${percentual.toFixed(2)}%</div>
+    `;
+
+        let barraProgressoSecundaria = `
+        <div class="progress-bar bg-secondary" role="progressbar" style="width: ${(percentual === 0 ? 100 : (100 - percentual)).toFixed(2)}%;" aria-valuenow="${(percentual === 0 ? 100 : (100 - percentual)).toFixed(2)}" aria-valuemin="0" aria-valuemax="100">${percentual === 0 ? '0%' : (100 - percentual).toFixed(2) + '%'}</div>
+    `;
+
+        let dados = barraProgressoPrincipal + barraProgressoSecundaria;
+
         $('#percentual_total').html(dados);
     }
 
+
+
     //** Função responsável por criar o visual das etapas do projeto ************************************************************
     const criarEtapa = (etapa) => {
-        if(etapa.id != null){
+        if (etapa.id != null) {
             const etapaItem = `
                 <li class="list-group-item" data-id="${etapa.id}">
                     <div class="row">
@@ -472,7 +485,7 @@
                         <td><input type="text" class="percentualMp" value="${percentualMp}"></td>
                         <td><input type="text" class="tempoAgitacao" value="${tempoAgitacao}"></td>
                         <td><input type="text" class="observacao" value="${observacao}"></td>
-                        <td><input type="text" class="observacao" value="${lote}"></td>
+                        <td><input type="text" class="lote" value="${lote}"></td>
                         <td style="width:100px">
                             <button type="button" class="btn btn-outline-secondary btn-sm salvarComposicao" title="salvar" data-id="${idMp}" onclick="salvaComposicao(${idMp})"><i class="far fa-save"></i></button>
                             <button type="button" class="btn btn-outline-secondary btn-sm deleteComposicao" title="excluir" data-id="${idMp}" onclick="excluiComposicao(${idMp})"><i class="fa fa-ban"></i></button>
@@ -637,11 +650,13 @@
         const percentualMp = row.querySelector('.percentualMp').value;
         const tempoAgitacao = row.querySelector('.tempoAgitacao').value;
         const observacao = row.querySelector('.observacao').value;
+        const lote = row.querySelector('.lote').value;
 
         jsonData = {
             "percentual": percentualMp,
             "tempo_agitacao": tempoAgitacao,
-            "observacao": observacao
+            "observacao": observacao,
+            "lote": lote
         }
 
         req_UPDATE(opt.urlEtapaMp + "/" + idMp, jsonData)
@@ -791,6 +806,6 @@
 
     // adiciona href no botão imprimir
     id_projeto = parseInt(getAllUrlParams()['id']);
-    $(".btn-imprimir").attr('href',`/page/projeto_impressao.html?id=${id_projeto}`)
+    $(".btn-imprimir").attr('href', `/page/projeto_impressao.html?id=${id_projeto}`)
 
 </script>

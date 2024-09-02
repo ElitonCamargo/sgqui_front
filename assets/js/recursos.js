@@ -65,24 +65,31 @@ const req_GET = async (url = "") => {
         // Remove o preload após completar a requisição
         hidePreload();
 
-        if (!response.ok) {
-            if(response.status == 404){
-                alert("Nenhum registro encontrado!");
-            }
-            // throw new Error('Failed to fetch');
+        if (response.status === 404) {
+            alert('Nenhum registro encontrado.');
+            return
         }
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch');
+        }
+
         return await response.json();
+
     } catch (error) {
+        hidePreload(); // Garante que o preload será removido em caso de erro
         alert('Erro ao tentar carregar os dados');
         console.error('Erro ao tentar fazer fetch:', error);
+
         // Retorna um objeto com status e mensagem de erro
         return {
-            status: null, // Aqui você pode definir um valor padrão para status de erro
+            status: null,
             message: 'Ocorreu um erro ao tentar carregar os dados. Por favor, tente novamente mais tarde.',
             data: null
         };
     }
 }
+
 
 const req_UPDATE = async (url = "", data = {}) => {
     // Mostra o preload antes de fazer a requisição
@@ -286,6 +293,19 @@ const formatarDataMysql = (data) => {
 
     return dataFormatada;
 }
+// Função para formatar a data para colocar no input
+const formatarDataInput = (isoDateString) => {
+    // Cria um objeto Date a partir da string ISO 8601
+    const date = new Date(isoDateString);
+
+    // Extrai o ano, mês e dia do objeto Date
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês começa do zero, então adiciona 1
+    const day = String(date.getDate()).padStart(2, '0');
+
+    // Formata a data no formato YYYY-MM-DD
+    return `${year}-${month}-${day}`;
+};
 
 //função para pegar paramentros da url, retorna array
 const getAllUrlParams = () => {

@@ -27,8 +27,6 @@
 
 <!-- *HTML filtro***************************************************************************************************** -->
 
-
-
 <div class="accordion" id="accordionExample">
   <div class="accordion-item">
     <h2 class="accordion-header">
@@ -73,12 +71,12 @@
 
 <!-- ***************************************************************************************************************** -->
 
-
 <table id="tabela-projetos" class="table table-striped table-bordered">
   <thead>
     <tr>
       <!-- <th>Update</th> -->
-      <th>ID</th>
+      <th>Update</th>
+      <th>Data Criação</th>
       <th>Código</th>
       <th>Nome</th>
       <th>Início</th>
@@ -98,7 +96,7 @@
 </table>
 
 <!-- Modal -->
-<div class="modal fade" id="detalhesModal" tabindex="-1" role="dialog">
+<div class="modal modal-xl fade" id="detalhesModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -299,7 +297,12 @@
           },
           columns: [
             { title: 'Update', data: 'updatedAt', visible: false },
-            { title: 'ID', data: 'id', visible: false },
+            {
+              title: 'Data Criação', data: 'createdAt',
+              render: function (data, type, row) {
+                return formatarDataPtBr(row.createdAt)
+              }
+            },
             { title: 'Código', data: 'codigo', visible: true },
             { title: 'Nome', data: 'nome' },
             {
@@ -309,10 +312,10 @@
                 return formatarDataPtBr(row.data_inicio)
               }
             },
-            { title: 'Densidade', data: 'densidade', visible:false },
+            { title: 'Densidade', data: 'densidade', visible: false },
             { title: 'PH', data: 'ph' },
             { title: 'Tipo', data: 'tipo' },
-            { title: 'Aplicação', data: 'aplicacao', visible:false },
+            { title: 'Aplicação', data: 'aplicacao', visible: false },
             { title: 'Natureza Física', data: 'natureza_fisica' },
             {
               title: 'Status',
@@ -383,65 +386,120 @@
       function exibirDetalhes(projeto) {
 
         console.log(projeto);
-        
-        let select = `<select class="form-select" id="status" name="status" disabled>`;
+
+        //cria select do status
+        let selectStatus = `<select class="form-select" id="status" name="status" disabled>`;
         let optionStatus = ''
-
-
         $.each(selectsProjeto.status, function (k, v) {
           let selected = ''
           if (v === projeto.status[0].status) {
             selected = 'selected'
           }
-
           optionStatus += `<option value="${v}" ${selected}>${v}</option>`
         })
+        selectStatus += optionStatus;
+        selectStatus += `</select>`;
 
-        select += optionStatus;
-        select += `</select>`;
+        //cria select do tipo Fertilizante
+        let selectTipo = `<select class="form-select" id="tipo" name="tipo" disabled>`;
+        let optionTipo = ''
+        $.each(selectsProjeto.tipoFertilizante, function (k, v) {
+          let selected = ''
+          if (v === projeto.tipo) {
+            selected = 'selected'
+          }
+          optionTipo += `<option value="${v}" ${selected}>${v}</option>`
+        })
+        selectTipo += optionTipo;
+        selectTipo += `</select>`;
 
+        //cria select do Natureza Física
+        let selectNaturezaFisica = `<select class="form-select" id="natureza_fisica" name="natureza_fisica" disabled>`;
+        let optionNaturezaFisica = ''
+        $.each(selectsProjeto.natureza, function (k, v) {
+          let selected = ''
+          if (v === projeto.natureza_fisica) {
+            selected = 'selected'
+          }
+          optionNaturezaFisica += `<option value="${v}" ${selected}>${v}</option>`
+        })
+        selectNaturezaFisica += optionNaturezaFisica;
+        selectNaturezaFisica += `</select>`;
+
+        //cria checkbox aplicação
+        let checkboxAplicacao = '';
+        let itensSelecionados = projeto.aplicacao;
+
+        $.each(selectsProjeto.modoAplicacao, function (k, v) {
+          let isChecked = itensSelecionados.includes(v) ? 'checked' : '';
+          checkboxAplicacao += `
+        <div class="form-check form-check-inline">
+            <input class="form-check-input ck_aplicacao" type="checkbox" id="aplicacao_${v}" name="aplicacao[]" value="${v}" ${isChecked} disabled>
+            <label class="form-check-label" for="aplicacao_${v}">${v}</label>
+        </div>`;
+        });
 
 
         let html = `
-                <div class="form-group">
-                   
-                    <div class="form-group">
-                      <label for="data_inicio">Início: ${formatarDataPtBr(projeto.data_inicio)} - Término: ${formatarDataPtBr(projeto.data_termino)}</label>
+                  
+
+                    <div class="row">
+                      <div class="form-group col-md-2">
+                        <label for="nome">Código:</label>
+                        <input type="text" class="form-control" id="codigo" name="codigo" value="${projeto.codigo}" readonly>
+                      </div> 
+                      <div class="form-group col-md-10">
+                        <label for="nome">Nome:</label>
+                        <input type="text" class="form-control" id="nome" name="nome" value="${projeto.nome}" readonly>
+                      </div>
                     </div>
-                    <div class="form-group">
-                      <label for="status">Status</label>
-                      ${select}
+                    <div class="row">
+                      <div class="form-group col-md-4">
+                        <label for="data_inicio" class="form-label">Data de Início</label>
+                        <input type="date" class="form-control" id="data_inicio" name="data_inicio" value="${formatarDataInput(projeto.data_inicio)}">
+                      </div>
+                      <div class="form-group col-md-4">
+                        <label for="data_termino" class="form-label">Data de Término</label>
+                        <input type="date" class="form-control" id="data_termino" name="data_termino" value="${formatarDataInput(projeto.data_termino)}">
+                      </div>
+                      <div class="form-group col-md-4">
+                        <label for="status" class="form-label">Status</label>
+                        ${selectStatus}
+                      </div>
+                      
                     </div>
-                    <div class="form-group">
-                      <label for="nome">Nome:</label>
-                      <input type="text" class="form-control" id="nome" name="nome" value="${projeto.nome}" readonly>
-                    </div>
-                    <div class="form-group">
+
+                    <div class="row">
+                    <div class="form-group col-md-2">
                       <label for="densidade">Densidade:</label>
                       <input type="text" class="form-control" id="densidade" name="densidade" value="${projeto.densidade}" readonly>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-md-1">
                       <label for="ph">PH:</label>
                       <input type="text" class="form-control" id="ph" name="ph" value="${projeto.ph}" readonly>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-md-2">
                       <label for="tipo">Tipo:</label>
-                      <input type="text" class="form-control" id="tipo" name="tipo" value="${projeto.tipo}" readonly>
+                      ${selectTipo}
                     </div>
-                    <div class="form-group">
-                      <label for="aplicacao">Aplicação:</label>
-                      <input type="text" class="form-control" id="aplicacao" name="aplicacao" value="${projeto.aplicacao}" readonly>
-                    </div>
-                    <div class="form-group">
+                     <div class="form-group col-md-2">
                       <label for="natureza_fisica">Natureza Física:</label>
-                      <input type="text" class="form-control" id="natureza_fisica" name="natureza_fisica" value="${projeto.natureza_fisica}" readonly>
+                     ${selectNaturezaFisica}
                     </div>
+
+                    <div class="form-group col-md-5">
+                      <label for="aplicacao">Aplicação:</label><br>
+                      ${checkboxAplicacao}
+                    </div>
+                  </div>
+                  <div class="row">
                     <div class="form-group">
                       <label for="descricao">Descrição:</label>
                       <textarea type="text" class="form-control" id="descricao" name="descricao" readonly>${projeto.descricao}</textarea>
                     </div>
+                  </div>
                     <input type="hidden" id="id" name="id" value="${projeto.id}">
-                </div>
+               
         `;
 
         $('#detalhesProjeto').html(html);
@@ -452,6 +510,7 @@
       $('#detalhesModal').on('click', '#btnEditar', function () {
         $('.form-control').prop('readonly', false);
         $('.form-select').prop('disabled', false);
+        $('.ck_aplicacao').prop('disabled', false);
         $('#btnEditar').addClass('d-none');
         $('#btnSalvar').removeClass('d-none');
       });
@@ -462,13 +521,28 @@
         event.preventDefault(); // Impedir o envio padrão do formulário
         const jsonData = serializadoParaJSON($(this).serialize());
 
-        req_UPDATE(opt.urlProjeto + "/" + jsonData.id, jsonData)
+        // adiciona aplicacao como array no json
+        var aplicacaoValores = $('input[name="aplicacao[]"]:checked').map(function () {
+          return $(this).val();
+        }).get();
+
+
+        let formObject = {};
+        $.each(jsonData, function (k, v) {
+          if (k === 'aplicacao[]') {
+            formObject['aplicacao'] = aplicacaoValores;
+          } else {
+            formObject[k] = v;
+          }
+        });
+
+        req_UPDATE(opt.urlProjeto + "/" + jsonData.id, formObject)
           .then(result => {
 
             // Exibir resposta da API no console
             if (result.success) {
               $('#detalhesModal .modal-body').html(`${jsonData.nome} atualizado com sucesso!`);
-              $('#detalhesModal #btnSalvar').hide();
+              $('#detalhesModal #btnSalvar').addClass("d-none");
               alterado = 1
             } else {
               showErrors(7, result.status)
@@ -555,8 +629,9 @@
     $('.modal').on('hidden.bs.modal', function (e) {
       if (alterado !== 0) {
         req_GET(opt.urlProjeto).then((res) => {
-          data = result.data; // Atualiza os dados com a resposta da requisição
+          data = res.data; // Atualiza os dados com a resposta da requisição
           table.clear().rows.add(data).draw(); // Limpa a tabela, adiciona os novos dados e redesenha
+          $('#detalhesProjeto').empty(); // Limpar o conteúdo do projeto com id 'detalhesProjeto'
         });
 
       }
