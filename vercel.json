@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/materia_prima/cadastrar",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/elemento/cadastrar",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/elemento/listar",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/nutrientes/cadastrar",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/nutrientes/listar",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/materia_prima/listar",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/projeto/cadastrar",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/projeto/listar",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/projetos/etapa",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/usuario/cadastrar",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/usuario/listar",
+      "dest": "/index.html"
+    }    
+  ]
+}
