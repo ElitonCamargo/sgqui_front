@@ -1,5 +1,10 @@
 # dependencies
 node_modules/
 
+# Ignore package-lock.json (optional, if you don't want to commit lock file)
 package-lock.json
+_package-lock.json
+
+# Ignore package.json (usually this is committed, but add if you don't want to track changes to it)
 package.json
+_package.json
