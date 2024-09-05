@@ -1,14 +1,13 @@
 {
   "name": "sgqui_front",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "1.0.0", 
   "scripts": {
     "start": "lite-server"
   },
   "author": "",
   "license": "ISC",
   "description": "",
-  "dependencies": {
+  "devDependencies": {
     "lite-server": "^2.6.1"
   },
   "lite-server": {
@@ -16,16 +15,16 @@
     "baseDir": "./",
     "routes": {
       "/materia_prima/cadastrar": "index.html",
-      "/elemento/cadastrar":"index.html",
-      "/elemento/listar":"index.html",
-      "/nutrientes/cadastrar":"index.html",
-      "/nutrientes/listar":"index.html",
-      "/materia_prima/listar":"index.html",
-      "/projeto/cadastrar":"index.html",
-      "/projeto/listar":"index.html",
-      "/projetos/etapa":"index.html",
-      "/usuario/cadastrar":"index.html",
-      "/usuario/listar":"index.html"
+      "/elemento/cadastrar": "index.html",
+      "/elemento/listar": "index.html",
+      "/nutrientes/cadastrar": "index.html",
+      "/nutrientes/listar": "index.html",
+      "/materia_prima/listar": "index.html",
+      "/projeto/cadastrar": "index.html",
+      "/projeto/listar": "index.html",
+      "/projetos/etapa": "index.html",
+      "/usuario/cadastrar": "index.html",
+      "/usuario/listar": "index.html"
     }
   }
 }
