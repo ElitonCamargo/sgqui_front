@@ -75,7 +75,6 @@
   <thead>
     <tr>
       <!-- <th>Update</th> -->
-      <th>Update</th>
       <th>Data Criação</th>
       <th>Código</th>
       <th>Nome</th>
@@ -88,6 +87,7 @@
       <th>Natureza Física</th>
       <th>Status</th>
       <th style="width: 255px;">Ações</th>
+      <th>Update</th>
     </tr>
   </thead>
   <tbody>
@@ -291,12 +291,12 @@
         // INICIA DATATABLE
         table = $('#tabela-projetos').DataTable({
           data: data,
-          order: [[1, 'desc']],
+          order: [[12, 'desc']],
           language: {
             emptyTable: "Não foram encontrados registros"
           },
           columns: [
-            { title: 'Update', data: 'updatedAt', visible: false },
+
             {
               title: 'Data Criação', data: 'createdAt',
               render: function (data, type, row) {
@@ -345,7 +345,8 @@
                           <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" title="Excluir"><i class="fa-solid fa-ban"></i></button>
                           `;
               }
-            }
+            }, 
+            { title: 'Update', data: 'updatedAt', visible: false }
           ],
           // Habilita a pesquisa global
           searching: true

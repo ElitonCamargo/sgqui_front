@@ -2,10 +2,10 @@
 <table id="tabela-nutrientes" class="table table-striped table-bordered">
   <thead>
     <tr>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th>Nome</th>
+      <th>Fórmula</th>
+      <th>Ações</th>
+      <th style="display: none;">Update</th>
     </tr>
   </thead>
   <tbody>
@@ -75,9 +75,9 @@
         // INICIA DATATABLE
         table = $('#tabela-nutrientes').DataTable({
           data: data,
-          order: [[1, 'desc']],
+          order: [[3, 'desc']],
           columns: [
-            { title: 'Update', data: 'updatedAt', visible:false },
+            
             { title: 'Nome', data: 'nome' },
             { title: 'Fórmula', data: 'formula' },
             { // Coluna para os botões de ação
@@ -91,10 +91,10 @@
                           <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" title="Excluir"><i class="fa-solid fa-ban"></i></button>
                       `;
               }
-            }
+            },{ title: 'Update', data: 'updatedAt', visible:false }
           ],
           columnDefs: [
-            { targets: 2, autoWidth: true } // Ativa o ajuste automático da largura para a primeira coluna
+            { targets: 3, autoWidth: true } // Ativa o ajuste automático da largura para a primeira coluna
           ],
           // Habilita a pesquisa global
           searching: true
@@ -106,7 +106,7 @@
         // Adiciona campos de pesquisa em cada cabeçalho de coluna
         $('#tabela-nutrientes thead th').each(function () {
           let title = $(this).text();
-          if (title !== "Ações") {
+          if (title !== "Update" && title !== "Ações") {
             $(this).html(`<input type="text" class="form-control form-control-sm" placeholder="${title} "/>`);
           }
         });

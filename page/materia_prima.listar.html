@@ -97,9 +97,8 @@
         // INICIA DATATABLE
         table = $('#tabela-materiaPrima').DataTable({
           data: data,
-          order: [[1, 'desc']],
+          order: [[7, 'desc']],
           columns: [
-            { title: 'Update', data: 'updatedAt', visible:false },
             { title: 'Código', data: 'codigo' },
             { title: 'Nome', data: 'nome' },
             { title: 'Fórmula', data: 'formula' },
@@ -110,15 +109,16 @@
               title: 'Ações',
               data: null,
               orderable: false,
-
+              
               render: function (data, type, row) {
                 return `
-                          <button class="btn btn-outline-secondary btn-sm btn-detalhes-editar" data-id="${row.id}" data-bs-toggle="modal" data-bs-target="#detalhesModal" title="Ver/Editar"><i class="fa-solid fa-eye"></i>/<i class="fa-solid fa-pen-to-square"></i></button>
-                          <button class="btn btn-outline-secondary btn-sm btn-garantias" data-id="${row.id}" data-nome="${row.nome}" data-bs-toggle="modal" data-bs-target="#modalGarantias" title="Garantias"><i class="fa-solid fa-award"></i></button>
-                          <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" data-bs-toggle="modal" data-bs-target="#confirmacaoExclusaoModal" title="Excluir"><i class="fa-solid fa-ban"></i></button>
-                      `;
+                <button class="btn btn-outline-secondary btn-sm btn-detalhes-editar" data-id="${row.id}" data-bs-toggle="modal" data-bs-target="#detalhesModal" title="Ver/Editar"><i class="fa-solid fa-eye"></i>/<i class="fa-solid fa-pen-to-square"></i></button>
+                <button class="btn btn-outline-secondary btn-sm btn-garantias" data-id="${row.id}" data-nome="${row.nome}" data-bs-toggle="modal" data-bs-target="#modalGarantias" title="Garantias"><i class="fa-solid fa-award"></i></button>
+                <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" data-bs-toggle="modal" data-bs-target="#confirmacaoExclusaoModal" title="Excluir"><i class="fa-solid fa-ban"></i></button>
+                `;
               }
-            }
+            },
+            { title: 'Update', data: 'updatedAt', visible:false },
           ],
           columnDefs: [
             { targets: 6, autoWidth: true } // Ativa o ajuste automático da largura para a primeira coluna

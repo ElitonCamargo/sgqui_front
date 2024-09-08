@@ -52,7 +52,6 @@
                         return response.data;
                     })
                     .then(function (data) {
-
                         var suggestions = data.map(function (item) {
                             return {
                                 label: item.nome,
@@ -64,46 +63,53 @@
                         response(suggestions);
                     })
                     .catch(function (error) {
-                        alert("Erro14:Erro ao buscar no autocomplete de nutrientes")
+                        alert("Erro14: Erro ao buscar no autocomplete de nutrientes");
                     });
             },
             select: function (event, ui) {
+                // Remove previous click event handler to avoid accumulation
+                $(".garantiaCadastra").off("click", "#btnGarantiaCadastra");
 
+                // Add new click event handler
                 $(".garantiaCadastra").on("click", "#btnGarantiaCadastra", function () {
-
+                    let data = {};
                     let garantia = parseInt($("#garantia").val());
 
-                    let data = {
+                    data = {
                         "materia_prima": ui.item.idMateriaPrima,
                         "nutriente": ui.item.idNutriente,
                         "percentual": garantia
-                    }
+                    };
+
+                    // console.log(data);
 
                     if (garantia !== null && garantia !== undefined) {
                         if (ui.item.idMateriaPrima && ui.item.idNutriente) {
-                            cadastraGarantia(data)
-                        } else { alert("Erro12: Erro ao selecionar o nutriente") }
-                    } else { alert("Erro13: Erro ao selecionar valor da garantia") }
-                })
+                            cadastraGarantia(data);
+                        } else {
+                            alert("Erro12: Erro ao selecionar o nutriente");
+                        }
+                    } else {
+                        alert("Erro13: Erro ao selecionar valor da garantia");
+                    }
+                });
             }
         });
 
 
+
         // exclui garantia
         $("#tbGarantias").on("click", ".btn-excluir-garantia", function () {
-            const id = $(this).data('id');
+            let id = "";
+            id = $(this).data('id');
             excluiGarantia(id)
         })
-
-
-
-
 
 
         //////////// FUNÇOES//////////////
 
         function carregaGarantias() {
-
+            $('#tbGarantias tbody').empty()
             req_GET(opt.urlGarantiaMateriaPrima + `/${idMateriaPrima}`).then((res) => {
 
                 data = res.data;
@@ -121,6 +127,7 @@
                                         </tr>
                                         `
                     });
+
                     $('#tbGarantias tbody').html(tBodyData)
                 }
             })
