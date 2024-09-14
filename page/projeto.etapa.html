@@ -92,34 +92,37 @@
                     <div class="card-body">
                         <h5 class="card-title">Detalhes do Projeto</h5>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><strong>ID:</strong> <span id="detalhesPojeto_id"></span>
+                            <li class="list-group-item"><strong>Código:</strong> <span
+                                    id="detalhesProjeto_codigo"></span>
                             </li>
-                            <li class="list-group-item"><strong>Nome:</strong> <span id="detalhesPojeto_nome"></span>
+                            <li class="list-group-item"><strong>Nome do Projeto:</strong> <span
+                                    id="detalhesProjeto_nome"></span>
                             </li>
+                            <li class="list-group-item"><strong>Cliente:</strong> <span
+                                    id="detalhesProjeto_cliente"></span>
+                            </li>
+                            <li class="list-group-item"><strong>Data de Criação:</strong> <span
+                                    id="detalhesProjeto_data_criacao"></span></li>
                             <li class="list-group-item"><strong>Data de Início:</strong> <span
-                                    id="detalhesPojeto_data_inicio"></span></li>
+                                    id="detalhesProjeto_data_inicio"></span></li>
                             <li class="list-group-item"><strong>Data de Término:</strong> <span
-                                    id="detalhesPojeto_data_termino"></span></li>
-                            <li class="list-group-item"><strong>Descrição:</strong> <span
-                                    id="detalhesPojeto_descricao"></span>
-                            </li>
+                                    id="detalhesProjeto_data_termino"></span></li>
                             <li class="list-group-item"><strong>Status:</strong> <span
-                                    id="detalhesPojeto_status"></span></li>
+                                    id="detalhesProjeto_status"></span></li>
                             <li class="list-group-item"><strong>Aplicação:</strong> <span
-                                    id="detalhesPojeto_aplicacao"></span>
+                                    id="detalhesProjeto_aplicacao"></span>
                             </li>
-                            <li class="list-group-item"><strong>Tipo:</strong> <span id="detalhesPojeto_tipo"></span>
+                            <li class="list-group-item"><strong>Tipo:</strong> <span id="detalhesProjeto_tipo"></span>
                             </li>
                             <li class="list-group-item"><strong>Natureza física:</strong> <span
-                                    id="detalhesPojeto_natureza_fisica"></span></li>
-                            <li class="list-group-item"><strong>PH:</strong> <span id="detalhesPojeto_ph"></span>
+                                    id="detalhesProjeto_natureza_fisica"></span></li>
+                            <li class="list-group-item"><strong>PH:</strong> <span id="detalhesProjeto_ph"></span>
                             </li>
-                            <li class="list-group-item"><strong>Dencidade real:</strong> <span
-                                    id="detalhesPojeto_dencidade_real"></span></li>
-                            <li class="list-group-item"><strong>Dencidade estimada:</strong> <span
-                                    id="detalhesPojeto_dencidade_estimada"></span></li>
-                            <li class="list-group-item"><strong>Dencidade estimada:</strong> <span
-                                    id="detalhesPojeto_dencidade_estimada"></span></li>
+                            <li class="list-group-item"><strong>Densidade:</strong> <span
+                                    id="detalhesProjeto_densidade"></span></li>
+                            <li class="list-group-item"><strong>Descrição:</strong> <span
+                                    id="detalhesProjeto_descricao"></span>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -262,7 +265,7 @@
                 etapa_ordem.push(etapa);
             });
             // ************************************************** Chamando a função para executar a ação na API **********************************
-            console.log(etapa_ordem)
+
 
             req_UPDATE(opt.urlEtapa + "/projeto/ordenar", etapa_ordem)
                 .then(result => console.log(result))
@@ -325,19 +328,20 @@
             if (results.success) {
                 // *************** Detalhes do Projeto ****************************************************************
                 let projeto = results.data[0];
-                $('#detalhesPojeto_id').text(projeto.id);
-                $('#detalhesPojeto_nome').text(projeto.nome);
                 $('#tituloProjeto').text(`Projeto: ${projeto.nome}`);
-                $('#detalhesPojeto_data_inicio').text(formatarDataPtBr(projeto.data_inicio));
-                $('#detalhesPojeto_data_termino').text(formatarDataPtBr(projeto.data_termino));
-                $('#detalhesPojeto_status').text(projeto.status[0].status);
-                $('#detalhesPojeto_descricao').text(projeto.descricao);
-                $('#detalhesPojeto_aplicacao').text(projeto.aplicacao);
-                $('#detalhesPojeto_tipo').text(projeto.tipo);
-                $('#detalhesPojeto_natureza_fisica').text(projeto.natureza_fisica);
-                $('#detalhesPojeto_dencidade_estimada').text(projeto.dencidade_estimada.toFixed(2));
-                $('#detalhesPojeto_dencidade_real').text(projeto.dencidade);
-                $('#detalhesPojeto_ph').text(projeto.ph);
+                $('#detalhesProjeto_codigo').text(projeto.codigo);
+                $('#detalhesProjeto_nome').text(projeto.nome);
+                $('#detalhesProjeto_cliente').text(projeto.cliente);
+                $('#detalhesProjeto_data_criacao').text(formatarDataPtBr(projeto.createdAt));
+                $('#detalhesProjeto_data_inicio').text(formatarDataPtBr(projeto.data_inicio));
+                $('#detalhesProjeto_data_termino').text(formatarDataPtBr(projeto.data_termino));
+                $('#detalhesProjeto_status').text(projeto.status[0].status);
+                $('#detalhesProjeto_descricao').text(projeto.descricao);
+                $('#detalhesProjeto_aplicacao').text(projeto.aplicacao);
+                $('#detalhesProjeto_tipo').text(projeto.tipo);
+                $('#detalhesProjeto_natureza_fisica').text(projeto.natureza_fisica);
+                $('#detalhesProjeto_densidade').text(projeto.densidade.toFixed(2));
+                $('#detalhesProjeto_ph').text(projeto.ph);
                 exibirPercentualConcluido(projeto.percentual_concluido);
 
                 // *************** Tabela de nutrientes *****************************************************************  
@@ -411,8 +415,6 @@
         $('#percentual_total').html(dados);
     }
 
-
-
     //** Função responsável por criar o visual das etapas do projeto ************************************************************
     const criarEtapa = (etapa) => {
         if (etapa.id != null) {
@@ -456,7 +458,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="nutrientes-por-etapa" data-id="${etapa.id}">
-                                    ${addMateriaPria(etapa.etapa_mp)}
+                                    ${addMateriaPria(etapa.etapa_mp, etapa.id)}
                                 </tbody>
                             </table>
                         </div>
@@ -468,16 +470,16 @@
     };
 
     //** Função responsável por adicionar os matérias primas de cada etapa ******************************************************
-    const addMateriaPria = (etapa_mp) => {
+    const addMateriaPria = (etapa_mp, etapa_id) => {
         let linhasEtapaEp = "";
         etapa_mp.forEach(e => {
-            linhasEtapaEp += criarLinhaEtapaMp(e.id, e.materia_prima, e.percentual, e.tempo_agitacao, e.observacao, e.lote);
+            linhasEtapaEp += criarLinhaEtapaMp(e.id, e.materia_prima, e.percentual, e.tempo_agitacao, e.observacao, e.lote, etapa_id);
         });
         return linhasEtapaEp;
     };
 
     //** Função responsável por criar as linhas para a função  addMateriaPria() *************************************************
-    const criarLinhaEtapaMp = (idMp, nomeMp, percentualMp, tempoAgitacao, observacao, lote) => {
+    const criarLinhaEtapaMp = (idMp, nomeMp, percentualMp, tempoAgitacao, observacao, lote, etapa_id) => {
         let cols = `
                     <tr id="nutriente_${idMp}" data-id="${idMp}">
                         <td><i class="fa fa-arrows moverNutriente"></i></td>
@@ -487,18 +489,13 @@
                         <td><input type="text" class="observacao" value="${observacao}"></td>
                         <td><input type="text" class="lote" value="${lote}"></td>
                         <td style="width:100px">
-                            <button type="button" class="btn btn-outline-secondary btn-sm salvarComposicao" title="salvar" data-id="${idMp}" onclick="salvaComposicao(${idMp})"><i class="far fa-save"></i></button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm deleteComposicao" title="excluir" data-id="${idMp}" onclick="excluiComposicao(${idMp})"><i class="fa fa-ban"></i></button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm salvarComposicao" title="salvar" data-id="${idMp}" onclick="salvaComposicao(${idMp},${etapa_id})"><i class="far fa-save"></i></button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm deleteComposicao" title="excluir" data-id="${idMp}" onclick="excluiComposicao(${idMp},${etapa_id})"><i class="fa fa-ban"></i></button>
                         </td>
                     </tr>`;
         return cols;
     };
 
-
-    //** Fecha modal ************************************************************************************************************
-    $(".modal").on("click", ".btn-fecha-modal", function () {
-        $('.modal').modal('hide');
-    })
 
     // Função para a Inicialização do auto-complete *****************************************************************************
     $('#modal_nutriente').autocomplete({
@@ -516,6 +513,7 @@
             })));
         },
         select: function (event, ui) {
+
             $('#addComposicaoProjeto').empty(); // Limpar a tabela
 
             // Aqui você pode usar o item selecionado (ui.item) para atualizar a tabela ou qualquer outra lógica
@@ -524,6 +522,7 @@
 
             //Consultar as máterias primas que atendem a necessidade. 
             req_GET(opt.urlMateriaPrima + `?nutriente=${id_nutriente}&percentual=${percentual}`).then(results => {
+
                 if (results.success) {
                     let dados = results.data;
                     dados.forEach(addPossivelComposicao);
@@ -570,6 +569,10 @@
 
     // Função responsável por Adicionar matéria prima a uma etap.
     $('#addComposicaoProjeto').on('click', '.addMP_Etapa', function () {
+
+        $("#modal_nutriente").val("")
+        $("#modal_percentual").val("")
+
         let linha = $(this).closest('tr');
         let etapa_mp_data = {
             "etapa": id_etapa,
@@ -587,7 +590,9 @@
             }
         }).catch(error => console.error('Erro ao compor etapa:', error));
 
-
+        setTimeout(() => {
+            $(`#etapa-${id_etapa}`).addClass('show');
+        }, 1000);
     });
 
     // Função para colocar o percentual em % *********************************************************************************
@@ -616,6 +621,7 @@
 
 
     let id_etapa;
+
     const btn_AddMpNutriente = (id, nome) => {
         id_etapa = id;
         $('#titulo_Etapa').text(nome);
@@ -637,7 +643,8 @@
 
 
     // salva alteracao na materia prima adicionada
-    function salvaComposicao(idMp) {
+    function salvaComposicao(idMp, idEtapa) {
+
         // Encontra a linha (tr) correspondente ao idMp
         const row = document.querySelector(`tr[data-id="${idMp}"]`);
 
@@ -657,22 +664,28 @@
             "tempo_agitacao": tempoAgitacao,
             "observacao": observacao,
             "lote": lote
-        }
+        };
 
         req_UPDATE(opt.urlEtapaMp + "/" + idMp, jsonData)
             .then(result => {
                 // Exibir resposta da API no console
                 if (result.success) {
                     projeto_detalhado(id_projeto)
-                    // location.reload()
                 } else {
-                    showErrors(18, result.status)
+                    showErrors(18, result.status);
                 }
             });
+
+        setTimeout(() => {
+            $(`#etapa-${idEtapa}`).addClass('show');
+        }, 1000);
+
     }
 
+
+
     // deleta materia prima adicionada
-    function excluiComposicao(idMp) {
+    function excluiComposicao(idMp, idEtapa) {
         // Exibe uma caixa de confirmação para o usuário
         const confirmar = window.confirm("Tem certeza de que deseja excluir este item?");
 
@@ -690,13 +703,18 @@
                 .then(result => {
                     // Exibir resposta da API no console
                     if (result.success) {
+
                         projeto_detalhado()
-                        // location.reload()
+
+
                     } else {
                         showErrors(19, result.status);
                     }
                 });
         }
+        setTimeout(() => {
+            $(`#etapa-${idEtapa}`).addClass('show');
+        }, 1000);
     }
 
     // edita etapa

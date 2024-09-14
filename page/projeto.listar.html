@@ -224,7 +224,6 @@
       let query = filters.length > 0 ? `?filtro_avancado=${JSON.stringify(filters)}` : '';
       req_GET(opt.urlProjeto + query).then((result) => {
         data = result.data; // Atualiza os dados com a resposta da requisição
-        console.log(data);
         table.clear().rows.add(data).draw(); // Limpa a tabela, adiciona os novos dados e redesenha
       });
 
@@ -345,7 +344,7 @@
                           <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" title="Excluir"><i class="fa-solid fa-ban"></i></button>
                           `;
               }
-            }, 
+            },
             { title: 'Update', data: 'updatedAt', visible: false }
           ],
           // Habilita a pesquisa global
@@ -385,8 +384,6 @@
 
       // Função para exibir os detalhes em um modal
       function exibirDetalhes(projeto) {
-
-        console.log(projeto);
 
         //cria select do status
         let selectStatus = `<select class="form-select" id="status" name="status" disabled>`;
@@ -429,15 +426,24 @@
 
         //cria checkbox aplicação
         let checkboxAplicacao = '';
-        let itensSelecionados = projeto.aplicacao;
+        let itensSelecionados = projeto.aplicacao
+
+
 
         $.each(selectsProjeto.modoAplicacao, function (k, v) {
-          let isChecked = itensSelecionados.includes(v) ? 'checked' : '';
+
+          let isChecked
+
+          if (itensSelecionados !== null) {
+            isChecked = itensSelecionados.includes(v) ? 'checked' : ''
+          }
+
           checkboxAplicacao += `
         <div class="form-check form-check-inline">
             <input class="form-check-input ck_aplicacao" type="checkbox" id="aplicacao_${v}" name="aplicacao[]" value="${v}" ${isChecked} disabled>
             <label class="form-check-label" for="aplicacao_${v}">${v}</label>
         </div>`;
+
         });
 
 
@@ -449,9 +455,13 @@
                         <label for="nome">Código:</label>
                         <input type="text" class="form-control" id="codigo" name="codigo" value="${projeto.codigo}" readonly>
                       </div> 
-                      <div class="form-group col-md-10">
-                        <label for="nome">Nome:</label>
+                      <div class="form-group col-md-5">
+                        <label for="nome">Nome do Projeto:</label>
                         <input type="text" class="form-control" id="nome" name="nome" value="${projeto.nome}" readonly>
+                      </div>
+                      <div class="form-group col-md-5">
+                        <label for="cliente">Cliente:</label>
+                        <input type="text" class="form-control" id="cliente" name="cliente" value="${projeto.cliente}" readonly>
                       </div>
                     </div>
                     <hr>
@@ -526,19 +536,25 @@
         const jsonData = serializadoParaJSON($(this).serialize());
 
         // adiciona aplicacao como array no json
-        var aplicacaoValores = $('input[name="aplicacao[]"]:checked').map(function () {
+        let aplicacaoValores = $('input[name="aplicacao[]"]:checked').map(function () {
           return $(this).val();
         }).get();
-
 
         let formObject = {};
         $.each(jsonData, function (k, v) {
           if (k === 'aplicacao[]') {
             formObject['aplicacao'] = aplicacaoValores;
+          } else if (k === 'densidade') {
+            formObject['densidade'] = v.replace(/,/g, '.');
           } else {
             formObject[k] = v;
           }
         });
+
+        // Se o campo "aplicacao[]" não foi serializado (checkboxes não marcados), adiciona manualmente
+        if (!('aplicacao[]' in formObject)) {
+          formObject['aplicacao'] = "";
+        }
 
         req_UPDATE(opt.urlProjeto + "/" + jsonData.id, formObject)
           .then(result => {
