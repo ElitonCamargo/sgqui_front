@@ -500,9 +500,12 @@
     // Função para a Inicialização do auto-complete *****************************************************************************
     $('#modal_nutriente').autocomplete({
         source: function (request, response) {
-            // Filtrar os itens com base no texto digitado
+            // Normalizar o termo de busca removendo acentos
+            const searchTerm = removeAcento(request.term.toLowerCase());
+
+            // Filtrar os itens com base no texto digitado, sem acentos
             const matches = listaDeNutriente.filter(nutriente =>
-                nutriente.nome.toLowerCase().startsWith(request.term.toLowerCase())
+                removeAcento(nutriente.nome.toLowerCase()).startsWith(searchTerm)
             );
 
             // Mapear os itens para o formato esperado pelo autocomplete
@@ -513,16 +516,14 @@
             })));
         },
         select: function (event, ui) {
-
             $('#addComposicaoProjeto').empty(); // Limpar a tabela
 
             // Aqui você pode usar o item selecionado (ui.item) para atualizar a tabela ou qualquer outra lógica
-            let id_nutriente = ui.item.id
+            let id_nutriente = ui.item.id;
             let percentual = $('#modal_percentual').val().replace(/[^0-9.]/g, ''); // Permitir números e ponto/virgula
 
-            //Consultar as máterias primas que atendem a necessidade. 
+            // Consultar as máterias primas que atendem a necessidade. 
             req_GET(opt.urlMateriaPrima + `?nutriente=${id_nutriente}&percentual=${percentual}`).then(results => {
-
                 if (results.success) {
                     let dados = results.data;
                     dados.forEach(addPossivelComposicao);
@@ -530,6 +531,7 @@
             }).catch(error => console.error('Erro capturado:', error));
         }
     }).autocomplete("widget").css("z-index", "9999");
+
 
     const addPossivelComposicao = (recomendacao) => {
         let { mp_id, mp_nome, percentual, mp_formula, composicao } = recomendacao;

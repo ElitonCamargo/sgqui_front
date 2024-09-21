@@ -346,6 +346,9 @@ const showError = (codErro, codStatus) => {
     }
 }
 
+const removeAcento = (str) => {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
 
 async function start() {
     if (!getSessionData('tk')) {

@@ -3,7 +3,7 @@
 
 </div>
 <form class="container mt-5" id="formCadastrarMateriaPrima">
- 
+
   <div class="row">
     <div class="col-md-2">
       <label for="codigo" class="form-label">Código</label>
@@ -66,6 +66,11 @@
 
       event.preventDefault(); // Impedir o envio padrão do formulário
       const jsonData = serializadoParaJSON($(this).serialize());
+
+      //trata virgula para numeros decimais
+      jsonData.densidade = jsonData.densidade.replace(/,/g, '.');
+
+
       req_INSERT(opt.urlMateriaPrima, jsonData)
         .then(result => {
           // Exibir resposta da API no console
@@ -81,10 +86,6 @@
           }
         });
     });
-
-    $(".modal").on("click", ".btn-fecha-modal", function () {
-      $('.modal').modal('hide');
-    })
 
   });
 

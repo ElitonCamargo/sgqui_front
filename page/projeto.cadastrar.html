@@ -15,7 +15,7 @@
         <input type="text" class="form-control" id="nome" name="nome" required>
       </div>
     </div>
-     <div class="col-md-5">
+    <div class="col-md-5">
       <div class="mb-3">
         <label for="cliente" class="form-label">Cliente</label>
         <input type="text" class="form-control" id="cliente" name="cliente" required>
@@ -128,6 +128,8 @@
       $.each(jsonData, function (k, v) {
         if (k === 'aplicacao[]') {
           formObject['aplicacao'] = aplicacaoValores;
+        } else if (k === 'densidade') {
+          formObject['densidade'] = v.replace(/,/g, '.');
         } else {
           formObject[k] = v;
         }

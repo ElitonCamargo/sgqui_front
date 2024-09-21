@@ -41,10 +41,12 @@
         //adiciona garantias já cadastradas
         carregaGarantias()
 
-        //autocomplete nutrientes
+        // autocomplete nutrientes
         $("#nutriente").autocomplete({
             source: function (request, response) {
-                req_GET(`${opt.urlNutriente}?nome=${request.term}`)
+                let searchTerm = removeAcento(request.term.toLowerCase());
+
+                req_GET(`${opt.urlNutriente}?nome=${searchTerm}`)
                     .then(function (response) {
                         if (!response.success) {
                             throw new Error('Erro ao buscar dados: ' + response.status);
@@ -60,17 +62,21 @@
                                 idMateriaPrima: idMateriaPrima
                             };
                         });
-                        response(suggestions);
+
+                        // Normaliza e filtra as sugestões removendo acentos antes da comparação
+                        var filteredSuggestions = suggestions.filter(function (item) {
+                            return removeAcento(item.label.toLowerCase()).indexOf(searchTerm) !== -1;
+                        });
+
+                        response(filteredSuggestions);
                     })
                     .catch(function (error) {
                         alert("Erro14: Erro ao buscar no autocomplete de nutrientes");
                     });
             },
             select: function (event, ui) {
-                // Remove previous click event handler to avoid accumulation
                 $(".garantiaCadastra").off("click", "#btnGarantiaCadastra");
 
-                // Add new click event handler
                 $(".garantiaCadastra").on("click", "#btnGarantiaCadastra", function () {
                     let data = {};
                     let garantia = parseInt($("#garantia").val());
@@ -80,8 +86,6 @@
                         "nutriente": ui.item.idNutriente,
                         "percentual": garantia
                     };
-
-                    // console.log(data);
 
                     if (garantia !== null && garantia !== undefined) {
                         if (ui.item.idMateriaPrima && ui.item.idNutriente) {
@@ -95,6 +99,7 @@
                 });
             }
         });
+
 
 
 

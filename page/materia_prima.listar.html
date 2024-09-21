@@ -254,7 +254,7 @@
               $('#confirmacaoExclusaoModal').modal('hide');
               alterado = 1;
             } else {
-              $('#confirmacaoExclusaoModal .modal-body').html(`Erro: ${data.erro.message}`);
+              $('#confirmacaoExclusaoModal .modal-body').html(`Erros: ${data.erro.message}`);
               $('#confirmacaoExclusaoModal').modal("show");
             }
           });

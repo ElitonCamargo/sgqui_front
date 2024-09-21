@@ -233,7 +233,9 @@
     let listaDeElementosDoFiltro = [];
     (() => {
       req_GET(opt.urlNutriente).then(results => {
+        
         if (results.success) {
+
           listaDeElementosDoFiltro = results.data.map(elemento => {
             return { tipo: "nutriente", id: elemento.id, nome: elemento.nome, formula: elemento.formula }
           });
@@ -247,17 +249,24 @@
               }
             }).catch(error => console.error('Erro capturado:', error));
           })();
+          
         }
       }).catch(error => console.error('Erro capturado:', error));
     })();
 
+    console.log(listaDeElementosDoFiltro)
+
     // Função para a Inicialização do auto-complete *****************************************************************************
     let elemento_select = [];
+
     $('#elemento_filtro').autocomplete({
       source: function (request, response) {
-        // Filtrar os itens com base no texto digitado
+        // Normalizar o termo de busca removendo acentos
+        const searchTerm = removeAcento(request.term.toLowerCase());
+
+        // Filtrar os itens com base no texto digitado, sem acentos
         const matches = listaDeElementosDoFiltro.filter(elemento =>
-          elemento.nome.toLowerCase().startsWith(request.term.toLowerCase())
+          removeAcento(elemento.nome.toLowerCase()).startsWith(searchTerm)
         );
 
         // Mapear os itens para o formato esperado pelo autocomplete
@@ -265,14 +274,18 @@
           label: elemento.nome + (elemento.formula ? ' - (' + elemento.formula + ')' : ''), // Texto exibido na lista
           value: elemento.nome, // Valor exibido no campo de entrada ao selecionar
           id: elemento.id,       // ID do item
-          tipo: elemento.tipo //Quero definir o tipo do telemento mas não quero que isso apareça no visual, tem como?
+          tipo: elemento.tipo    // O tipo é passado mas não exibido visualmente
         })));
       },
       select: function (event, ui) {
-        elemento_select[0] = ui.item.id
-        elemento_select[1] = ui.item.tipo
+        // Guardar o ID e o tipo do elemento selecionado
+        elemento_select[0] = ui.item.id;
+        elemento_select[1] = ui.item.tipo;
       }
     }).autocomplete("widget").css("z-index", "9999");
+
+
+
 
     // *****************************************************************************************************************
 
@@ -552,9 +565,9 @@
         });
 
         // Se o campo "aplicacao[]" não foi serializado (checkboxes não marcados), adiciona manualmente
-        if (!('aplicacao[]' in formObject)) {
-          formObject['aplicacao'] = "";
-        }
+        // if (!('aplicacao[]' in formObject)) {
+        //   formObject['aplicacao'] = null;
+        // }
 
         req_UPDATE(opt.urlProjeto + "/" + jsonData.id, formObject)
           .then(result => {
