@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="tituloDaPagina"></title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            color: #333;
+            width: 794px;
+            height: 1123px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #006E00;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            position: relative;
+            height: 24px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: #e0e0e0;
+        }
+
+        .progress-completed {
+            height: 100%;
+            background-color: #006E00;
+            width: 0;
+            text-align: center;
+            line-height: 24px;
+            color: white;
+            white-space: nowrap;
+        }
+
+        #progress-label {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            margin-top: 5px;
+            color: white;
+            z-index: 1;
+            bottom: -1px;
+        }
+
+        @media print {
+            button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button id="back-button" onclick="goBack()">Voltar</button>
+    <button onclick="window.print()">Imprimir</button>
+    <h1 id="project-name"></h1>
+
+    <div class="section">
+        <h2>Detalhes do Projeto</h2>
+        <table>
+            <tbody id="project-details"></tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Tabela de Nutrientes</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nutriente</th>
+                    <th>Fórmula</th>
+                    <th>Percentual</th>
+                    <th>Origem</th>
+                </tr>
+            </thead>
+            <tbody id="nutrients-table"></tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Composição Total</h2>
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar">
+                <div id="progress-completed" class="progress-completed"></div>
+            </div>
+            <div id="progress-label"></div>
+        </div>
+    </div>
+
+    <h1>Etapas</h1>
+    <!-- Container para as seções dinâmicas -->
+    <div id="dynamic-sections"></div>
+    <footer></footer>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src='/assets/js/config.js'></script>
+    <script src='/assets/js/recursos.js'></script>
+
+    <script>
+
+        let param = getAllUrlParams()
+
+        req_GET(opt.urlProjeto + `/detalhado/${param.id}`).then((result) => {
+            if (result.success) {
+                let data = result;
+        
+                // coloca o title da página para salvar o arquivo com o id e o nome ao imprimir
+                document.getElementById('tituloDaPagina').innerText = `${data.data[0].id} - ${data.data[0].nome}`;
+
+                function preencherDetalhesDoProjeto(data) {
+                    const detalhes = `
+                        <tr>
+                            <td colspan="1"><strong>ID:</strong> ${data.id}</td>
+                            <td colspan="5"><strong>Nome:</strong> ${data.nome}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><strong>Data de Início:</strong> ${new Date(data.data_inicio).toLocaleString()}</td>
+                            <td colspan="2"><strong>Data de Término:</strong> ${new Date(data.data_termino).toLocaleString()}</td>
+                            <td colspan="2"><strong>Status:</strong> ${data.status[0].status}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Aplicação:</strong> ${data.aplicacao}</td>
+                            <td><strong>Tipo:</strong> ${data.tipo}</td>
+                            <td><strong>Natureza Física:</strong> ${data.natureza_fisica}</td>
+                            <td><strong>pH:</strong> ${data.ph}</td>
+                            <td><strong>Densidade Real:</strong> ${data.densidade}</td>
+                            <td><strong>Densidade Estimada:</strong> ${data.dencidade_estimada}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="6"><strong>Descrição:</strong> ${data.descricao}</td>
+                        </tr>
+                    `;
+                    document.getElementById('project-details').innerHTML = detalhes;
+                    document.getElementById('project-name').innerText = data.nome;
+                }
+
+                function preencherTabelaDeNutrientes(nutrientes) {
+                    let tabela = '';
+                    nutrientes.forEach(nutriente => {
+                        let origem = nutriente.origem.map(o => `${o.mp} - ${o.percentual}%`).join('<br>');
+                        tabela += `
+                            <tr>
+                                <td>${nutriente.nome}</td>
+                                <td>${nutriente.formula}</td>
+                                <td>${nutriente.percentual.toFixed(2)}%</td>
+                                <td>${origem}</td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('nutrients-table').innerHTML = tabela;
+                }
+
+                function preencherBarraDeComposicao(total) {
+                    const progressBar = document.getElementById('progress-bar');
+                    const progressCompleted = document.getElementById('progress-completed');
+                    const progressLabel = document.getElementById('progress-label');
+
+                    const percentualConcluido = total.percentual_concluido;
+                    const percentualRestante = Math.max(0, 100 - percentualConcluido);
+
+                    progressCompleted.style.width = `${percentualConcluido}%`;
+                    progressLabel.innerText = `${percentualConcluido.toFixed(2)}% Concluído | ${percentualRestante.toFixed(2)}% Restante`;
+                }
+
+                // Função para preencher as seções dinâmicas
+                function preencherSecoesDinamicas(etapas) {
+                    const container = document.getElementById('dynamic-sections');
+                    container.innerHTML = ''; // Limpa o container
+
+                    etapas.forEach(etapa => {
+                        let tabela = '';
+
+                        if (etapa.etapa_mp.length > 0) {
+                            etapa.etapa_mp.forEach((mp, index) => {
+                                tabela += `
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td>${mp.materia_prima}</td>
+                                        <td>${mp.percentual.toFixed(2)}%</td>
+                                        <td>${mp.tempo_agitacao}</td>
+                                        <td>${mp.observacao || ''}</td>
+                                    </tr>
+                                `;
+                            });
+                        } else {
+                            tabela += '<tr><td colspan="5">Nenhum dado disponível</td></tr>';
+                        }
+
+                        const sectionHTML = `
+                            <div class="section">
+                                <h2>${etapa.ordem} - ${etapa.nome}</h2>
+                                <span class="etapa-descricao">${etapa.descricao}</span>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Ordem</th>
+                                            <th>Matéria Prima</th>
+                                            <th>Percentual</th>
+                                            <th>Tempo de Agitação</th>
+                                            <th>Observação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${tabela}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+                        container.insertAdjacentHTML('beforeend', sectionHTML);
+                    });
+                }
+
+                const projeto = data.data[0];
+                preencherDetalhesDoProjeto(projeto);
+                preencherTabelaDeNutrientes(projeto.nutrientes);
+                preencherBarraDeComposicao(projeto);
+                preencherSecoesDinamicas(projeto.etapas);
+            }
+        });
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+
+</html>

@@ -26,8 +26,7 @@
           <!-- Detalhes do nutriente serão exibidos aqui -->
         </div>
         <div class="modal-footer">
-          <button type="button" id="btnEditar" class="btn btn-outline-secondary btn-sm"
-            >Editar</button>
+          <button type="button" id="btnEditar" class="btn btn-outline-secondary btn-sm">Editar</button>
           <button type="submit" id="btnSalvar" class="btn btn-outline-secondary btn-sm d-none">Salvar
             Alterações</button>
           <button type="button" class="btn btn-outline-secondary btn-sm btn-fecha-modal"
@@ -77,7 +76,7 @@
           data: data,
           order: [[3, 'desc']],
           columns: [
-            
+
             { title: 'Nome', data: 'nome' },
             { title: 'Fórmula', data: 'formula' },
             { // Coluna para os botões de ação
@@ -91,7 +90,7 @@
                           <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" title="Excluir"><i class="fa-solid fa-ban"></i></button>
                       `;
               }
-            },{ title: 'Update', data: 'updatedAt', visible:false }
+            }, { title: 'Update', data: 'updatedAt', visible: false }
           ],
           columnDefs: [
             { targets: 3, autoWidth: true } // Ativa o ajuste automático da largura para a primeira coluna
@@ -150,6 +149,13 @@
                       <label for="formula">Fórmula:</label>
                       <input type="text" class="form-control" id="formula" name="formula" value="${nutriente.formula}" readonly>
                     </div>
+                      <div class="form-check" style="align-content:end">
+                        <input class="form-check-input" type="checkbox" id="visivelCheckbox" ${(nutriente.visivel == 1) ? "checked" : ""} disabled>
+                        <label class="form-check-label" for="visivelCheckbox">
+                          Visível na impressão
+                        </label>
+                        <input type="hidden" name="visivel" id="visivel" value="${(nutriente.visivel == 1) ? "1" : "0"}">
+                      </div>
                     <input type="hidden" id="id" name="id" value="${nutriente.id}"
                 </div>
         `;
@@ -161,6 +167,7 @@
       // Adicionar evento de clique para o botão "Editar"
       $('#detalhesModal').on('click', '#btnEditar', function () {
         $('.form-control').prop('readonly', false);
+        $('#visivelCheckbox').prop('disabled', false);
         $('#btnEditar').addClass('d-none');
         $('#btnSalvar').removeClass('d-none');
       });
@@ -230,6 +237,11 @@
         window.location.reload(true);
       }
     })
+
+    // Script para garantir o valor correto no envio
+    $('#formEditarNutriente').on('change', '#visivelCheckbox', function () {
+      $("#visivel").val(this.checked ? '1' : '0');
+    });
 
   })
 </script>

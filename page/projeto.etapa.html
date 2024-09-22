@@ -324,6 +324,7 @@
         //Consultar projetos detalhados......
         req_GET(opt.urlProjeto + `/detalhado/${id_projeto}`).then(results => {
 
+            console.log(results)
 
             if (results.success) {
                 // *************** Detalhes do Projeto ****************************************************************
@@ -473,13 +474,13 @@
     const addMateriaPria = (etapa_mp, etapa_id) => {
         let linhasEtapaEp = "";
         etapa_mp.forEach(e => {
-            linhasEtapaEp += criarLinhaEtapaMp(e.id, e.materia_prima, e.percentual, e.tempo_agitacao, e.observacao, e.lote, etapa_id);
+            linhasEtapaEp += criarLinhaEtapaMp(e.id, e.materia_prima, e.percentual, e.tempo_agitacao, e.observacao, e.lote, e.ordem, etapa_id);
         });
         return linhasEtapaEp;
     };
 
     //** Função responsável por criar as linhas para a função  addMateriaPria() *************************************************
-    const criarLinhaEtapaMp = (idMp, nomeMp, percentualMp, tempoAgitacao, observacao, lote, etapa_id) => {
+    const criarLinhaEtapaMp = (idMp, nomeMp, percentualMp, tempoAgitacao, observacao, lote, ordem, etapa_id) => {
         let cols = `
                     <tr id="nutriente_${idMp}" data-id="${idMp}">
                         <td><i class="fa fa-arrows moverNutriente"></i></td>
@@ -489,7 +490,7 @@
                         <td><input type="text" class="observacao" value="${observacao}"></td>
                         <td><input type="text" class="lote" value="${lote}"></td>
                         <td style="width:100px">
-                            <button type="button" class="btn btn-outline-secondary btn-sm salvarComposicao" title="salvar" data-id="${idMp}" onclick="salvaComposicao(${idMp},${etapa_id})"><i class="far fa-save"></i></button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm salvarComposicao" title="salvar" data-id="${idMp}" data-pos="${ordem}" onclick="salvaComposicao(${idMp},${etapa_id})"><i class="far fa-save"></i></button>
                             <button type="button" class="btn btn-outline-secondary btn-sm deleteComposicao" title="excluir" data-id="${idMp}" onclick="excluiComposicao(${idMp},${etapa_id})"><i class="fa fa-ban"></i></button>
                         </td>
                     </tr>`;
@@ -655,17 +656,21 @@
             return;
         }
 
+
+
         // Obtém os valores dos inputs na linha
         const percentualMp = row.querySelector('.percentualMp').value;
         const tempoAgitacao = row.querySelector('.tempoAgitacao').value;
         const observacao = row.querySelector('.observacao').value;
         const lote = row.querySelector('.lote').value;
+        const ordem = row.getAttribute('data-pos');
 
         jsonData = {
             "percentual": percentualMp,
             "tempo_agitacao": tempoAgitacao,
             "observacao": observacao,
-            "lote": lote
+            "lote": lote,
+            "ordem":ordem
         };
 
         req_UPDATE(opt.urlEtapaMp + "/" + idMp, jsonData)

@@ -4,16 +4,23 @@
 </div>
 <form class="container mt-5" id="formCadastrarNutriente">
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-5">
       <label for="nome" class="form-label">Nome</label>
       <input type="text" class="form-control" id="nome" name="nome" required>
     </div>
 
-    <div class="col-md-6">
-      <label for="nome" class="form-label">Fórmula</label>
+    <div class="col-md-5">
+      <label for="formula" class="form-label">Fórmula</label>
       <input type="text" class="form-control" id="formula" name="formula" required>
     </div>
 
+    <div class="form-check col-md-2" style="align-content:end">
+      <input class="form-check-input" type="checkbox" id="visivelCheckbox">
+      <label class="form-check-label" for="visivelCheckbox">
+        Visível na impressão
+      </label>
+      <input type="hidden" name="visivel" id="visivel" value="0">
+    </div>
   </div>
   <button class="btn btn-primary" type="submit" id="nutrienteCadastrar">Cadastrar</button>
 </form>
@@ -60,9 +67,10 @@
         });
     });
 
-    $(".modal").on("click", ".btn-fecha-modal", function () {
-      $('.modal').modal('hide');
-    })
+    // Script para garantir o valor correto no envio
+    $('#visivelCheckbox').on('change', function () {
+      $("#visivel").val(this.checked ? '1' : '0');
+    });
 
   });
 

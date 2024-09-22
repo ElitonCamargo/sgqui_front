@@ -4,264 +4,436 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="tituloDaPagina"></title>
+    <title>Acompanhamento de Projeto</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 20px;
-            color: #333;
-            width: 794px;
-            height: 1123px;
-            margin: 0 auto;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        h1,
-        h2,
-        h3 {
-            color: #006E00;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 10pt;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            page-break-inside: avoid;
         }
 
         th,
         td {
-            border: 1px solid #ddd;
+            border: 1px solid black;
             padding: 8px;
             text-align: left;
+            vertical-align: top;
         }
 
         th {
             background-color: #f2f2f2;
+            width: 25%;
         }
 
-        .section {
-            margin-bottom: 30px;
+        .titulo1 {
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 16px;
         }
 
-        .progress-bar-container {
-            width: 100%;
-            position: relative;
-            height: 24px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f2f2f2;
-            overflow: hidden;
+        .titulo2 {
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 14px;
+
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background-color: #e0e0e0;
+        .titulo3 {
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 12px;
         }
 
-        .progress-completed {
-            height: 100%;
-            background-color: #006E00;
-            width: 0;
-            text-align: center;
-            line-height: 24px;
-            color: white;
-            white-space: nowrap;
+
+
+        /* Estilo para a linha de total */
+        .total-row {
+            font-weight: bold;
+            background-color: #e6e6e6;
         }
 
-        #progress-label {
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            margin-top: 5px;
-            color: white;
-            z-index: 1;
-            bottom: -1px;
+        .total-row td {
+            border-top: 2px solid black;
+        }
+
+        .negrito {
+            font-weight: bold;
+        }
+
+        #responsaveis th {
+            border: none
+        }
+
+        #responsaveis td {
+            border: none
+        }
+
+        [contenteditable="true"] {
+            background-color: yellow;
         }
 
         @media print {
-            button {
+            .no-print {
                 display: none;
+            }
+
+            [contenteditable="true"] {
+                background-color: inherit;
             }
         }
     </style>
 </head>
 
 <body>
-    <button id="back-button" onclick="goBack()">Voltar</button>
-    <button onclick="window.print()">Imprimir</button>
-    <h1 id="project-name"></h1>
+    <h2 class="titulo1">Acompanhamento de Projeto - Prova de Laboratório</h2>
+    <h3 class="titulo2">Desenvolvimento de Produto</h3>
 
-    <div class="section">
-        <h2>Detalhes do Projeto</h2>
-        <table>
-            <tbody id="project-details"></tbody>
-        </table>
-    </div>
+    <h3>1 - Informações Gerais do Produto</h3>
+    <table>
+        <tr>
+            <th>Nome Comercial:</th>
+            <td colspan="3" id="nome_comercial"></td>
+        </tr>
+        <tr>
+            <th>Densidade a 20°C:</th>
+            <td id="densidade"></td>
+            <th>pH:</th>
+            <td id="ph"></td>
+        </tr>
+        <tr>
+            <th>Tipo de Fertilizante:</th>
+            <td id="tipo_fertilizante"></td>
+            <th>Modo de Aplicação:</th>
+            <td id="modo_aplicacao"></td>
+        </tr>
+        <tr>
+            <th>Garantia:</th>
+            <td colspan="3" id="garantia"></td>
+        </tr>
+        <tr>
+            <th>Descrição:</th>
+            <td colspan="3" id="descricao"></td>
+        </tr>
+    </table>
 
-    <div class="section">
-        <h2>Tabela de Nutrientes</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nutriente</th>
-                    <th>Fórmula</th>
-                    <th>Percentual</th>
-                    <th>Origem</th>
-                </tr>
-            </thead>
-            <tbody id="nutrients-table"></tbody>
-        </table>
-    </div>
+    <h3 class="titulo2">2 - Dados do Projeto</h3>
+    <table>
+        <tr>
+            <th>Nº do Projeto:</th>
+            <td id="numero_projeto" colspan="2"></td>
+            <th>Status:</th>
+            <td id="status" colspan="2"></td>
+        </tr>
+        <tr>
+            <th>Cliente:</th>
+            <td id="cliente" colspan="5"></td>
 
-    <div class="section">
-        <h2>Composição Total</h2>
-        <div class="progress-bar-container">
-            <div id="progress-bar" class="progress-bar">
-                <div id="progress-completed" class="progress-completed"></div>
-            </div>
-            <div id="progress-label"></div>
-        </div>
-    </div>
+        </tr>
+        <tr>
+            <th>Natureza Física:</th>
+            <td colspan="5" id="natureza_fisica"></td>
+        </tr>
+        <tr>
+            <th>Data de Criação:</th>
+            <td id="data_solicitacao"></td>
+            <th>Data de Início</th>
+            <td id="data_inicio"></td>
+            <th>Data de Término</th>
+            <td id="data_termino"></td>
+        </tr>
+    </table>
 
-    <h1>Etapas</h1>
-    <!-- Container para as seções dinâmicas -->
-    <div id="dynamic-sections"></div>
-    <footer></footer>
+
+
+    <h3 class="titulo2">3 - Descrição de Produção</h3>
+    <table id="quantidade">
+        <tr>
+            <th>Quantidade kg/l (ex: 1.4)</th>
+            <td id="quantidadeVendida" contenteditable="true">1</td>
+        </tr>
+    </table>
+    <table id="descricao_producao">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Matéria-Prima</th>
+                <th>Código</th>
+                <th>% (sistema)</th>
+                <th>Quantidade (g/ml)</th>
+                <th>Tempo de Agitação (min)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Linhas serão preenchidas dinamicamente -->
+        </tbody>
+        <tfoot>
+            <tr class="total-row">
+                <td colspan="3" style="text-align:right;">Total:</td>
+                <td id="total_percentual">0,0000%</td>
+                <td id="total_quantidade">0,0000</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+
+
+    <h3 class="titulo2">4 - Procedimento</h3>
+    <table>
+        <tr>
+            <td contenteditable="true"></td>
+        </tr>
+    </table>
+
+    <h3 class="titulo2">5 - Análises Físico-Químicas</h3>
+    <table>
+        <tr>
+            <td>
+                <!-- Select para escolher as análises -->
+                <div class="no-print">
+                    <label for="analisesSelect">Selecione a Análise:</label>
+                    <select id="analisesSelect">
+                        <option value="">-- Selecione --</option>
+                        <option value="Cor">Cor</option>
+                        <option value="Densidade">Densidade</option>
+                        <option value="pH">pH</option>
+                        <option value="Solubilidade">Solubilidade</option>
+                        <option value="Viscosidade">Viscosidade</option>
+                        <option value="Supersensibilidade">Supersensibilidade</option>
+                        <option value="Índice Salino (IS)">Índice Salino (IS)</option>
+                        <option value="Condutividade Elétrica (CE)">Condutividade Elétrica (CE)</option>
+                    </select>
+
+                    <button id="adicionarBtn">Adicionar Análise</button>
+                </div>
+                <table id="tabelaAnalises">
+                    <tr>
+                        <th>Análises</th>
+                        <th>Especificação</th>
+                        <th>Resultado</th>
+                    </tr>
+                </table>
+
+            </td>
+            <td>
+
+                <table id="responsaveis">
+                    <tr>
+                        <th>Produzido por: </th>
+                        <td contenteditable="true">David Carvalho</td>
+                    </tr>
+                    <tr>
+                        <th>Resultado final:</th>
+                        <td contenteditable="true">Aprovado</td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+    <h3 class="titulo2">6 - Observações</h3>
+
+
+
+    <table>
+        <tr>
+            <td style="width: 50%;">
+                <table>
+                    <tr>
+                        <td>
+                            <input id="hm" type="checkbox"> <label for="hm">Matéria Prima Homologada</label>
+                        </td>
+                        <td>
+                            <input id="nr" type="checkbox"><label for="nr">Solicitar Novo Registro</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" contenteditable="true">
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td colspan="2">ANEXO PQ03 A01 - VIGÊNCIA: 05/03/2024 - REVISÃO:01</td>
+                    </tr>
+                </table>
+
+            </td>
+            <td>
+                <table>
+                    <tr>
+                        <th>RESPONSÁVEL DA ÁREA: </th>
+                        <td contenteditable="true">Fábio Scudeler</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+
+
+
+
+
+
+
+
+
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src='/assets/js/config.js'></script>
     <script src='/assets/js/recursos.js'></script>
-
+    <!-- Script para preencher os dados dinamicamente -->
     <script>
-
         let param = getAllUrlParams()
 
         req_GET(opt.urlProjeto + `/detalhado/${param.id}`).then((result) => {
+
             if (result.success) {
-                let data = result;
-        
-                // coloca o title da página para salvar o arquivo com o id e o nome ao imprimir
-                document.getElementById('tituloDaPagina').innerText = `${data.data[0].id} - ${data.data[0].nome}`;
 
-                function preencherDetalhesDoProjeto(data) {
-                    const detalhes = `
-                        <tr>
-                            <td colspan="1"><strong>ID:</strong> ${data.id}</td>
-                            <td colspan="5"><strong>Nome:</strong> ${data.nome}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2"><strong>Data de Início:</strong> ${new Date(data.data_inicio).toLocaleString()}</td>
-                            <td colspan="2"><strong>Data de Término:</strong> ${new Date(data.data_termino).toLocaleString()}</td>
-                            <td colspan="2"><strong>Status:</strong> ${data.status[0].status}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Aplicação:</strong> ${data.aplicacao}</td>
-                            <td><strong>Tipo:</strong> ${data.tipo}</td>
-                            <td><strong>Natureza Física:</strong> ${data.natureza_fisica}</td>
-                            <td><strong>pH:</strong> ${data.ph}</td>
-                            <td><strong>Densidade Real:</strong> ${data.densidade}</td>
-                            <td><strong>Densidade Estimada:</strong> ${data.dencidade_estimada}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="6"><strong>Descrição:</strong> ${data.descricao}</td>
-                        </tr>
-                    `;
-                    document.getElementById('project-details').innerHTML = detalhes;
-                    document.getElementById('project-name').innerText = data.nome;
-                }
+                console.log(`Data:`, result.data)
 
-                function preencherTabelaDeNutrientes(nutrientes) {
-                    let tabela = '';
-                    nutrientes.forEach(nutriente => {
-                        let origem = nutriente.origem.map(o => `${o.mp} - ${o.percentual}%`).join('<br>');
-                        tabela += `
-                            <tr>
-                                <td>${nutriente.nome}</td>
-                                <td>${nutriente.formula}</td>
-                                <td>${nutriente.percentual.toFixed(2)}%</td>
-                                <td>${origem}</td>
-                            </tr>
-                        `;
-                    });
-                    document.getElementById('nutrients-table').innerHTML = tabela;
-                }
 
-                function preencherBarraDeComposicao(total) {
-                    const progressBar = document.getElementById('progress-bar');
-                    const progressCompleted = document.getElementById('progress-completed');
-                    const progressLabel = document.getElementById('progress-label');
 
-                    const percentualConcluido = total.percentual_concluido;
-                    const percentualRestante = Math.max(0, 100 - percentualConcluido);
+                // monta garantias visiveis
+                let garantias_visiveis = "";
+                result.data[0].nutrientes.forEach(nt => {
+                    if (nt.visivel == 1) {
+                        garantias_visiveis += `<span class="negrito">${nt.formula}</span> - ${nt.percentual}% `
+                    }
+                });
 
-                    progressCompleted.style.width = `${percentualConcluido}%`;
-                    progressLabel.innerText = `${percentualConcluido.toFixed(2)}% Concluído | ${percentualRestante.toFixed(2)}% Restante`;
-                }
+                // Preenchendo os dados no HTML
+                document.getElementById('nome_comercial').innerText = result.data[0].nome;
+                document.getElementById('densidade').innerText = result.data[0].densidade + " g/ml";
+                document.getElementById('ph').innerText = result.data[0].ph;
+                document.getElementById('tipo_fertilizante').innerText = result.data[0].tipo;
+                document.getElementById('modo_aplicacao').innerText = result.data[0].aplicacao.join(', ');
+                document.getElementById('garantia').innerHTML = garantias_visiveis;
+                document.getElementById('descricao').innerText = result.data[0].descricao;
+                document.getElementById('numero_projeto').innerText = result.data[0].codigo;
+                document.getElementById('status').innerText = result.data[0].status[0].status;
+                document.getElementById('cliente').innerText = result.data[0].cliente;
+                document.getElementById('data_solicitacao').innerText = formatarDataPtBr(result.data[0].createdAt);
+                document.getElementById('data_inicio').innerText = formatarDataPtBr(result.data[0].data_inicio);
+                document.getElementById('data_termino').innerText = formatarDataPtBr(result.data[0].data_termino);
+                document.getElementById('natureza_fisica').innerText = result.data[0].natureza_fisica;
 
-                // Função para preencher as seções dinâmicas
-                function preencherSecoesDinamicas(etapas) {
-                    const container = document.getElementById('dynamic-sections');
-                    container.innerHTML = ''; // Limpa o container
 
-                    etapas.forEach(etapa => {
-                        let tabela = '';
+                // Preenchendo a tabela de descrição de produção
+                const tableBody = document.querySelector('#descricao_producao tbody');
 
-                        if (etapa.etapa_mp.length > 0) {
-                            etapa.etapa_mp.forEach((mp, index) => {
-                                tabela += `
-                                    <tr>
-                                        <td>${index + 1}</td>
-                                        <td>${mp.materia_prima}</td>
-                                        <td>${mp.percentual.toFixed(2)}%</td>
-                                        <td>${mp.tempo_agitacao}</td>
-                                        <td>${mp.observacao || ''}</td>
-                                    </tr>
-                                `;
-                            });
-                        } else {
-                            tabela += '<tr><td colspan="5">Nenhum dado disponível</td></tr>';
-                        }
+                let totais = criaLista(result.data[0].densidade, result.data[0].etapas, tableBody);
 
-                        const sectionHTML = `
-                            <div class="section">
-                                <h2>${etapa.ordem} - ${etapa.nome}</h2>
-                                <span class="etapa-descricao">${etapa.descricao}</span>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Ordem</th>
-                                            <th>Matéria Prima</th>
-                                            <th>Percentual</th>
-                                            <th>Tempo de Agitação</th>
-                                            <th>Observação</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${tabela}
-                                    </tbody>
-                                </table>
-                            </div>
-                        `;
-                        container.insertAdjacentHTML('beforeend', sectionHTML);
-                    });
-                }
+                // Calculando totais
+                document.getElementById('total_percentual').innerText = `${totais.somaPercentual}%`;
+                document.getElementById('total_quantidade').innerText = totais.somaPeso;
 
-                const projeto = data.data[0];
-                preencherDetalhesDoProjeto(projeto);
-                preencherTabelaDeNutrientes(projeto.nutrientes);
-                preencherBarraDeComposicao(projeto);
-                preencherSecoesDinamicas(projeto.etapas);
+
+                $("#quantidade").on('blur', '#quantidadeVendida', function () {
+
+
+                    let totais = criaLista(result.data[0].densidade, result.data[0].etapas, tableBody);
+
+                    // Calculando totais
+                    document.getElementById('total_percentual').innerText = `${totais.somaPercentual}%`;
+                    document.getElementById('total_quantidade').innerText = totais.somaPeso;
+                });
+
+
             }
         });
 
-        function goBack() {
-            window.history.back();
+
+
+
+        const criaLista = (densidade, etapas, tableBody) => {
+            tableBody.innerHTML = "";
+            let i = 1;
+            let somaPercentual = null;
+            let somaPeso = null;
+
+            etapas.forEach(etapa => {
+
+                let row = document.createElement('tr');
+                row.innerHTML = `
+                                <td colspan=6 class="titulo3">${etapa.nome}</td>
+                                `;
+                tableBody.appendChild(row);
+
+                etapa.etapa_mp.forEach(mp => {
+
+                    let peso = calculaPeso(densidade, mp.percentual)
+
+                    row = document.createElement('tr');
+                    row.innerHTML = `
+                                <td>${i}</td>
+                                <td>${mp.materia_prima}</td>
+                                <td>${mp.id}</td>
+                                <td>${mp.percentual}%</td>
+                                <td>${peso}</td>
+                                <td>${mp.tempo_agitacao}</td>
+                                `;
+
+                    somaPercentual += mp.percentual;
+                    somaPeso += parseFloat(peso);
+                    tableBody.appendChild(row);
+                    i++
+                });
+
+            });
+
+            return { 'somaPercentual': somaPercentual, 'somaPeso': somaPeso.toFixed(4) }
         }
+
+
+        const calculaPeso = (densidade, percentual) => {
+
+            let qtVendida = parseFloat($("#quantidadeVendida").text().trim() || '0');
+
+            let pesoGr = (parseFloat(densidade) * parseFloat(percentual)) / 100;
+
+            return ((qtVendida * pesoGr) * 1000).toFixed(4);
+        }
+
+        document.getElementById('adicionarBtn').addEventListener('click', function () {
+            const select = document.getElementById('analisesSelect');
+            const valorSelecionado = select.value;
+
+            if (valorSelecionado === '') {
+                alert('Por favor, selecione uma análise.');
+                return;
+            }
+
+            // Cria uma nova linha na tabela
+            const tabela = document.getElementById('tabelaAnalises');
+            const novaLinha = tabela.insertRow();
+            // Célula para Análise
+            const celulaAnalise = novaLinha.insertCell(0);
+            celulaAnalise.textContent = valorSelecionado;
+
+            // Célula para Especificação (conteúdo editável)
+            const celulaEspecificacao = novaLinha.insertCell(1);
+            celulaEspecificacao.setAttribute('contenteditable', 'true');
+            celulaEspecificacao.textContent = 'Especificação';
+
+            // Célula para Resultado (conteúdo editável)
+            const celulaResultado = novaLinha.insertCell(2);
+            celulaResultado.setAttribute('contenteditable', 'true');
+            celulaResultado.textContent = 'Resultado';
+            // Reseta o select após adicionar
+            select.value = '';
+        });
+
     </script>
+
+    <div class="no-print" style="height: 300px;"></div>
 </body>
 
 </html>
