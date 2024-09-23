@@ -266,6 +266,7 @@
             });
             // ************************************************** Chamando a função para executar a ação na API **********************************
 
+            console.log("ordem",etapa_ordem)
 
             req_UPDATE(opt.urlEtapa + "/projeto/ordenar", etapa_ordem)
                 .then(result => console.log(result))
@@ -663,15 +664,17 @@
         const tempoAgitacao = row.querySelector('.tempoAgitacao').value;
         const observacao = row.querySelector('.observacao').value;
         const lote = row.querySelector('.lote').value;
-        const ordem = row.getAttribute('data-pos');
-
+      
         jsonData = {
             "percentual": percentualMp,
             "tempo_agitacao": tempoAgitacao,
             "observacao": observacao,
-            "lote": lote,
-            "ordem":ordem
+            "lote": lote
         };
+
+
+        console.log("salva etapa",jsonData);
+       
 
         req_UPDATE(opt.urlEtapaMp + "/" + idMp, jsonData)
             .then(result => {
