@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acompanhamento de Projeto - teste de envio git automatico</title>
+    <title></title>
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -25,25 +25,36 @@
             vertical-align: top;
         }
 
+        #header th,
+        #header td {
+            border: none;
+        }
+
         th {
             background-color: #f2f2f2;
             width: 25%;
         }
 
-        .titulo1 {
+        h2,
+        h3,
+        h4 {
+            margin-bottom: 0;
+        }
+
+        h2 {
             text-transform: uppercase;
             font-weight: bold;
             font-size: 16px;
         }
 
-        .titulo2 {
+        h3 {
             text-transform: uppercase;
             font-weight: bold;
             font-size: 14px;
 
         }
 
-        .titulo3 {
+        h4 {
             text-transform: uppercase;
             font-weight: bold;
             font-size: 12px;
@@ -78,6 +89,12 @@
         }
 
         @media print {
+
+            th,
+            td {
+                padding: 2px;
+            }
+
             .no-print {
                 display: none;
             }
@@ -90,8 +107,19 @@
 </head>
 
 <body>
-    <h2 class="titulo1">Acompanhamento de Projeto - Prova de Laboratório</h2>
-    <h3 class="titulo2">Desenvolvimento de Produto</h3>
+    <div class="no-print">
+        <button id="back-button" onclick="goBack()">Voltar</button>
+        <button onclick="window.print()">Imprimir</button>
+    </div>
+    <table id="header">
+        <tr>
+            <td style="width: 105px; text-align: center;"><img src="/assets/img/logo.jpg"></td>
+            <td style="text-align: center;">
+                <h2 class="titulo1">Acompanhamento de Projeto - Prova de Laboratório</h2>
+                <h3 class="titulo2">Desenvolvimento de Produto</h3>
+            </td>
+        </tr>
+    </table>
 
     <h3>1 - Informações Gerais do Produto</h3>
     <table>
@@ -124,27 +152,27 @@
     <h3 class="titulo2">2 - Dados do Projeto</h3>
     <table>
         <tr>
+            <th>Cliente:</th>
+            <td id="cliente" colspan="10"></td>
+        </tr>
+        <tr>
             <th>Nº do Projeto:</th>
             <td id="numero_projeto" colspan="2"></td>
+            <th>Natureza Física:</th>
+            <td colspan="5" id="natureza_fisica"></td>
             <th>Status:</th>
             <td id="status" colspan="2"></td>
         </tr>
-        <tr>
-            <th>Cliente:</th>
-            <td id="cliente" colspan="5"></td>
 
-        </tr>
         <tr>
-            <th>Natureza Física:</th>
-            <td colspan="5" id="natureza_fisica"></td>
-        </tr>
-        <tr>
-            <th>Data de Criação:</th>
-            <td id="data_solicitacao"></td>
-            <th>Data de Início</th>
-            <td id="data_inicio"></td>
-            <th>Data de Término</th>
-            <td id="data_termino"></td>
+            <table>
+                <th style="width: 16.5%;">Data de Criação:</th>
+                <td id="data_solicitacao" style="width: 16.5%;"></td>
+                <th style="width: 16.5%;">Data de Início</th>
+                <td id="data_inicio" style="width: 16.5%;"></td>
+                <th style="width: 16.5%;">Data de Término</th>
+                <td id="data_termino" style="width: 16.5%;"></td>
+            </table>
         </tr>
     </table>
 
@@ -245,7 +273,7 @@
         <tr>
             <td style="width: 50%;">
                 <table>
-                    <tr>
+                    <tr style="font-size: 10px;">
                         <td>
                             <input id="hm" type="checkbox"> <label for="hm">Matéria Prima Homologada</label>
                         </td>
@@ -275,18 +303,7 @@
         </tr>
     </table>
 
-
-
-
-
-
-
-
-
-
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="/assets/vendor/jquery-3.7.1.min.js"></script>
     <script src='/assets/js/config.js'></script>
     <script src='/assets/js/recursos.js'></script>
     <!-- Script para preencher os dados dinamicamente -->
@@ -297,39 +314,40 @@
 
             if (result.success) {
 
-                console.log(`Data:`, result.data)
+                let data = result.data[0];
 
 
 
                 // monta garantias visiveis
                 let garantias_visiveis = "";
-                result.data[0].nutrientes.forEach(nt => {
+                data.nutrientes.forEach(nt => {
                     if (nt.visivel == 1) {
                         garantias_visiveis += `<span class="negrito">${nt.formula}</span> - ${nt.percentual}% `
                     }
                 });
 
                 // Preenchendo os dados no HTML
-                document.getElementById('nome_comercial').innerText = result.data[0].nome;
-                document.getElementById('densidade').innerText = result.data[0].densidade + " g/ml";
-                document.getElementById('ph').innerText = result.data[0].ph;
-                document.getElementById('tipo_fertilizante').innerText = result.data[0].tipo;
-                document.getElementById('modo_aplicacao').innerText = result.data[0].aplicacao.join(', ');
+                document.title = `${data.codigo} - ${data.nome}`;
+                document.getElementById('nome_comercial').innerText = data.nome;
+                document.getElementById('densidade').innerText = data.densidade + " g/ml";
+                document.getElementById('ph').innerText = data.ph;
+                document.getElementById('tipo_fertilizante').innerText = data.tipo;
+                document.getElementById('modo_aplicacao').innerText = data.aplicacao.join(', ');
                 document.getElementById('garantia').innerHTML = garantias_visiveis;
-                document.getElementById('descricao').innerText = result.data[0].descricao;
-                document.getElementById('numero_projeto').innerText = result.data[0].codigo;
-                document.getElementById('status').innerText = result.data[0].status[0].status;
-                document.getElementById('cliente').innerText = result.data[0].cliente;
-                document.getElementById('data_solicitacao').innerText = formatarDataPtBr(result.data[0].createdAt);
-                document.getElementById('data_inicio').innerText = formatarDataPtBr(result.data[0].data_inicio);
-                document.getElementById('data_termino').innerText = formatarDataPtBr(result.data[0].data_termino);
-                document.getElementById('natureza_fisica').innerText = result.data[0].natureza_fisica;
+                document.getElementById('descricao').innerText = data.descricao;
+                document.getElementById('numero_projeto').innerText = data.codigo;
+                document.getElementById('status').innerText = data.status[0].status;
+                document.getElementById('cliente').innerText = data.cliente;
+                document.getElementById('data_solicitacao').innerText = formatarDataPtBr(data.createdAt);
+                document.getElementById('data_inicio').innerText = formatarDataPtBr(data.data_inicio);
+                document.getElementById('data_termino').innerText = formatarDataPtBr(data.data_termino);
+                document.getElementById('natureza_fisica').innerText = data.natureza_fisica;
 
 
                 // Preenchendo a tabela de descrição de produção
                 const tableBody = document.querySelector('#descricao_producao tbody');
 
-                let totais = criaLista(result.data[0].densidade, result.data[0].etapas, tableBody);
+                let totais = criaLista(data.densidade, data.etapas, tableBody);
 
                 // Calculando totais
                 document.getElementById('total_percentual').innerText = `${totais.somaPercentual}%`;
@@ -339,7 +357,7 @@
                 $("#quantidade").on('blur', '#quantidadeVendida', function () {
 
 
-                    let totais = criaLista(result.data[0].densidade, result.data[0].etapas, tableBody);
+                    let totais = criaLista(data.densidade, data.etapas, tableBody);
 
                     // Calculando totais
                     document.getElementById('total_percentual').innerText = `${totais.somaPercentual}%`;
@@ -363,7 +381,7 @@
 
                 let row = document.createElement('tr');
                 row.innerHTML = `
-                                <td colspan=6 class="titulo3">${etapa.nome}</td>
+                                <td colspan=6 class="titulo3"><strong>${etapa.nome}</strong></td>
                                 `;
                 tableBody.appendChild(row);
 
@@ -430,6 +448,9 @@
             // Reseta o select após adicionar
             select.value = '';
         });
+        function goBack() {
+            window.history.back();
+        }
 
     </script>
 

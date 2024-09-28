@@ -269,14 +269,14 @@ const formatarDataPtBr = (dataString) => {
     const ano = data.getFullYear(); // obtém o ano com quatro dígitos
 
     // Verifica se o formato é "2024-07-02 16:12:38.000000"
-    if (temHorario) {
-        const hora = ('0' + data.getHours()).slice(-2);
-        const minuto = ('0' + data.getMinutes()).slice(-2);
-        const segundo = ('0' + data.getSeconds()).slice(-2);
-        return `${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}`;
-    } else {
+    // if (temHorario) {
+    //     const hora = ('0' + data.getHours()).slice(-2);
+    //     const minuto = ('0' + data.getMinutes()).slice(-2);
+    //     const segundo = ('0' + data.getSeconds()).slice(-2);
+    //     return `${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}`;
+    // } else {
         return `${dia}/${mes}/${ano}`;
-    }
+    // }
 }
 
 
