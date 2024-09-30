@@ -448,6 +448,35 @@
             // Reseta o select após adicionar
             select.value = '';
         });
+
+        const quantidadeVendida = document.getElementById('quantidadeVendida');
+
+        quantidadeVendida.addEventListener('input', function () {
+            // Armazena a posição do cursor
+            const cursorPos = window.getSelection().getRangeAt(0).startOffset;
+
+            // Substitui vírgula por ponto no texto atual
+            let valor = this.textContent.replace(',', '.');
+
+            // Atualiza o conteúdo sem interferir na posição do cursor
+            this.textContent = valor;
+
+            // Restaura a posição do cursor
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.setStart(this.firstChild, cursorPos);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        });
+
+        quantidadeVendida.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        });
+
+
         function goBack() {
             window.history.back();
         }
