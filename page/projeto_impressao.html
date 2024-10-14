@@ -214,7 +214,7 @@
     <h3 class="titulo2">4 - Procedimento</h3>
     <table>
         <tr>
-            <td contenteditable="true"></td>
+            <td contenteditable="true" id="print-procedimento"></td>
         </tr>
     </table>
 
@@ -253,11 +253,11 @@
                 <table id="responsaveis">
                     <tr>
                         <th>Produzido por: </th>
-                        <td contenteditable="true">David Carvalho</td>
+                        <td contenteditable="true" id="print-produzido-por"></td>
                     </tr>
                     <tr>
                         <th>Resultado final:</th>
-                        <td contenteditable="true">Aprovado</td>
+                        <td contenteditable="true" id="print-resultado-final"></td>
                     </tr>
                 </table>
 
@@ -287,7 +287,7 @@
 
                     </tr>
                     <tr>
-                        <td colspan="2">ANEXO PQ03 A01 - VIGÊNCIA: 05/03/2024 - REVISÃO:01</td>
+                        <td colspan="2" id="print-anexo"></td>
                     </tr>
                 </table>
 
@@ -296,7 +296,7 @@
                 <table>
                     <tr>
                         <th>RESPONSÁVEL DA ÁREA: </th>
-                        <td contenteditable="true">Fábio Scudeler</td>
+                        <td contenteditable="true" id="print-responsavel-area"></td>
                     </tr>
                 </table>
             </td>
@@ -308,6 +308,23 @@
     <script src='/assets/js/recursos.js'></script>
     <!-- Script para preencher os dados dinamicamente -->
     <script>
+
+        // alimenta os dados do form
+        (async () => {
+            const procedimento = await getConfig('print-procedimento');
+            const produzidoPor = await getConfig('print-produzido-por');
+            const resultadoFinal = await getConfig('print-resultado-final');
+            const responsavelArea = await getConfig('print-responsavel-area');
+            const anexo = await getConfig('print-anexo');
+
+            $("#print-procedimento").html(procedimento.value);
+            $("#print-produzido-por").html(produzidoPor.value);
+            $("#print-resultado-final").html(resultadoFinal.value);
+            $("#print-responsavel-area").html(responsavelArea.value);
+            $("#print-anexo").html(anexo.value);
+        })();
+
+
         let param = getAllUrlParams()
 
         req_GET(opt.urlProjeto + `/detalhado/${param.id}`).then((result) => {
@@ -322,14 +339,14 @@
                 let garantias_visiveis = "";
                 data.nutrientes.forEach(nt => {
                     if (nt.visivel == 1) {
-                        garantias_visiveis += `<span class="negrito">${nt.formula}</span> - ${nt.percentual}% `
+                        garantias_visiveis += `<span class="negrito">${nt.formula}</span> - ${nt.percentual.toFixed(4)}% `
                     }
                 });
 
                 // Preenchendo os dados no HTML
                 document.title = `${data.codigo} - ${data.nome}`;
                 document.getElementById('nome_comercial').innerText = data.nome;
-                document.getElementById('densidade').innerText = data.densidade + " g/ml";
+                document.getElementById('densidade').innerText = data.densidade.toFixed(4) + " g/ml";
                 document.getElementById('ph').innerText = data.ph;
                 document.getElementById('tipo_fertilizante').innerText = data.tipo;
                 document.getElementById('modo_aplicacao').innerText = data.aplicacao.join(', ');
@@ -350,7 +367,7 @@
                 let totais = criaLista(data.densidade, data.etapas, tableBody);
 
                 // Calculando totais
-                document.getElementById('total_percentual').innerText = `${totais.somaPercentual}%`;
+                document.getElementById('total_percentual').innerText = `${totais.somaPercentual.toFixed(4)}%`;
                 document.getElementById('total_quantidade').innerText = totais.somaPeso;
 
 
@@ -360,13 +377,17 @@
                     let totais = criaLista(data.densidade, data.etapas, tableBody);
 
                     // Calculando totais
-                    document.getElementById('total_percentual').innerText = `${totais.somaPercentual}%`;
+                    document.getElementById('total_percentual').innerText = `${totais.somaPercentual.toFixed(4)}%`;
                     document.getElementById('total_quantidade').innerText = totais.somaPeso;
                 });
 
 
             }
         });
+
+
+
+
 
 
 
@@ -394,7 +415,7 @@
                                 <td>${i}</td>
                                 <td>${mp.materia_prima}</td>
                                 <td>${mp.id}</td>
-                                <td>${mp.percentual}%</td>
+                                <td>${mp.percentual.toFixed(4)}%</td>
                                 <td>${peso}</td>
                                 <td>${mp.tempo_agitacao}</td>
                                 `;

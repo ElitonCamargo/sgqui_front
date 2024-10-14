@@ -1,0 +1,44 @@
+<h2>Configurações do sistema</h2>
+<hr>
+
+<h3>Página de impressão</h3>
+
+<form class="form-group">
+    <label class="label">Procedimento: </label>
+    <textarea class="form-control" type="text" id="print-procedimento" name="print-procedimento"></textarea>
+    <label class="label">Produzido Por: </label>
+    <input class="form-control" type="text" id="print-produzido-por" name="print-produzido-por">
+    <label class="label">Resultado Final:</label>
+    <input class="form-control" type="text" id="print-resultado-final" name="print-resultado-final">
+    <label class="label">Responsável Área:</label>
+    <input class="form-control" type="text" id="print-responsavel-area" name="print-responsavel-area">
+    <label class="label">Anexo:</label>
+    <input class="form-control" type="text" id="print-anexo" name="print-anexo">
+
+</form>
+
+
+<script>
+
+    // alimenta os dados do form
+    (async () => {
+        const procedimento = await getConfig('print-procedimento');
+        const produzidoPor = await getConfig('print-produzido-por');
+        const resultadoFinal = await getConfig('print-resultado-final');
+        const responsavelArea = await getConfig('print-responsavel-area');
+        const anexo = await getConfig('print-anexo');
+
+        $("#print-procedimento").val(procedimento.value);
+        $("#print-produzido-por").val(produzidoPor.value);
+        $("#print-resultado-final").val(resultadoFinal.value);
+        $("#print-responsavel-area").val(responsavelArea.value);
+        $("#print-anexo").val(anexo.value);
+    })();
+
+
+
+
+
+
+
+</script>

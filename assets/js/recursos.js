@@ -1,4 +1,5 @@
 $(function () {
+
     // LOGAR
     $(document).on('click', '#logar', function () {
         let email = $('#email').val();
@@ -20,21 +21,35 @@ $(function () {
         };
 
         fetch(opt.urlLogar, requestOptions)
-            .then(response => response.json())
             .then(response => {
-                if (response.success) {
-
+                if (!response.ok) {
+                    throw new Error('Erro na requisição: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
                     if (!getSessionData('tk')) {
-                        setSessionData('tk', response.data[0].token);
-                        setSessionData('us', response.data[2]);
+                        setSessionData('tk', data.data[0].token);
+                        setSessionData('us', data.data[2]);
                         window.location.href = "/";
                     }
                 } else {
-                    $('#loginErro').text(response.erro); // Define o texto da div de erro
+                    $('#loginErro').text(data.erro); // Define o texto da div de erro
                     $('#loginErro').show(); // Mostra a div de erro
                 }
             })
+            .catch(error => {
+                console.error('Erro:', error);
+                if (error.message.includes('Failed to fetch')) {
+                    $('#loginErro').text('A API não está disponível. Verifique a conexão.'); // Mensagem se a API estiver fora
+                } else {
+                    $('#loginErro').text('Falha ao logar. Tente novamente.'); // Mensagem genérica em outros erros
+                }
+                $('#loginErro').show();
+            });
     });
+
     // FIM LOGAR
 })
 
@@ -46,7 +61,6 @@ const logoff = () => {
 }
 
 const req_GET = async (url = "") => {
-
     // Mostra o preload antes de fazer a requisição
     showPreload();
     try {
@@ -66,8 +80,11 @@ const req_GET = async (url = "") => {
         hidePreload();
 
         if (response.status === 404) {
-            alert('Nenhum registro encontrado.');
-            return
+            return {
+                status: 404,
+                message: 'Nenhum registro encontrado.',
+                data: null
+            };
         }
 
         if (!response.ok) {
@@ -78,18 +95,61 @@ const req_GET = async (url = "") => {
 
     } catch (error) {
         hidePreload(); // Garante que o preload será removido em caso de erro
-        alert('Erro ao tentar carregar os dados');
+
         console.error('Erro ao tentar fazer fetch:', error);
 
-        // Retorna um objeto com status e mensagem de erro
+        // Retorna o erro capturado para o frontend
         return {
-            status: null,
-            message: 'Ocorreu um erro ao tentar carregar os dados. Por favor, tente novamente mais tarde.',
+            status: (error.response && error.response.status) ? error.response.status : 500,
+            message: error.message || 'Erro ao tentar carregar os dados',
             data: null
         };
     }
 }
 
+const req_INSERT = async (url = "", data = {}) => {
+    // Mostra o preload antes de fazer a requisição
+    showPreload();
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "omit",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": getSessionData('tk')
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify(data)
+        });
+
+        // Remove o preload após completar a requisição
+        hidePreload();
+
+        if (!response.ok) {
+            // Retorna a resposta de erro como JSON
+            const errorResponse = await response.json();
+            return {
+                status: errorResponse.status,
+                message: errorResponse.erro.message,
+                data: errorResponse.data
+            };
+        }
+        return await response.json();
+    } catch (error) {
+        hidePreload(); // Garante que o preload será removido em caso de erro
+        console.error('Erro ao tentar fazer fetch:', error);
+
+        // Retorna o erro capturado para o frontend
+        return {
+            status: error?.response?.status || 500,
+            message: error.message || 'Erro ao tentar carregar os dados',
+            data: null
+        };
+    }
+}
 
 const req_UPDATE = async (url = "", data = {}) => {
     // Mostra o preload antes de fazer a requisição
@@ -113,57 +173,18 @@ const req_UPDATE = async (url = "", data = {}) => {
         hidePreload();
 
         if (!response.ok) {
-            console.log(response)
+            console.log(response);
             throw new Error('Failed to fetch');
         }
         return await response.json();
     } catch (error) {
-        alert('Erro ao tentar carregar os dados');
+        hidePreload(); // Garante que o preload será removido em caso de erro
         console.error('Erro ao tentar fazer fetch:', error);
-        // Retorna um objeto com status e mensagem de erro
+
+        // Retorna o erro capturado para o frontend
         return {
-            status: null, // Aqui você pode definir um valor padrão para status de erro
-            message: 'Ocorreu um erro ao tentar carregar os dados. Por favor, tente novamente mais tarde.',
-            data: null
-        };
-    }
-}
-
-
-const req_INSERT = async (url = "", data = {}) => {
-    // Mostra o preload antes de fazer a requisição
-    showPreload();
-    try {
-
-        const response = await fetch(url, {
-            method: "POST",
-            mode: "cors",
-            cache: "no-cache",
-            credentials: "omit",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": getSessionData('tk')
-            },
-            redirect: "follow",
-            referrerPolicy: "no-referrer",
-            body: JSON.stringify(data)
-        });
-
-        // Remove o preload após completar a requisição
-        hidePreload();
-
-        if (!response.ok) {
-            console.log(response)
-            throw new Error('Failed to fetch');
-        }
-        return await response.json();
-    } catch (error) {
-        alert('Erro ao tentar carregar os dados');
-        console.error('Erro ao tentar fazer fetch:', error);
-        // Retorna um objeto com status e mensagem de erro
-        return {
-            status: null, // Aqui você pode definir um valor padrão para status de erro
-            message: 'Ocorreu um erro ao tentar carregar os dados. Por favor, tente novamente mais tarde.',
+            status: error?.response?.status || 500,
+            message: error.message || 'Erro ao tentar carregar os dados',
             data: null
         };
     }
@@ -190,21 +211,23 @@ const req_DELETE = async (url = '') => {
         hidePreload();
 
         if (!response.ok) {
-            console.log(response)
+            console.log(response);
             throw new Error('Failed to fetch');
         }
         return await response.json();
     } catch (error) {
-        alert('Erro ao tentar carregar os dados');
+        hidePreload(); // Garante que o preload será removido em caso de erro
         console.error('Erro ao tentar fazer fetch:', error);
-        // Retorna um objeto com status e mensagem de erro
+
+        // Retorna o erro capturado para o frontend
         return {
-            status: null, // Aqui você pode definir um valor padrão para status de erro
-            message: 'Ocorreu um erro ao tentar carregar os dados. Por favor, tente novamente mais tarde.',
+            status: error?.response?.status || 500,
+            message: error.message || 'Erro ao tentar carregar os dados',
             data: null
         };
     }
 }
+
 // Função para mostrar o preload (pode ser uma spinner, mensagem, etc.)
 const showPreload = () => {
     // Exemplo simples: mostrando uma mensagem de "Carregando..."
@@ -224,6 +247,15 @@ const hidePreload = () => {
     }
 };
 
+// Função para abrir o modal com a mensagem de erro
+const showErrorModal = (errorMessage) => {
+    // Define a mensagem de erro no modal
+    document.getElementById('modalErrorMessage').textContent = errorMessage;
+
+    // Abre o modal
+    const modal = new bootstrap.Modal(document.getElementById('errorModal'));
+    modal.show();
+};
 
 //Função para criar uma sessão com dados
 const setSessionData = (key, value) => {
@@ -240,7 +272,6 @@ const getSessionData = (key) => {
 const destroySession = (key) => {
     sessionStorage.removeItem(key);
 }
-
 
 //Função para transformar dados de um form em json
 const serializadoParaJSON = (serializado) => {
@@ -275,10 +306,9 @@ const formatarDataPtBr = (dataString) => {
     //     const segundo = ('0' + data.getSeconds()).slice(-2);
     //     return `${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}`;
     // } else {
-        return `${dia}/${mes}/${ano}`;
+    return `${dia}/${mes}/${ano}`;
     // }
 }
-
 
 //Função para formatar data para Mysql
 const formatarDataMysql = (data) => {
@@ -335,6 +365,62 @@ const getAllUrlParams = () => {
     return params;
 }
 
+// funções para a tabela de configurações
+const getConfig = async (key) => {
+    try {
+        const result = await req_GET(`${opt.urlConfig}?key=${key}`);
+
+        if (result.success) {
+            return result.data[0];
+        } else {
+            return null; // ou outro valor padrão caso não haja sucesso
+        }
+    } catch (error) {
+        console.error('Erro ao obter config:', error);
+        return null;
+    }
+};
+
+const insertConfig = async (key, value) => {
+    let data = {
+        "key": key,
+        "value": value
+    };
+
+    try {
+        const result = await req_INSERT(`${opt.urlConfig}`, data);
+        return result;
+    } catch (error) {
+        console.error('Erro ao inserir config:', error);
+        return null;
+    }
+};
+
+const updateConfig = async (key, value) => {
+    let data = {
+        "key": key,
+        "value": value
+    };
+
+    try {
+        const result = await req_UPDATE(`${opt.urlConfig}`, data);
+        return result.success ? result : null;
+    } catch (error) {
+        console.error('Erro ao atualizar config:', error);
+        return null;
+    }
+};
+
+const deleteConfig = async (id) => {
+    try {
+        const result = await req_DELETE(`${opt.urlConfig}/${id}`);
+        return result.success ? result : null;
+    } catch (error) {
+        console.error('Erro ao deletar config:', error);
+        return null;
+    }
+};
+
 const showError = (codErro, codStatus) => {
 
     alert(`Erro ${codErro}: ${erro[codErro]}`);
@@ -348,7 +434,7 @@ const showError = (codErro, codStatus) => {
 
 const removeAcento = (str) => {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  }
+}
 
 async function start() {
     if (!getSessionData('tk')) {
@@ -469,7 +555,7 @@ async function carregaCardsHome() {
             if (cardsContainer) {
                 menu.forEach(item => {
                     const cardElement = document.createElement('div');
-                    cardElement.className = 'col-md-4 mb-3';
+                    cardElement.className = 'col-md-3 mb-3';
                     cardElement.innerHTML = `
                     <div class="card shadow">
                         <a class="card-body text-center" href="${getCardUrl(item)}" style="
@@ -511,6 +597,8 @@ async function carregaCardsHome() {
             const listarItem = item.dropdown.find(subItem => subItem.title === 'Listar');
             if (listarItem) {
                 return listarItem.url; // Retorna a URL de "Listar" se existir no submenu
+            } else {
+                return item.dropdown[0].url
             }
         }
         return '#'; // Caso contrário, retorna uma URL padrão ou "#" (página atual)

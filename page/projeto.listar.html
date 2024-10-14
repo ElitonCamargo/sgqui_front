@@ -222,9 +222,21 @@
         });
       });
       let query = filters.length > 0 ? `?filtro_avancado=${JSON.stringify(filters)}` : '';
+
       req_GET(opt.urlProjeto + query).then((result) => {
+        if (!result.success) {
+          // Tratamento de erro
+          let errorMessage;
+          errorMessage = `${result.message || 'Erro desconhecido.'}`;
+          // Usa a função showErrorModal para mostrar o erro
+          showErrorModal(errorMessage);
+          return;
+        }
         data = result.data; // Atualiza os dados com a resposta da requisição
         table.clear().rows.add(data).draw(); // Limpa a tabela, adiciona os novos dados e redesenha
+      }).catch(error => {
+        // Tratamento de erro de rede ou erro inesperado
+        showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
       });
 
     }
@@ -232,26 +244,36 @@
     //** Consultar materia prima e nutriente para o auto-complete **************************************************  
     let listaDeElementosDoFiltro = [];
     (() => {
-      req_GET(opt.urlNutriente).then(results => {
-        
-        if (results.success) {
+      req_GET(opt.urlNutriente).then(result => {
 
-          listaDeElementosDoFiltro = results.data.map(elemento => {
-            return { tipo: "nutriente", id: elemento.id, nome: elemento.nome, formula: elemento.formula }
-          });
-
-          (() => {
-            req_GET(opt.urlMateriaPrima).then(results => {
-              if (results.success) {
-                listaDeElementosDoFiltro = listaDeElementosDoFiltro.concat(results.data.map(elemento => {
-                  return { tipo: "materia_prima", id: elemento.id, nome: elemento.nome, formula: elemento.formula }
-                }));
-              }
-            }).catch(error => console.error('Erro capturado:', error));
-          })();
-          
+        if (!result.success) {
+          // Tratamento de erro
+          let errorMessage;
+          errorMessage = `${result.message || 'Erro desconhecido.'}`;
+          // Usa a função showErrorModal para mostrar o erro
+          showErrorModal(errorMessage);
+          return;
         }
-      }).catch(error => console.error('Erro capturado:', error));
+
+        listaDeElementosDoFiltro = result.data.map(elemento => {
+          return { tipo: "nutriente", id: elemento.id, nome: elemento.nome, formula: elemento.formula }
+        });
+
+        (() => {
+          req_GET(opt.urlMateriaPrima).then(result => {
+            if (result.success) {
+              listaDeElementosDoFiltro = listaDeElementosDoFiltro.concat(result.data.map(elemento => {
+                return { tipo: "materia_prima", id: elemento.id, nome: elemento.nome, formula: elemento.formula }
+              }));
+            }
+          }).catch(error => console.error('Erro capturado:', error));
+        })();
+
+
+      }).catch(error => {
+        // Tratamento de erro de rede ou erro inesperado
+        showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+      });
     })();
 
     console.log(listaDeElementosDoFiltro)
@@ -298,94 +320,95 @@
     req_GET(opt.urlProjeto).then((result) => {
 
       data = result.data;
-      if (result.success) {
+      if (!result.success) {
+        // Tratamento de erro
+        let errorMessage;
+        errorMessage = `${result.message || 'Erro desconhecido.'}`;
+        // Usa a função showErrorModal para mostrar o erro
+        //showErrorModal(errorMessage);
+        data = null;
+      }
+      
+      // INICIA DATATABLE
+      table = $('#tabela-projetos').DataTable({
+        data: data,
+        order: [[12, 'desc']],
+        language: {
+          emptyTable: "Não foram encontrados registros"
+        },
+        columns: [
 
-        // INICIA DATATABLE
-        table = $('#tabela-projetos').DataTable({
-          data: data,
-          order: [[12, 'desc']],
-          language: {
-            emptyTable: "Não foram encontrados registros"
+          {
+            title: 'Data Criação', data: 'createdAt',
+            render: function (data, type, row) {
+              return formatarDataPtBr(row.createdAt)
+            }
           },
-          columns: [
+          { title: 'Código', data: 'codigo', visible: true },
+          { title: 'Nome', data: 'nome' },
+          {
+            title: 'Início',
+            data: null,
+            render: function (data, type, row) {
+              return formatarDataPtBr(row.data_inicio)
+            }
+          },
+          { title: 'Densidade', data: 'densidade', visible: false },
+          { title: 'PH', data: 'ph' },
+          { title: 'Tipo', data: 'tipo' },
+          { title: 'Aplicação', data: 'aplicacao', visible: false },
+          { title: 'Natureza Física', data: 'natureza_fisica' },
+          {
+            title: 'Status',
+            data: null,
+            render: function (data, type, row) {
+              return row.status[0].status;
+            }
+          },
+          {
+            title: 'Término',
+            data: null,
+            render: function (data, type, row) {
+              return formatarDataPtBr(row.data_inicio)
+            }
+          },
+          { // Coluna para os botões de ação
+            title: 'Ações',
+            data: null,
+            orderable: false,
 
-            {
-              title: 'Data Criação', data: 'createdAt',
-              render: function (data, type, row) {
-                return formatarDataPtBr(row.createdAt)
-              }
-            },
-            { title: 'Código', data: 'codigo', visible: true },
-            { title: 'Nome', data: 'nome' },
-            {
-              title: 'Início',
-              data: null,
-              render: function (data, type, row) {
-                return formatarDataPtBr(row.data_inicio)
-              }
-            },
-            { title: 'Densidade', data: 'densidade', visible: false },
-            { title: 'PH', data: 'ph' },
-            { title: 'Tipo', data: 'tipo' },
-            { title: 'Aplicação', data: 'aplicacao', visible: false },
-            { title: 'Natureza Física', data: 'natureza_fisica' },
-            {
-              title: 'Status',
-              data: null,
-              render: function (data, type, row) {
-                return row.status[0].status;
-              }
-            },
-            {
-              title: 'Término',
-              data: null,
-              render: function (data, type, row) {
-                return formatarDataPtBr(row.data_inicio)
-              }
-            },
-            { // Coluna para os botões de ação
-              title: 'Ações',
-              data: null,
-              orderable: false,
-
-              render: function (data, type, row) {
-                return `
+            render: function (data, type, row) {
+              return `
                           <button class="btn btn-outline-secondary btn-sm btn-detalhes-editar" data-id="${row.id}" data-toggle="modal" data-target="#detalhesModal" title="Ver/Editar"><i class="fa-solid fa-eye"></i>/<i class="fa-solid fa-pen-to-square"></i></button>
                           <button class="btn btn-outline-secondary btn-sm btn-clonar" data-id="${row.id}" data-nome="${row.nome}" data-toggle="modal" data-target="#clonarProjeto" title="Clonar Projeto"><i class="fa-solid fa-clone"></i></button>
                           <a href="/projetos/etapa?id=${row.id}" class="btn btn-outline-secondary btn-sm btn-etapas" title="Etapas"><i class="fa-solid fa-tasks"></i></a>
                           <a href="/page/projeto_impressao.html?id=${row.id}"  class="btn btn-outline-secondary btn-sm btn-imprimir" title="Imprimir"><i class="fa-solid fa-print"></i></a>
                           <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" title="Excluir"><i class="fa-solid fa-ban"></i></button>
                           `;
-              }
-            },
-            { title: 'Update', data: 'updatedAt', visible: false }
-          ],
-          // Habilita a pesquisa global
-          searching: true
-        });
-        //FIM DATATABLE
+            }
+          },
+          { title: 'Update', data: 'updatedAt', visible: false }
+        ],
+        // Habilita a pesquisa global
+        searching: true
+      });
+      //FIM DATATABLE
 
 
 
-        // Adiciona campos de pesquisa em cada cabeçalho de coluna
-        $('#tabela-projetos thead th').each(function () {
-          let title = $(this).text();
-          if (title !== "Ações") {
-            $(this).html(`<input type="text" class="form-control form-control-sm" placeholder="${title} "/>`);
-          }
-        });
+      // Adiciona campos de pesquisa em cada cabeçalho de coluna
+      $('#tabela-projetos thead th').each(function () {
+        let title = $(this).text();
+        if (title !== "Ações") {
+          $(this).html(`<input type="text" class="form-control form-control-sm" placeholder="${title} "/>`);
+        }
+      });
 
-        // Adiciona um evento de pesquisa para cada campo de entrada de texto nas colunas
-        $('#tabela-projetos thead th input').on('keyup', function () {
-          let columnIndex = $(this).closest('th').index(); // Obtém o índice da coluna
-          table.column(columnIndex).search(this.value).draw();
-        });
-
-
-        // se conexao com api erro
-      } else {
-        showError(15, data.status);
-      }
+      // Adiciona um evento de pesquisa para cada campo de entrada de texto nas colunas
+      $('#tabela-projetos thead th input').on('keyup', function () {
+        let columnIndex = $(this).closest('th').index(); // Obtém o índice da coluna
+        table.column(columnIndex).search(this.value).draw();
+      });
 
       //Abre modal de visualização e edição de projetos
       $('#tabela-projetos').on('click', '.btn-detalhes-editar', function () {
@@ -613,6 +636,9 @@
         excluiProjeto(id, nome);
       });
 
+    }).catch(error => {
+      // Tratamento de erro de rede ou erro inesperado
+      showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
     });//FIM GETAPI
 
     // FUNCOES AUXILIARES
@@ -620,15 +646,23 @@
     function clonarProjeto(id) {
 
       let urlClonar = opt.urlProjeto + "/" + id;
-      req_INSERT(urlClonar).then((data) => {
-        if (data.success) {
-          // fecha modal
-          $("#clonarProjeto").modal('hide')
-          alterado = 1;
-        } else {
-          $('#clonarProjeto .modal-body').html(`Erro: ${data.erro.message}`);
-          $('#clonarProjeto').modal("show");
+      req_INSERT(urlClonar).then((result) => {
+
+        if (!result.success) {
+          // Tratamento de erro
+          let errorMessage;
+          errorMessage = `${result.message || 'Erro desconhecido.'}`;
+          // Usa a função showErrorModal para mostrar o erro
+          showErrorModal(errorMessage);
+          return;
         }
+        // fecha modal
+        $("#clonarProjeto").modal('hide')
+        alterado = 1;
+
+      }).catch(error => {
+        // Tratamento de erro de rede ou erro inesperado
+        showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
       });
 
     }
@@ -641,15 +675,24 @@
       // Evento ao clicar no botão "Confirmar Exclusão" no modal de confirmação
       $('#confirmarExclusao').on('click', function () {
         let urlExclusao = opt.urlProjeto + "/" + id;
-        req_DELETE(urlExclusao).then((data) => {
-          if (data.success) {
-            // Fecha o modal de confirmação de exclusão
-            $('#confirmacaoExclusaoModal').modal('hide');
-            alterado = 1;
-          } else {
-            $('#confirmacaoExclusaoModal .modal-body').html(`Erro: ${data.erro.message}`);
-            $('#confirmacaoExclusaoModal').modal("show");
+        req_DELETE(urlExclusao).then((result) => {
+
+          if (!result.success) {
+            // Tratamento de erro
+            let errorMessage;
+            errorMessage = `${result.message || 'Erro desconhecido.'}`;
+            // Usa a função showErrorModal para mostrar o erro
+            showErrorModal(errorMessage);
+            return;
           }
+
+          // Fecha o modal de confirmação de exclusão
+          $('#confirmacaoExclusaoModal').modal('hide');
+          alterado = 1;
+
+        }).catch(error => {
+          // Tratamento de erro de rede ou erro inesperado
+          showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
         });
       });
     }
@@ -661,10 +704,24 @@
 
     $('.modal').on('hidden.bs.modal', function (e) {
       if (alterado !== 0) {
-        req_GET(opt.urlProjeto).then((res) => {
-          data = res.data; // Atualiza os dados com a resposta da requisição
+        req_GET(opt.urlProjeto).then((result) => {
+
+          if (!result.success) {
+            // Tratamento de erro
+            let errorMessage;
+            errorMessage = `${result.message || 'Erro desconhecido.'}`;
+            // Usa a função showErrorModal para mostrar o erro
+            showErrorModal(errorMessage);
+            return;
+          }
+
+          data = result.data; // Atualiza os dados com a resposta da requisição
           table.clear().rows.add(data).draw(); // Limpa a tabela, adiciona os novos dados e redesenha
           $('#detalhesProjeto').empty(); // Limpar o conteúdo do projeto com id 'detalhesProjeto'
+
+        }).catch(error => {
+          // Tratamento de erro de rede ou erro inesperado
+          showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
         });
 
       }

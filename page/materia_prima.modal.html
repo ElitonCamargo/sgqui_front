@@ -53,6 +53,7 @@
                         }
                         return response.data;
                     })
+
                     .then(function (data) {
                         var suggestions = data.map(function (item) {
                             return {
@@ -117,53 +118,75 @@
             $('#tbGarantias tbody').empty()
             req_GET(opt.urlGarantiaMateriaPrima + `/${idMateriaPrima}`).then((res) => {
 
+                if (!result.success) {
+                    // Tratamento de erro
+                    let errorMessage;
+                    errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                    // Usa a função showErrorModal para mostrar o erro
+                    showErrorModal(errorMessage);
+                    return;
+                }
+
                 data = res.data;
 
-                if (res.success) {
+                let tBodyData;
 
-                    let tBodyData;
-
-                    data.forEach(nutriente => {
-                        tBodyData += `
+                data.forEach(nutriente => {
+                    tBodyData += `
                                         <tr>
                                             <td>${nutriente.nutriente_Nome}</td>
                                             <td>${nutriente.garantia_Percentual}</td>
                                             <td><button class="btn btn-outline-secondary btn-sm btn-excluir-garantia" data-id="${nutriente.garantia_Id}" ><i class="fa-solid fa-ban"></i></button></td>
                                         </tr>
                                         `
-                    });
+                });
 
-                    $('#tbGarantias tbody').html(tBodyData)
-                }
-            })
+                $('#tbGarantias tbody').html(tBodyData)
+
+            }).catch(error => {
+                // Tratamento de erro de rede ou erro inesperado
+                showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+            });
         }
 
         function cadastraGarantia(data) {
 
             req_INSERT(opt.urlGarantia, data)
                 .then(result => {
-
-
-                    console.log(result)
-                    // Exibir resposta da API no console
-                    if (result.success === true) {
-                        carregaGarantias();
-                    } else {
-                        alert(`Erro10:falha api cadastrar garantia`)
+                    if (!result.success) {
+                        // Tratamento de erro
+                        let errorMessage;
+                        errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                        // Usa a função showErrorModal para mostrar o erro
+                        showErrorModal(errorMessage);
+                        return;
                     }
+
+                    carregaGarantias();
+
+                }).catch(error => {
+                    // Tratamento de erro de rede ou erro inesperado
+                    showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
                 });
         }
 
         function excluiGarantia(garantia_Id) {
             req_DELETE(opt.urlGarantia + "/" + garantia_Id)
                 .then(result => {
-                    // Exibir resposta da API no console
-                    if (result.success === true) {
-                        carregaGarantias();
-                    } else {
-                        showError(11, result.status);
+                    if (!result.success) {
+                        // Tratamento de erro
+                        let errorMessage;
+                        errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                        // Usa a função showErrorModal para mostrar o erro
+                        showErrorModal(errorMessage);
+                        return;
                     }
-                })
+                    carregaGarantias();
+
+                }).catch(error => {
+                    // Tratamento de erro de rede ou erro inesperado
+                    showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+                });
         }
 
 

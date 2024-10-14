@@ -17,7 +17,7 @@
 </table>
 
 <!-- Modal -->
-<div class="modal fade" id="detalhesModal" tabindex="-1" role="dialog">
+<div class="modal modal-xl fade" id="detalhesModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -29,8 +29,7 @@
           <!-- Detalhes do materia_prima serão exibidos aqui -->
         </div>
         <div class="modal-footer">
-          <button type="button" id="btnEditar" class="btn btn-outline-secondary btn-sm"
-          >Editar</button>
+          <button type="button" id="btnEditar" class="btn btn-outline-secondary btn-sm">Editar</button>
           <button type="submit" id="btnSalvar" class="btn btn-outline-secondary btn-sm d-none">Salvar
             Alterações</button>
           <button type="button" class="btn btn-outline-secondary btn-sm btn-fecha-modal"
@@ -92,63 +91,66 @@
 
       data = result.data;
 
-      if (result.success) {
+      if (!result.success) {
+        // Tratamento de erro
+        let errorMessage;
+        // errorMessage = `${result.message || 'Erro desconhecido.'}`;
+        // Usa a função showErrorModal para mostrar o erro
+        // showErrorModal(errorMessage);
+        data = null;
+      }
 
-        // INICIA DATATABLE
-        table = $('#tabela-materiaPrima').DataTable({
-          data: data,
-          order: [[7, 'desc']],
-          columns: [
-            { title: 'Código', data: 'codigo' },
-            { title: 'Nome', data: 'nome' },
-            { title: 'Fórmula', data: 'formula' },
-            { title: 'CAS Number', data: 'cas_number' },
-            { title: 'Densidade', data: 'densidade' },
-            { title: 'Descrição', data: 'descricao' },
-            { // Coluna para os botões de ação
-              title: 'Ações',
-              data: null,
-              orderable: false,
-              
-              render: function (data, type, row) {
-                return `
+
+
+      // INICIA DATATABLE
+      table = $('#tabela-materiaPrima').DataTable({
+        data: data,
+        order: [[7, 'desc']],
+        columns: [
+          { title: 'Código', data: 'codigo' },
+          { title: 'Nome', data: 'nome' },
+          { title: 'Fórmula', data: 'formula' },
+          { title: 'CAS Number', data: 'cas_number' },
+          { title: 'Densidade', data: 'densidade' },
+          { title: 'Descrição', data: 'descricao' },
+          { // Coluna para os botões de ação
+            title: 'Ações',
+            data: null,
+            orderable: false,
+
+            render: function (data, type, row) {
+              return `
                 <button class="btn btn-outline-secondary btn-sm btn-detalhes-editar" data-id="${row.id}" data-bs-toggle="modal" data-bs-target="#detalhesModal" title="Ver/Editar"><i class="fa-solid fa-eye"></i>/<i class="fa-solid fa-pen-to-square"></i></button>
                 <button class="btn btn-outline-secondary btn-sm btn-garantias" data-id="${row.id}" data-nome="${row.nome}" data-bs-toggle="modal" data-bs-target="#modalGarantias" title="Garantias"><i class="fa-solid fa-award"></i></button>
                 <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" data-bs-toggle="modal" data-bs-target="#confirmacaoExclusaoModal" title="Excluir"><i class="fa-solid fa-ban"></i></button>
                 `;
-              }
-            },
-            { title: 'Update', data: 'updatedAt', visible:false },
-          ],
-          columnDefs: [
-            { targets: 6, autoWidth: true } // Ativa o ajuste automático da largura para a primeira coluna
-          ],
-          // Habilita a pesquisa global
-          searching: true
-        });
-        //FIM DATATABLE
+            }
+          },
+          { title: 'Update', data: 'updatedAt', visible: false },
+        ],
+        columnDefs: [
+          { targets: 6, autoWidth: true } // Ativa o ajuste automático da largura para a primeira coluna
+        ],
+        // Habilita a pesquisa global
+        searching: true
+      });
+      //FIM DATATABLE
 
 
 
-        // Adiciona campos de pesquisa em cada cabeçalho de coluna
-        $('#tabela-materiaPrima thead th').each(function () {
-          let title = $(this).text();
-          if (title !== "Ações") {
-            $(this).html(`<input type="text" class="form-control form-control-sm" placeholder="${title} "/>`);
-          }
-        });
+      // Adiciona campos de pesquisa em cada cabeçalho de coluna
+      $('#tabela-materiaPrima thead th').each(function () {
+        let title = $(this).text();
+        if (title !== "Ações") {
+          $(this).html(`<input type="text" class="form-control form-control-sm" placeholder="${title} "/>`);
+        }
+      });
 
-        // Adiciona um evento de pesquisa para cada campo de entrada de texto nas colunas
-        $('#tabela-materiaPrima thead th input').on('keyup', function () {
-          let columnIndex = $(this).closest('th').index(); // Obtém o índice da coluna
-          table.column(columnIndex).search(this.value).draw();
-        });
-
-
-        // se conexao com api erro
-      } else {
-        showError(8, result.status)
-      }
+      // Adiciona um evento de pesquisa para cada campo de entrada de texto nas colunas
+      $('#tabela-materiaPrima thead th input').on('keyup', function () {
+        let columnIndex = $(this).closest('th').index(); // Obtém o índice da coluna
+        table.column(columnIndex).search(this.value).draw();
+      });
 
 
       ///////////////EDITAR///////////////////////
@@ -164,29 +166,35 @@
       function exibirDetalhes(materia_prima) {
         let html = `
                 <div class="form-group">
-                    <div class="form-group">
-                      <label for="codigo">Código:</label>
-                      <input type="text" class="form-control" id="codigo" name="codigo" value="${materia_prima.codigo}" readonly>
+                    <div class="row">
+                        <div class="col-md-2">
+                        <label for="codigo">Código:</label>
+                        <input type="text" class="form-control" id="codigo" name="codigo" value="${materia_prima.codigo}" readonly>
+                        </div>
+                        <div class="col-md-10">
+                        <label for="nome">Nome:</label>
+                        <input type="text" class="form-control" id="nome" name="nome" value="${materia_prima.nome}" readonly>
+                      </div>
                     </div>
-                    <div class="form-group">
-                      <label for="nome">Nome:</label>
-                      <input type="text" class="form-control" id="nome" name="nome" value="${materia_prima.nome}" readonly>
-                    </div>
-                    <div class="form-group">
-                      <label for="formula">Fórmula:</label>
-                      <input type="text" class="form-control" id="formula" name="formula" value="${materia_prima.formula}" readonly>
-                    </div>
-                    <div class="form-group">
-                      <label for="cas_number">CAS Number:</label>
-                      <input type="text" class="form-control" id="cas_number" name="cas_number" value="${materia_prima.cas_number}" readonly>
-                    </div>
-                    <div class="form-group">
-                      <label for="densidade">Densidade:</label>
-                      <input type="text" class="form-control" id="densidade" name="densidade" value="${materia_prima.densidade}" readonly>
-                    </div>
-                    <div class="form-group">
-                      <label for="descricao">Descrição:</label>
-                      <textarea class="form-control" id="descricao" name="descricao" readonly>${materia_prima.descricao}</textarea>
+                    <div class="row">
+                      <div class="col-md-4">
+                        <label for="formula">Fórmula:</label>
+                        <input type="text" class="form-control" id="formula" name="formula" value="${materia_prima.formula}" readonly>
+                        </div>
+                        <div class="col-md-4">
+                        <label for="cas_number">CAS Number:</label>
+                        <input type="text" class="form-control" id="cas_number" name="cas_number" value="${materia_prima.cas_number}" readonly>
+                        </div>
+                        <div class="col-md-4">
+                        <label for="densidade">Densidade:</label>
+                        <input type="text" class="form-control" id="densidade" name="densidade" value="${materia_prima.densidade}" readonly>
+                      </div>
+                    <div>
+                   <div class="row">   
+                      <div class="col-md-12">
+                        <label for="descricao">Descrição:</label>
+                        <textarea class="form-control" id="descricao" name="descricao" readonly>${materia_prima.descricao}</textarea>
+                      </div>
                     </div>
                     <input type="hidden" id="id" name="id" value="${materia_prima.id}">
                 </div>
@@ -212,14 +220,23 @@
         req_UPDATE(opt.urlMateriaPrima + "/" + jsonData.id, jsonData)
           .then(result => {
 
-            // Exibir resposta da API no console
-            if (result.success) {
-              $('#detalhesModal .modal-body').html(`${jsonData.nome} atualizado com sucesso!`);
-              $('#detalhesModal #btnSalvar').hide();
-              alterado = 1
-            } else {
-              showError(9,result.status)
+            if (!result.success) {
+              // Tratamento de erro
+              let errorMessage;
+              errorMessage = `${result.message || 'Erro desconhecido.'}`;
+              // Usa a função showErrorModal para mostrar o erro
+              showErrorModal(errorMessage);
+              return;
             }
+
+            // Exibir resposta da API no console
+            $('#detalhesModal .modal-body').html(`${jsonData.nome} atualizado com sucesso!`);
+            $('#detalhesModal #btnSalvar').hide();
+            alterado = 1
+
+          }).catch(error => {
+            // Tratamento de erro de rede ou erro inesperado
+            showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
           });
       });
 
@@ -248,15 +265,22 @@
         // Evento ao clicar no botão "Confirmar Exclusão" no modal de confirmação
         $('#confirmarExclusao').on('click', function () {
           let urlExclusao = opt.urlMateriaPrima + "/" + id;
-          req_DELETE(urlExclusao).then((data) => {
-            if (data.success) {
-              // Fecha o modal de confirmação de exclusão
-              $('#confirmacaoExclusaoModal').modal('hide');
-              alterado = 1;
-            } else {
-              $('#confirmacaoExclusaoModal .modal-body').html(`Erros: ${data.erro.message}`);
-              $('#confirmacaoExclusaoModal').modal("show");
+          req_DELETE(urlExclusao).then((result) => {
+            if (!result.success) {
+              // Tratamento de erro
+              let errorMessage;
+              errorMessage = `${result.message || 'Erro desconhecido.'}`;
+              // Usa a função showErrorModal para mostrar o erro
+              showErrorModal(errorMessage);
+              return;
             }
+            // Fecha o modal de confirmação de exclusão
+            $('#confirmacaoExclusaoModal').modal('hide');
+            alterado = 1;
+
+          }).catch(error => {
+            // Tratamento de erro de rede ou erro inesperado
+            showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
           });
         });
       }
@@ -283,20 +307,32 @@
 
       ///////////////FIM GARANTIAS///////////////////////
 
-
+    }).catch(error => {
+      // Tratamento de erro de rede ou erro inesperado
+      showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
     });//FIM GETAPI
 
     // FUNCOES AUXILIARES
 
-    $(".modal").on("click", ".btn-fecha-modal", function () {
-      $('.modal').modal('hide');
-    })
 
     $('.modal').on('hidden.bs.modal', function () {
       if (alterado !== 0) {
         req_GET(opt.urlMateriaPrima).then((result) => {
+          
+          if (!result.success) {
+            // Tratamento de erro
+            let errorMessage;
+            errorMessage = `${result.message || 'Erro desconhecido.'}`;
+            // Usa a função showErrorModal para mostrar o erro
+            showErrorModal(errorMessage);
+            return;
+          }
+
           data = result.data; // Atualiza os dados com a resposta da requisição
           table.clear().rows.add(data).draw(); // Limpa a tabela, adiciona os novos dados e redesenha
+        }).catch(error => {
+          // Tratamento de erro de rede ou erro inesperado
+          showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
         });
       }
     })

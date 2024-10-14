@@ -67,6 +67,8 @@
     .etapa-list p {
         margin-top: 50px !important;
     }
+    .nutrientes-por-etapa input{width: 75%;}
+
 </style>
 <div class="row">
     <div class="col-10">
@@ -266,11 +268,22 @@
             });
             // ************************************************** Chamando a função para executar a ação na API **********************************
 
-            console.log("ordem",etapa_ordem)
+            console.log("ordem", etapa_ordem)
 
-            req_UPDATE(opt.urlEtapa + "/projeto/ordenar", etapa_ordem)
-                .then(result => console.log(result))
-                .catch(error => console.log('error', error));
+            req_UPDATE(opt.urlEtapa + "/projeto/ordenar", etapa_ordem).then(result => {
+
+                if (!result.success) {
+                    // Tratamento de erro
+                    let errorMessage;
+                    errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                    // Usa a função showErrorModal para mostrar o erro
+                    showErrorModal(errorMessage);
+                    return;
+                }
+            }).catch(error => {
+                // Tratamento de erro de rede ou erro inesperado
+                showErrorModal(`1 - Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+            });
         }
     });
 
@@ -310,9 +323,20 @@
                 console.log('Mover nutriente entre etapas \n', arrayParaUpdate);
                 // ************************************************** Chamando a função para executar a ação na API **********************************
                 // Alterar as matérias primas dentro das etapas
-                req_UPDATE(opt.urlEtapaMp + "/ordenar/m_p", arrayParaUpdate)
-                    .then(result => console.log(result))
-                    .catch(error => console.log('error', error));
+                req_UPDATE(opt.urlEtapaMp + "/ordenar/m_p", arrayParaUpdate).then(result => {
+
+                    if (!result.success) {
+                        // Tratamento de erro
+                        let errorMessage;
+                        errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                        // Usa a função showErrorModal para mostrar o erro
+                        showErrorModal(errorMessage);
+                        return;
+                    }
+                }).catch(error => {
+                    // Tratamento de erro de rede ou erro inesperado
+                    showErrorModal(`2 - Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+                });
 
 
             }
@@ -323,42 +347,52 @@
     const projeto_detalhado = (id_projeto = parseInt(getAllUrlParams()['id'])) => {
 
         //Consultar projetos detalhados......
-        req_GET(opt.urlProjeto + `/detalhado/${id_projeto}`).then(results => {
+        req_GET(opt.urlProjeto + `/detalhado/${id_projeto}`).then(result => {
 
-            console.log(results)
-
-            if (results.success) {
-                // *************** Detalhes do Projeto ****************************************************************
-                let projeto = results.data[0];
-                $('#tituloProjeto').text(`Projeto: ${projeto.nome}`);
-                $('#detalhesProjeto_codigo').text(projeto.codigo);
-                $('#detalhesProjeto_nome').text(projeto.nome);
-                $('#detalhesProjeto_cliente').text(projeto.cliente);
-                $('#detalhesProjeto_data_criacao').text(formatarDataPtBr(projeto.createdAt));
-                $('#detalhesProjeto_data_inicio').text(formatarDataPtBr(projeto.data_inicio));
-                $('#detalhesProjeto_data_termino').text(formatarDataPtBr(projeto.data_termino));
-                $('#detalhesProjeto_status').text(projeto.status[0].status);
-                $('#detalhesProjeto_descricao').text(projeto.descricao);
-                $('#detalhesProjeto_aplicacao').text(projeto.aplicacao);
-                $('#detalhesProjeto_tipo').text(projeto.tipo);
-                $('#detalhesProjeto_natureza_fisica').text(projeto.natureza_fisica);
-                $('#detalhesProjeto_densidade').text(projeto.densidade.toFixed(2));
-                $('#detalhesProjeto_ph').text(projeto.ph);
-                exibirPercentualConcluido(projeto.percentual_concluido);
-
-                // *************** Tabela de nutrientes *****************************************************************  
-
-                $('#tbody_nutricional').empty();  // Limpa o conteúdo da tabela antes de adicionar os novos dados
-
-                projeto.nutrientes.forEach(addDadosTableNutricional); // For usado para adicionar os nutrientes que compoem o projeto
-
-                // *************** Carregar etapas e nutrientes das etapas **********************************************
-                $('#etapa-list').empty();  // Limpa listas de conteúdo
-                projeto.etapas.forEach(criarEtapa);
+            if (!result.success) {
+                // Tratamento de erro
+                let errorMessage;
+                errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                // Usa a função showErrorModal para mostrar o erro
+                showErrorModal(errorMessage);
+                return;
             }
-        })
-            .catch(error => console.error('Erro capturado:', error));
+
+
+            // *************** Detalhes do Projeto ****************************************************************
+            projeto = result.data[0];
+            $('#tituloProjeto').text(`Projeto: ${projeto.nome}`);
+            $('#detalhesProjeto_codigo').text(projeto.codigo);
+            $('#detalhesProjeto_nome').text(projeto.nome);
+            $('#detalhesProjeto_cliente').text(projeto.cliente);
+            $('#detalhesProjeto_data_criacao').text(formatarDataPtBr(projeto.createdAt));
+            $('#detalhesProjeto_data_inicio').text(formatarDataPtBr(projeto.data_inicio));
+            $('#detalhesProjeto_data_termino').text(formatarDataPtBr(projeto.data_termino));
+            $('#detalhesProjeto_status').text(projeto.status[0].status);
+            $('#detalhesProjeto_descricao').text(projeto.descricao);
+            $('#detalhesProjeto_aplicacao').text(projeto.aplicacao);
+            $('#detalhesProjeto_tipo').text(projeto.tipo);
+            $('#detalhesProjeto_natureza_fisica').text(projeto.natureza_fisica);
+            $('#detalhesProjeto_densidade').text(projeto.densidade.toFixed(2));
+            $('#detalhesProjeto_ph').text(projeto.ph);
+            exibirPercentualConcluido(projeto.percentual_concluido);
+
+            // *************** Tabela de nutrientes *****************************************************************  
+
+            $('#tbody_nutricional').empty();  // Limpa o conteúdo da tabela antes de adicionar os novos dados
+
+            projeto.nutrientes.forEach(addDadosTableNutricional); // For usado para adicionar os nutrientes que compoem o projeto
+
+            // *************** Carregar etapas e nutrientes das etapas **********************************************
+            $('#etapa-list').empty();  // Limpa listas de conteúdo
+            projeto.etapas.forEach(criarEtapa);
+
+        }).catch(error => {
+            // Tratamento de erro de rede ou erro inesperado
+            showErrorModal(`03 - Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+        });
     };
+
     projeto_detalhado();
 
     //** Função para compor a "Tabela de nutrientes"*****************************************************************************
@@ -450,17 +484,18 @@
                             <table class="table" id="tableComposicaoEtapa${etapa.id}">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Ordem</th>
-                                        <th scope="col">Matéria Prima</th>
-                                        <th scope="col">Percentual</th>
-                                        <th scope="col">Tempo de Agitação</th>
-                                        <th scope="col">Observação</th>
-                                        <th scope="col">Lote</th>
-                                        <th scope="col">Ação</th>
+                                        <th>Ordem</th>
+                                        <th>Matéria Prima</th>
+                                        <th>Percentual</th>
+                                        <th>Peso g/ml</th>
+                                        <th>Tempo de Agitação</th>
+                                        <th>Observação</th>
+                                        <th>Lote</th>
+                                        <th>Ação</th>
                                     </tr>
                                 </thead>
                                 <tbody class="nutrientes-por-etapa" data-id="${etapa.id}">
-                                    ${addMateriaPria(etapa.etapa_mp, etapa.id)}
+                                    ${addMateriaPrima(etapa.etapa_mp, etapa.id)}
                                 </tbody>
                             </table>
                         </div>
@@ -472,7 +507,7 @@
     };
 
     //** Função responsável por adicionar os matérias primas de cada etapa ******************************************************
-    const addMateriaPria = (etapa_mp, etapa_id) => {
+    const addMateriaPrima = (etapa_mp, etapa_id) => {
         let linhasEtapaEp = "";
         etapa_mp.forEach(e => {
             linhasEtapaEp += criarLinhaEtapaMp(e.id, e.materia_prima, e.percentual, e.tempo_agitacao, e.observacao, e.lote, e.ordem, etapa_id);
@@ -480,23 +515,35 @@
         return linhasEtapaEp;
     };
 
-    //** Função responsável por criar as linhas para a função  addMateriaPria() *************************************************
+    //** Função responsável por criar as linhas para a função  addMateriaPrima() *************************************************
     const criarLinhaEtapaMp = (idMp, nomeMp, percentualMp, tempoAgitacao, observacao, lote, ordem, etapa_id) => {
+        let densidade = parseFloat($("#detalhesProjeto_densidade").text());
         let cols = `
                     <tr id="nutriente_${idMp}" data-id="${idMp}">
                         <td><i class="fa fa-arrows moverNutriente"></i></td>
                         <td>${nomeMp}</td>
-                        <td><input type="text" class="percentualMp" value="${percentualMp}"></td>
+                        <td><input type="text" class="percentualMp" value="${percentualMp.toFixed(4)}"></td>
+                        <td><input type="text" class="percentualMp" value="${calculaPeso(percentualMp, densidade)}"></td>
                         <td><input type="text" class="tempoAgitacao" value="${tempoAgitacao}"></td>
                         <td><input type="text" class="observacao" value="${observacao}"></td>
                         <td><input type="text" class="lote" value="${lote}"></td>
-                        <td style="width:100px">
+                        <td style="min-width: 100px">
                             <button type="button" class="btn btn-outline-secondary btn-sm salvarComposicao" title="salvar" data-id="${idMp}" data-pos="${ordem}" onclick="salvaComposicao(${idMp},${etapa_id})"><i class="far fa-save"></i></button>
                             <button type="button" class="btn btn-outline-secondary btn-sm deleteComposicao" title="excluir" data-id="${idMp}" onclick="excluiComposicao(${idMp},${etapa_id})"><i class="fa fa-ban"></i></button>
                         </td>
                     </tr>`;
         return cols;
     };
+
+
+    const calculaPeso = (densidade, percentual) => {
+
+        let qtVendida = parseFloat($("#quantidadeVendida").text().trim() || '0');
+
+        let pesoGr = (parseFloat(densidade) * parseFloat(percentual)) / 100;
+
+        return pesoGr.toFixed(4);
+    }
 
 
     // Função para a Inicialização do auto-complete *****************************************************************************
@@ -525,12 +572,24 @@
             let percentual = $('#modal_percentual').val().replace(/[^0-9.]/g, ''); // Permitir números e ponto/virgula
 
             // Consultar as máterias primas que atendem a necessidade. 
-            req_GET(opt.urlMateriaPrima + `?nutriente=${id_nutriente}&percentual=${percentual}`).then(results => {
-                if (results.success) {
-                    let dados = results.data;
-                    dados.forEach(addPossivelComposicao);
+            req_GET(opt.urlMateriaPrima + `?nutriente=${id_nutriente}&percentual=${percentual}`).then(result => {
+
+                if (!result.success) {
+                    // Tratamento de erro
+                    let errorMessage;
+                    errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                    // Usa a função showErrorModal para mostrar o erro
+                    showErrorModal(errorMessage);
+                    return;
                 }
-            }).catch(error => console.error('Erro capturado:', error));
+
+                let dados = result.data;
+                dados.forEach(addPossivelComposicao);
+
+            }).catch(error => {
+                // Tratamento de erro de rede ou erro inesperado
+                showErrorModal(`04 - Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+            });
         }
     }).autocomplete("widget").css("z-index", "9999");
 
@@ -587,12 +646,22 @@
             "ordem": "0"
         }
 
-        req_INSERT(opt.urlEtapaMp, etapa_mp_data).then(results => {
-            if (results.success) {
-                // console.log(results)
-                projeto_detalhado();
+        req_INSERT(opt.urlEtapaMp, etapa_mp_data).then(result => {
+
+            if (!result.success) {
+                // Tratamento de erro
+                let errorMessage;
+                errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                // Usa a função showErrorModal para mostrar o erro
+                showErrorModal(errorMessage);
+                return;
             }
-        }).catch(error => console.error('Erro ao compor etapa:', error));
+            projeto_detalhado();
+
+        }).catch(error => {
+            // Tratamento de erro de rede ou erro inesperado
+            showErrorModal(`05 - Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+        });
 
         setTimeout(() => {
             $(`#etapa-${id_etapa}`).addClass('show');
@@ -638,11 +707,23 @@
     let listaDeNutriente;
     (() => {
         //Consultar projetos detalhados......
-        req_GET(opt.urlNutriente).then(results => {
-            if (results.success) {
-                listaDeNutriente = results.data;
+        req_GET(opt.urlNutriente).then(result => {
+
+            if (!result.success) {
+                // Tratamento de erro
+                let errorMessage;
+                errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                // Usa a função showErrorModal para mostrar o erro
+                showErrorModal(errorMessage);
+                return;
             }
-        }).catch(error => console.error('Erro capturado:', error));
+
+            listaDeNutriente = result.data;
+
+        }).catch(error => {
+            // Tratamento de erro de rede ou erro inesperado
+            showErrorModal(`06 - Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+        });
     })();
 
 
@@ -664,7 +745,7 @@
         const tempoAgitacao = row.querySelector('.tempoAgitacao').value;
         const observacao = row.querySelector('.observacao').value;
         const lote = row.querySelector('.lote').value;
-      
+
         jsonData = {
             "percentual": percentualMp,
             "tempo_agitacao": tempoAgitacao,
@@ -673,18 +754,26 @@
         };
 
 
-        console.log("salva etapa",jsonData);
-       
+        console.log("salva etapa", jsonData);
 
-        req_UPDATE(opt.urlEtapaMp + "/" + idMp, jsonData)
-            .then(result => {
-                // Exibir resposta da API no console
-                if (result.success) {
-                    projeto_detalhado(id_projeto)
-                } else {
-                    showErrors(18, result.status);
-                }
-            });
+
+        req_UPDATE(opt.urlEtapaMp + "/" + idMp, jsonData).then(result => {
+
+            if (!result.success) {
+                // Tratamento de erro
+                let errorMessage;
+                errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                // Usa a função showErrorModal para mostrar o erro
+                showErrorModal(errorMessage);
+                return;
+            }
+
+            projeto_detalhado(id_projeto)
+
+        }).catch(error => {
+            // Tratamento de erro de rede ou erro inesperado
+            showErrorModal(`07 - Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+        });
 
         setTimeout(() => {
             $(`#etapa-${idEtapa}`).addClass('show');
@@ -709,18 +798,23 @@
                 return;
             }
 
-            req_DELETE(opt.urlEtapaMp + "/" + idMp)
-                .then(result => {
-                    // Exibir resposta da API no console
-                    if (result.success) {
+            req_DELETE(opt.urlEtapaMp + "/" + idMp).then(result => {
 
-                        projeto_detalhado()
+                if (!result.success) {
+                    // Tratamento de erro
+                    let errorMessage;
+                    errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                    // Usa a função showErrorModal para mostrar o erro
+                    showErrorModal(errorMessage);
+                    return;
+                }
 
+                projeto_detalhado()
 
-                    } else {
-                        showErrors(19, result.status);
-                    }
-                });
+            }).catch(error => {
+                // Tratamento de erro de rede ou erro inesperado
+                showErrorModal(`08 - Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+            });
         }
         setTimeout(() => {
             $(`#etapa-${idEtapa}`).addClass('show');
@@ -737,20 +831,33 @@
             $('#modalEtapas .modal-title').text('Editar Etapa');
 
             // Preenche os campos com os dados da etapa usando AJAX
-            req_GET(opt.urlEtapa + `/${id}`).then(results => {
-                if (results.success) {
-                    const data = results.data[0];
+            req_GET(opt.urlEtapa + `/${id}`).then(result => {
 
-                    $('#nome').val(data.nome);
-                    $('#descricao').val(data.descricao);
-
-                    // Altera o botão "Cadastrar" para "Atualizar"
-                    $('#etapaCadastrar').text('Atualizar').data('action', 'editar').data('id', id);
+                if (!result.success) {
+                    // Tratamento de erro
+                    let errorMessage;
+                    errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                    // Usa a função showErrorModal para mostrar o erro
+                    showErrorModal(errorMessage);
+                    return;
                 }
+
+                const data = result.data[0];
+
+                $('#nome').val(data.nome);
+                $('#descricao').val(data.descricao);
+
+                // Altera o botão "Cadastrar" para "Atualizar"
+                $('#etapaCadastrar').text('Atualizar').data('action', 'editar').data('id', id);
+
 
                 // Mostra o modal após preencher os dados
                 $('#modalEtapas').modal('show');
+            }).catch(error => {
+                // Tratamento de erro de rede ou erro inesperado
+                showErrorModal(`09 - Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
             });
+
         } else {
             // Se o ID não for fornecido, configura o modal para cadastro
             $('#modalEtapas .modal-title').text('Cadastrar Etapa');
@@ -781,26 +888,43 @@
 
             if (action === 'editar') {
                 // Envia requisição de atualização
-                req_UPDATE(opt.urlEtapa + `/${id}`, jsonData)
-                    .then(result => {
-                        if (result.success) {
-                            projeto_detalhado()
-                        } else {
-                            showErrors(20, result.status);
-                        }
-                        // Fecha o modal após a atualização
-                        $('#modalEtapas').modal('hide');
-                    });
+                req_UPDATE(opt.urlEtapa + `/${id}`, jsonData).then(result => {
+
+                    if (!result.success) {
+                        // Tratamento de erro
+                        let errorMessage;
+                        errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                        // Usa a função showErrorModal para mostrar o erro
+                        showErrorModal(errorMessage);
+                        return;
+                    }
+                    projeto_detalhado()
+                    // Fecha o modal após a atualização
+                    $('#modalEtapas').modal('hide');
+                }).catch(error => {
+                    // Tratamento de erro de rede ou erro inesperado
+                    showErrorModal(`10 - Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+                });
             } else {
                 // Envia requisição de criação
                 jsonData.ordem = 0
 
-                req_INSERT(opt.urlEtapa, jsonData)
-                    .then(result => {
-                        projeto_detalhado()
-                        // Fecha o modal após o cadastro
-                        $('#modalEtapas').modal('hide');
-                    });
+                req_INSERT(opt.urlEtapa, jsonData).then(result => {
+                    if (!result.success) {
+                        // Tratamento de erro
+                        let errorMessage;
+                        errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                        // Usa a função showErrorModal para mostrar o erro
+                        showErrorModal(errorMessage);
+                        return;
+                    }
+                    projeto_detalhado()
+                    // Fecha o modal após o cadastro
+                    $('#modalEtapas').modal('hide');
+                }).catch(error => {
+                    // Tratamento de erro de rede ou erro inesperado
+                    showErrorModal(`11 - Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+                });
             }
         });
 
@@ -819,16 +943,24 @@
         // Se o usuário confirmar
         if (confirmar) {
 
-            req_DELETE(opt.urlEtapa + `/${idEt}`)
-                .then(result => {
-                    // Exibir resposta da API no console
-                    if (result.success) {
-                        projeto_detalhado()
-                        // location.reload();
-                    } else {
-                        showErrors(21, result.status);
-                    }
-                });
+            req_DELETE(opt.urlEtapa + `/${idEt}`).then(result => {
+
+                if (!result.success) {
+                    // Tratamento de erro
+                    let errorMessage;
+                    errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                    // Usa a função showErrorModal para mostrar o erro
+                    showErrorModal(errorMessage);
+                    return;
+                }
+
+                projeto_detalhado()
+
+
+            }).catch(error => {
+                // Tratamento de erro de rede ou erro inesperado
+                showErrorModal(`12  - Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+            });
         }
     }
 

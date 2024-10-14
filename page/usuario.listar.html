@@ -33,19 +33,20 @@
                 <button type="button" class="btn-close btn-fecha-modal" data-bs-dismiss="modal"
                     aria-label="Close"></button>
             </div>
+
             <form id="formEditarUsuario">
                 <div class="modal-body" id="detalhesUsuario">
                     <!-- Detalhes do usuario serão exibidos aqui -->
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="btnEditar" class="btn btn-outline-secondary btn-sm"
-                        data-bs-dismiss="modal">Editar</button>
+                    <button type="button" id="btnEditar" class="btn btn-outline-secondary btn-sm">Editar</button>
                     <button type="submit" id="btnSalvar" class="btn btn-outline-secondary btn-sm d-none">Salvar
                         Alterações</button>
                     <button type="button" class="btn btn-outline-secondary btn-sm btn-fecha-modal"
                         data-bs-dismiss="modal">Fechar</button>
                 </div>
             </form>
+
         </div>
     </div>
 </div>
@@ -82,59 +83,61 @@
 
         req_GET(opt.urlUsuario).then((result) => {
 
-            data = result.data;
-  
-            if (result.success) {
-                // INICIA DATATABLE
-                table = $('#tabela-usuario').DataTable({
-                    data: data,
-                    order: [[1, 'desc']],
-                    columns: [
-                        { title: 'Update', data: 'updatedAt', visible: false },
-                        { title: 'Nome', data: 'nome' },
-                        { title: 'Login', data: 'email' },
-                        { // Coluna para os botões de ação
-                            title: 'Ações',
-                            data: null,
-                            orderable: false,
+            if (!result.success) {
+                // Tratamento de erro
+                let errorMessage;
+                errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                // Usa a função showErrorModal para mostrar o erro
+                showErrorModal(errorMessage);
+                return;
+            }
 
-                            render: function (data, type, row) {
-                                return `
+            data = result.data;
+
+            // INICIA DATATABLE
+            table = $('#tabela-usuario').DataTable({
+                data: data,
+                order: [[1, 'desc']],
+                columns: [
+                    { title: 'Update', data: 'updatedAt', visible: false },
+                    { title: 'Nome', data: 'nome' },
+                    { title: 'Login', data: 'email' },
+                    { // Coluna para os botões de ação
+                        title: 'Ações',
+                        data: null,
+                        orderable: false,
+
+                        render: function (data, type, row) {
+                            return `
                           <button class="btn btn-outline-secondary btn-sm btn-detalhes-editar" data-id="${row.id}" data-toggle="modal" data-target="#detalhesModal" title="Ver/Editar"><i class="fa-solid fa-eye"></i>/<i class="fa-solid fa-pen-to-square"></i></button>
                           <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" title="Excluir"><i class="fa-solid fa-ban"></i></button>
                       `;
-                            }
                         }
-                    ],
-                    columnDefs: [
-                        { targets: 2, autoWidth: true } // Ativa o ajuste automático da largura para a coluna ações
-                    ],
-                    // Habilita a pesquisa global
-                    searching: true
-                });
-                //FIM DATATABLE
-
-
-
-                // Adiciona campos de pesquisa em cada cabeçalho de coluna
-                $('#tabela-usuario thead th').each(function () {
-                    let title = $(this).text();
-                    if (title !== "Ações") {
-                        $(this).html(`<input type="text" class="form-control form-control-sm" placeholder="${title} "/>`);
                     }
-                });
+                ],
+                columnDefs: [
+                    { targets: 2, autoWidth: true } // Ativa o ajuste automático da largura para a coluna ações
+                ],
+                // Habilita a pesquisa global
+                searching: true
+            });
+            //FIM DATATABLE
 
-                // Adiciona um evento de pesquisa para cada campo de entrada de texto nas colunas
-                $('#tabela-usuario thead th input').on('keyup', function () {
-                    let columnIndex = $(this).closest('th').index(); // Obtém o índice da coluna
-                    table.column(columnIndex).search(this.value).draw();
-                });
 
 
-                // se conexao com api erro
-            } else {
-                showError(16, result.status)
-            }
+            // Adiciona campos de pesquisa em cada cabeçalho de coluna
+            $('#tabela-usuario thead th').each(function () {
+                let title = $(this).text();
+                if (title !== "Ações") {
+                    $(this).html(`<input type="text" class="form-control form-control-sm" placeholder="${title} "/>`);
+                }
+            });
+
+            // Adiciona um evento de pesquisa para cada campo de entrada de texto nas colunas
+            $('#tabela-usuario thead th input').on('keyup', function () {
+                let columnIndex = $(this).closest('th').index(); // Obtém o índice da coluna
+                table.column(columnIndex).search(this.value).draw();
+            });
 
 
             ///////////////EDITAR///////////////////////
@@ -152,7 +155,7 @@
                 <div class="form-group">
                     <div class="form-group">
                       <label for="nome">Nome:</label>
-                      <input type="text" class="form-control" id="nomes" name="nomes" value="${usuario.nome}" readonly>
+                      <input type="text" class="form-control" id="nome" name="nome" value="${usuario.nome}" readonly>
                     </div>
                     <div class="form-group">
                       <label for="email">Email:</label>
@@ -164,7 +167,7 @@
                     </div>
                     <input type="hidden" id="id" name="id" value="${usuario.id}">
                 </div>
-        `;
+                 `;
 
                 $('#detalhesUsuario').html(html);
                 $('#detalhesModal').modal('show');
@@ -186,15 +189,21 @@
                 req_UPDATE(opt.urlUsuario + "/" + jsonData.id, jsonData)
                     .then(result => {
 
-                        // Exibir resposta da API no console
-                        if (result.success) {
-                            $('#detalhesModal .modal-body').html(`${jsonData.nome} atualizado com sucesso!`);
-                            $('#detalhesModal #btnSalvar').hide();
-                            alterado = 1
-                        } else {
-                            console.log(result)
-                            showError(17, result.status)
+                        if (!result.success) {
+                            // Tratamento de erro
+                            let errorMessage;
+                            errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                            // Usa a função showErrorModal para mostrar o erro
+                            showErrorModal(errorMessage);
+                            return;
                         }
+
+                        $('#detalhesModal .modal-body').html(`${jsonData.nome} atualizado com sucesso!`);
+                        $('#detalhesModal #btnSalvar').hide();
+                        alterado = 1
+                    }).catch(error => {
+                        // Tratamento de erro de rede ou erro inesperado
+                        showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
                     });
             });
 
@@ -222,36 +231,37 @@
 
                 // Evento ao clicar no botão "Confirmar Exclusão" no modal de confirmação
                 $('#confirmarExclusao').on('click', function () {
+
                     let urlExclusao = opt.urlUsuario + "/" + id;
-                    req_DELETE(urlExclusao).then((data) => {
-                        if (data.success) {
-                            // Fecha o modal de confirmação de exclusão
-                            $('#confirmacaoExclusaoModal').modal('hide');
-                            alterado = 1;
-                        } else {
-                            $('#confirmacaoExclusaoModal .modal-body').html(`Erro: ${data.erro.message}`);
-                            $('#confirmacaoExclusaoModal').modal("show");
+                    
+                    req_DELETE(urlExclusao).then((response) => {
+                        if (!result.success) {
+                            // Tratamento de erro
+                            let errorMessage;
+                            errorMessage = `${result.message || 'Erro desconhecido.'}`;
+                            // Usa a função showErrorModal para mostrar o erro
+                            showErrorModal(errorMessage);
+                            return;
                         }
+                        // Fecha o modal de confirmação de exclusão
+                        $('#confirmacaoExclusaoModal').modal('hide');
+                        alterado = 1;
+                    }).catch(error => {
+                        // Tratamento de erro de rede ou erro inesperado
+                        showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
                     });
                 });
             }
 
-            ///////////////FIM EXCLUIR///////////////////////
-        });//FIM GETAPI
-
-        // FUNCOES AUXILIARES
-
-        $(".modal").on("click", ".btn-fecha-modal", function () {
-            $('.modal').modal('hide');
-        })
-
-        $('.modal').on('hidden.bs.modal', function () {
-            if (alterado !== 0) {
-                req_GET(opt.urlUsuario).then((res) => {
-                    data = result.data; // Atualiza os dados com a resposta da requisição
-                    table.clear().rows.add(data).draw(); // Limpa a tabela, adiciona os novos dados e redesenha
-                });
-            }
+            // FUNCOES AUXILIARES
+            $('.modal').on('hidden.bs.modal', function () {
+                if (alterado !== 0) {
+                    req_GET(opt.urlUsuario).then((res) => {
+                        data = result.data; // Atualiza os dados com a resposta da requisição
+                        table.clear().rows.add(data).draw(); // Limpa a tabela, adiciona os novos dados e redesenha
+                    });
+                }
+            })
         })
     })
 </script>

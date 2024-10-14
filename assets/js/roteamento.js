@@ -1,5 +1,4 @@
-const rotas = [
-    {
+const rotas = [{
         'path': '',
         'component': '/page/home.html'
     },
@@ -51,11 +50,18 @@ const rotas = [
         'path': '/usuario/listar',
         'component': '/page/usuario.listar.html'
     },
+    {
+        'path': '/configuracao',
+        'component': '/page/configuracoes.html'
+    },
 ];
 
 const rotear = (rotaUrl = window.location.pathname) => {
     const rotaEncontrada = rotas.find(rota => rota.path.toLowerCase() === rotaUrl.toLowerCase());
-    return rotaEncontrada || { path: '/error', component: '/page/erro.html' };
+    return rotaEncontrada || {
+        path: '/error',
+        component: '/page/erro.html'
+    };
 }
 
 
@@ -67,8 +73,7 @@ $(function () {
         if (rota) {
             $("#root").empty();
             $("#root").load(rota.component);
-        }
-        else {
+        } else {
             $("#root").load('/page/erro.html');
         }
     }

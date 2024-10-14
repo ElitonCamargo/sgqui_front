@@ -65,69 +65,64 @@
     //variavel de controle se algo foi alterado
     let alterado = 0;
 
-    req_GET(opt.urlNutriente).then((res) => {
+    req_GET(opt.urlNutriente).then((result) => {
 
-      data = res.data;
+      data = result.data;
 
-      if (res.success) {
+      if (!result.success) {
+        // Tratamento de erro
+        let errorMessage;
+        errorMessage = `${result.message || 'Erro desconhecido.'}`;
+        // Usa a função showErrorModal para mostrar o erro
+        // showErrorModal(errorMessage);
+        data = null;
+        // return;
+      }
 
-        // INICIA DATATABLE
-        table = $('#tabela-nutrientes').DataTable({
-          data: data,
-          order: [[3, 'desc']],
-          columns: [
+      // INICIA DATATABLE
+      table = $('#tabela-nutrientes').DataTable({
+        data: data,
+        order: [[3, 'desc']],
+        columns: [
 
-            { title: 'Nome', data: 'nome' },
-            { title: 'Fórmula', data: 'formula' },
-            { // Coluna para os botões de ação
-              title: 'Ações',
-              data: null,
-              orderable: false,
+          { title: 'Nome', data: 'nome' },
+          { title: 'Fórmula', data: 'formula' },
+          { // Coluna para os botões de ação
+            title: 'Ações',
+            data: null,
+            orderable: false,
 
-              render: function (data, type, row) {
-                return `
+            render: function (data, type, row) {
+              return `
                           <button class="btn btn-outline-secondary btn-sm btn-detalhes-editar" data-id="${row.id}" data-bs-toggle="modal" data-bs-target="#detalhesModal" title="Ver/Editar"><i class="fa-solid fa-eye"></i>/<i class="fa-solid fa-pen-to-square"></i></button>
                           <button class="btn btn-outline-secondary btn-sm btn-excluir" data-id="${row.id}" data-nome="${row.nome}" title="Excluir"><i class="fa-solid fa-ban"></i></button>
                       `;
-              }
-            }, { title: 'Update', data: 'updatedAt', visible: false }
-          ],
-          columnDefs: [
-            { targets: 3, autoWidth: true } // Ativa o ajuste automático da largura para a primeira coluna
-          ],
-          // Habilita a pesquisa global
-          searching: true
-        });
-        //FIM DATATABLE
+            }
+          }, { title: 'Update', data: 'updatedAt', visible: false }
+        ],
+        columnDefs: [
+          { targets: 3, autoWidth: true } // Ativa o ajuste automático da largura para a primeira coluna
+        ],
+        // Habilita a pesquisa global
+        searching: true
+      });
+      //FIM DATATABLE
 
 
 
-        // Adiciona campos de pesquisa em cada cabeçalho de coluna
-        $('#tabela-nutrientes thead th').each(function () {
-          let title = $(this).text();
-          if (title !== "Update" && title !== "Ações") {
-            $(this).html(`<input type="text" class="form-control form-control-sm" placeholder="${title} "/>`);
-          }
-        });
-
-        // Adiciona um evento de pesquisa para cada campo de entrada de texto nas colunas
-        $('#tabela-nutrientes thead th input').on('keyup', function () {
-          let columnIndex = $(this).closest('th').index(); // Obtém o índice da coluna
-          table.column(columnIndex).search(this.value).draw();
-        });
-
-
-        // se conexao com api erro
-      } else {
-        alert(`Erro06: ${res.message}`);
-        if (res.status === 498) {
-          destroySession('tk');
-          destroySession('us');
-          window.location.reload(true);
+      // Adiciona campos de pesquisa em cada cabeçalho de coluna
+      $('#tabela-nutrientes thead th').each(function () {
+        let title = $(this).text();
+        if (title !== "Update" && title !== "Ações") {
+          $(this).html(`<input type="text" class="form-control form-control-sm" placeholder="${title} "/>`);
         }
-      }
+      });
 
-
+      // Adiciona um evento de pesquisa para cada campo de entrada de texto nas colunas
+      $('#tabela-nutrientes thead th input').on('keyup', function () {
+        let columnIndex = $(this).closest('th').index(); // Obtém o índice da coluna
+        table.column(columnIndex).search(this.value).draw();
+      });
 
       //Abre modal de visualização e edição de nutrientes
       $('#tabela-nutrientes').on('click', '.btn-detalhes-editar', function () {
@@ -135,7 +130,6 @@
         const nutriente = data.find(item => item.id === id);
         exibirDetalhes(nutriente);
       });
-
 
       // Função para exibir os detalhes em um modal
       function exibirDetalhes(nutriente) {
@@ -181,14 +175,22 @@
         req_UPDATE(opt.urlNutriente + "/" + jsonData.id, jsonData)
           .then(result => {
 
-            // Exibir resposta da API no console
-            if (result.success) {
-              $('#detalhesModal .modal-body').html(`${jsonData.nome} atualizado com sucesso!`);
-              $('#detalhesModal #btnSalvar').hide();
-              alterado = 1
-            } else {
-              showError(7, result.status);
+            if (!result.success) {
+              // Tratamento de erro
+              let errorMessage;
+              errorMessage = `${result.message || 'Erro desconhecido.'}`;
+              // Usa a função showErrorModal para mostrar o erro
+              showErrorModal(errorMessage);
+              return;
             }
+
+            // Exibir resposta da API no console
+            $('#detalhesModal .modal-body').html(`${jsonData.nome} atualizado com sucesso!`);
+            $('#detalhesModal #btnSalvar').hide();
+            alterado = 1
+          }).catch(error => {
+            // Tratamento de erro de rede ou erro inesperado
+            showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
           });
       });
 
@@ -208,6 +210,9 @@
         excluiNutriente(id, nome);
       });
 
+    }).catch(error => {
+      // Tratamento de erro de rede ou erro inesperado
+      showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
     });//FIM GETAPI
 
     // FUNCOES AUXILIARES
@@ -219,15 +224,23 @@
       // Evento ao clicar no botão "Confirmar Exclusão" no modal de confirmação
       $('#confirmarExclusao').on('click', function () {
         let urlExclusao = opt.urlNutriente + "/" + id;
-        req_DELETE(urlExclusao).then((data) => {
-          if (data.success) {
-            // Fecha o modal de confirmação de exclusão
-            $('#confirmacaoExclusaoModal').modal('hide');
-            alterado = 1;
-          } else {
-            $('#confirmacaoExclusaoModal .modal-body').html(`Erro: ${data.erro.message}`);
-            $('#confirmacaoExclusaoModal').modal("show");
+        req_DELETE(urlExclusao).then((result) => {
+          if (!result.success) {
+            // Tratamento de erro
+            let errorMessage;
+            errorMessage = `${result.message || 'Erro desconhecido.'}`;
+            // Usa a função showErrorModal para mostrar o erro
+            showErrorModal(errorMessage);
+            return;
           }
+
+          // Fecha o modal de confirmação de exclusão
+          $('#confirmacaoExclusaoModal').modal('hide');
+          alterado = 1;
+
+        }).catch(error => {
+          // Tratamento de erro de rede ou erro inesperado
+          showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
         });
       });
     }

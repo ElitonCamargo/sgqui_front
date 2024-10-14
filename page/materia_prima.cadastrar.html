@@ -73,17 +73,25 @@
 
       req_INSERT(opt.urlMateriaPrima, jsonData)
         .then(result => {
-          // Exibir resposta da API no console
 
-          if (result.success === true) {
-            $('#confirmacaoCadastroModal .modal-body').html(`<b>${result.data[0].nome}</b> cadastrado com sucesso!`);
-            $('#confirmacaoCadastroModal').modal('show');
-            $(this)[0].reset();
+          if (!result.success) {
 
-          } else {
-            $('#confirmacaoCadastroModal .modal-body').html(`Erro: ${result.erro.message}`);
-            $('#confirmacaoCadastroModal').modal('show');
+            console.log(result)
+            // Tratamento de erro
+            let errorMessage;
+            errorMessage = `${result.message || 'Erro desconhecido.'}`;
+            // Usa a função showErrorModal para mostrar o erro
+            showErrorModal(errorMessage);
+            return;
           }
+
+          $('#confirmacaoCadastroModal .modal-body').html(`<b>${result.data[0].nome}</b> cadastrado com sucesso!`);
+          $('#confirmacaoCadastroModal').modal('show');
+          $(this)[0].reset();
+
+        }).catch(error => {
+          // Tratamento de erro de rede ou erro inesperado
+          showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
         });
     });
 

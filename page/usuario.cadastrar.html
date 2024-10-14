@@ -2,7 +2,7 @@
 <div id="msgResult">
 
 </div>
-<form class="container mt-5" id="formCadastrarNutriente">
+<form class="container mt-5" id="formCadastrarUsuario">
   <div class="row">
     <div class="col-md-4">
       <label for="nome" class="form-label">Nome</label>
@@ -11,9 +11,9 @@
 
     <div class="col-md-4">
       <label for="login" class="form-label">Login</label>
-      <input type="text" class="form-control" id="login" name="email" required>
+      <input type="email" class="form-control" id="login" name="email" required>
     </div>
-    
+
     <div class="col-md-4">
       <label for="senha" class="form-label">Senha</label>
       <input type="text" class="form-control" id="senha" name="senha" required>
@@ -45,30 +45,29 @@
 
 
     // Adicionar evento de submit para o formulário de edição do nutriente
-    $('#formCadastrarNutriente').on('submit', function (event) {
+    $('#formCadastrarUsuario').on('submit', function (event) {
 
       event.preventDefault(); // Impedir o envio padrão do formulário
       const jsonData = serializadoParaJSON($(this).serialize());
-      // req_INSERT(opt.urlMateriaPrima, jsonData)
-        .then(result => {
-          // Exibir resposta da API no console
 
-          if (result.success === true) {
-            $('#confirmacaoCadastroModal .modal-body').html(`<b>${result.data[0].nome}</b> cadastrado com sucesso!`);
-            $('#confirmacaoCadastroModal').modal('show');
-            $(this)[0].reset();
+      req_INSERT(opt.usuario, jsonData).then(result => {
 
-          } else {
-            $('#confirmacaoCadastroModal .modal-body').html(`Erro: ${result.erro.message}`);
-            $('#confirmacaoCadastroModal').modal('show');
+          if (!result.success) {
+            // Tratamento de erro
+            let errorMessage;
+            errorMessage = `${result.message || 'Erro desconhecido.'}`;
+            // Usa a função showErrorModal para mostrar o erro
+            showErrorModal(errorMessage);
+            return;
           }
+          $('#confirmacaoCadastroModal .modal-body').html(`<b>${result.data[0].nome}</b> cadastrado com sucesso!`);
+          $('#confirmacaoCadastroModal').modal('show');
+          $(this)[0].reset();
+        }).catch(error => {
+          // Tratamento de erro de rede ou erro inesperado
+          showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
         });
     });
-
-    $(".modal").on("click", ".btn-fecha-modal", function () {
-      $('.modal').modal('hide');
-    })
-
   });
 
 </script>
