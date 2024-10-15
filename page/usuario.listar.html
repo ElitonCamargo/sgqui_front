@@ -162,8 +162,8 @@
                       <input type="email" class="form-control" id="email" name="email" value="${usuario.email}" readonly>
                     </div>
                     <div class="form-group">
-                      <label for="senha">Alterar senha:</label>
-                      <input type="password" class="form-control" id="senha" name="senha" placeholder="***" required readonly>
+                      <label for="senha">Nova senha:</label>
+                      <input type="password" class="form-control" id="senha" name="senha" placeholder="******" required readonly minlength="6">
                     </div>
                     <input type="hidden" id="id" name="id" value="${usuario.id}">
                 </div>
@@ -232,9 +232,7 @@
                 // Evento ao clicar no botão "Confirmar Exclusão" no modal de confirmação
                 $('#confirmarExclusao').on('click', function () {
 
-                    let urlExclusao = opt.urlUsuario + "/" + id;
-                    
-                    req_DELETE(urlExclusao).then((response) => {
+                    req_DELETE(opt.urlUsuario + "/" + id).then((response) => {
                         if (!result.success) {
                             // Tratamento de erro
                             let errorMessage;
@@ -254,14 +252,22 @@
             }
 
             // FUNCOES AUXILIARES
+            // FUNÇÕES AUXILIARES
             $('.modal').on('hidden.bs.modal', function () {
                 if (alterado !== 0) {
                     req_GET(opt.urlUsuario).then((res) => {
-                        data = result.data; // Atualiza os dados com a resposta da requisição
-                        table.clear().rows.add(data).draw(); // Limpa a tabela, adiciona os novos dados e redesenha
+                        let data = res.data; // Certifique-se de que 'data' está na resposta correta
+                        if (data && table) {
+                            table.clear().rows.add(data).draw(); // Limpa a tabela, adiciona os novos dados e redesenha
+                        } else {
+                            console.error("Erro: Dados ou tabela não encontrados.");
+                        }
+                    }).catch((error) => {
+                        console.error("Erro ao fazer a requisição:", error);
                     });
                 }
-            })
+            });
+            
         })
     })
 </script>
