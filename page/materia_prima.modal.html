@@ -43,15 +43,15 @@
 
         // autocomplete nutrientes
         $("#nutriente").autocomplete({
-            source: function (request, response) {
+            source: function (request, result) {
                 let searchTerm = removeAcento(request.term.toLowerCase());
 
                 req_GET(`${opt.urlNutriente}?nome=${searchTerm}`)
-                    .then(function (response) {
-                        if (!response.success) {
-                            throw new Error('Erro ao buscar dados: ' + response.status);
+                    .then(result => {
+                        if (!result.success) {
+                            throw new Error('Erro ao buscar dados: ' + result.status);
                         }
-                        return response.data;
+                        return result.data;
                     })
 
                     .then(function (data) {
@@ -69,7 +69,7 @@
                             return removeAcento(item.label.toLowerCase()).indexOf(searchTerm) !== -1;
                         });
 
-                        response(filteredSuggestions);
+                        result(filteredSuggestions);
                     })
                     .catch(function (error) {
                         alert("Erro14: Erro ao buscar no autocomplete de nutrientes");
@@ -116,18 +116,22 @@
 
         function carregaGarantias() {
             $('#tbGarantias tbody').empty()
-            req_GET(opt.urlGarantiaMateriaPrima + `/${idMateriaPrima}`).then((res) => {
+
+
+            req_GET(opt.urlGarantiaMateriaPrima + `/${idMateriaPrima}`).then(result => {
+
+                data = result.data;
 
                 if (!result.success) {
                     // Tratamento de erro
                     let errorMessage;
                     errorMessage = `${result.message || 'Erro desconhecido.'}`;
                     // Usa a função showErrorModal para mostrar o erro
-                    showErrorModal(errorMessage);
-                    return;
+                    // showErrorModal(errorMessage);
+
+                    data = [];
                 }
 
-                data = res.data;
 
                 let tBodyData;
 

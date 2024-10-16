@@ -250,9 +250,11 @@
 
       ///////////////EXCLUIR///////////////////////
       // Adicionar evento de clique para o botão "Excluir"
+     
       $('#tabela-materiaPrima').on('click', '.btn-excluir', function () {
         const id = $(this).data('id');
         const nome = $(this).data('nome');
+        
         // Faça algo com o ID, como confirmar a exclusão do materia_prima
         excluirMateriaPrima(id, nome);
       });
@@ -264,21 +266,25 @@
 
         // Evento ao clicar no botão "Confirmar Exclusão" no modal de confirmação
         $('#confirmarExclusao').on('click', function () {
-          let urlExclusao = opt.urlMateriaPrima + "/" + id;
-          req_DELETE(urlExclusao).then((result) => {
+         
+          req_DELETE(opt.urlMateriaPrima + "/" + id).then((result) => {
+
             if (!result.success) {
+              console.log("result",result)
               // Tratamento de erro
               let errorMessage;
-              errorMessage = `${result.message || 'Erro desconhecido.'}`;
+              errorMessage = `Não é possível excluir essa matéria prima pois ela está relacionada com algum nutriente ou algum projeto`;
               // Usa a função showErrorModal para mostrar o erro
               showErrorModal(errorMessage);
               return;
             }
+
             // Fecha o modal de confirmação de exclusão
             $('#confirmacaoExclusaoModal').modal('hide');
             alterado = 1;
 
           }).catch(error => {
+            console.error('Erro ao tentar fazer fetch:', error);
             // Tratamento de erro de rede ou erro inesperado
             showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
           });
