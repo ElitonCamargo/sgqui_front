@@ -328,7 +328,7 @@
         //showErrorModal(errorMessage);
         data = null;
       }
-      
+
       // INICIA DATATABLE
       table = $('#tabela-projetos').DataTable({
         data: data,
@@ -659,6 +659,7 @@
         // fecha modal
         $("#clonarProjeto").modal('hide')
         alterado = 1;
+        location.reload()
 
       }).catch(error => {
         // Tratamento de erro de rede ou erro inesperado
@@ -688,7 +689,10 @@
 
           // Fecha o modal de confirmação de exclusão
           $('#confirmacaoExclusaoModal').modal('hide');
-          alterado = 1;
+
+          location.reload()
+
+
 
         }).catch(error => {
           // Tratamento de erro de rede ou erro inesperado

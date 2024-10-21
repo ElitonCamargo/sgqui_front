@@ -1,20 +1,27 @@
+<style>
+    .alert-success {
+        color: green;
+        /* Cor do texto de sucesso */
+        font-weight: bold;
+        /* Negrito, se desejado */
+    }
+</style>
 <h2>Configurações do sistema</h2>
 <hr>
 
 <h3>Página de impressão</h3>
 
-<form class="form-group">
-    <label class="label">Procedimento: </label>
-    <textarea class="form-control" type="text" id="print-procedimento" name="print-procedimento"></textarea>
-    <label class="label">Produzido Por: </label>
-    <input class="form-control" type="text" id="print-produzido-por" name="print-produzido-por">
-    <label class="label">Resultado Final:</label>
-    <input class="form-control" type="text" id="print-resultado-final" name="print-resultado-final">
-    <label class="label">Responsável Área:</label>
-    <input class="form-control" type="text" id="print-responsavel-area" name="print-responsavel-area">
-    <label class="label">Anexo:</label>
-    <input class="form-control" type="text" id="print-anexo" name="print-anexo">
-
+<form id="formConfig" class="form-group">
+    <label class="label" for="print-procedimento">Procedimento: </label>
+    <textarea class="form-control itemEdit" type="text" id="print-procedimento" name="print-procedimento"></textarea>
+    <label class="label" for="print-produzido-por">Produzido Por: </label>
+    <input class="form-control itemEdit" type="text" id="print-produzido-por" name="print-produzido-por">
+    <label class="label" for="print-resultado-final">Resultado Final:</label>
+    <input class="form-control itemEdit" type="text" id="print-resultado-final" name="print-resultado-final">
+    <label class="label" for="print-responsavel-area">Responsável Área:</label>
+    <input class="form-control itemEdit" type="text" id="print-responsavel-area" name="print-responsavel-area">
+    <label class="label" for="print-anexo">Anexo:</label>
+    <input class="form-control itemEdit" type="text" id="print-anexo" name="print-anexo">
 </form>
 
 
@@ -32,13 +39,34 @@
         $("#print-produzido-por").val(produzidoPor.value);
         $("#print-resultado-final").val(resultadoFinal.value);
         $("#print-responsavel-area").val(responsavelArea.value);
-        $("#print-anexo").val(anexo.value);
+        $("#print-anexo").val(anexo.value + "-" + anexo.id);
+
+        $("#print-procedimento").attr('data-id', procedimento.id);
+        $("#print-produzido-por").attr('data-id', produzidoPor.id);
+        $("#print-resultado-final").attr('data-id', resultadoFinal.id);
+        $("#print-responsavel-area").attr('data-id', responsavelArea.id);
+        $("#print-anexo").attr('data-id', anexo.id);
     })();
 
 
+    //altera ao sair de foco
+    $(".itemEdit").on("focusout", async function () {
+        let id = $(this).attr("data-id");
+        let key = $(this).attr("id");
+        let value = $(this).val();
 
-
-
-
-
+        try {
+            let r = await setConfig(id, key, value); // Aguarda o retorno correto
+            if (r.id) {
+                // Seleciona a label associada
+                let label = $("label[for='" + key + "']");
+                // Remove a parte "salvo" se existir
+                label.html(label.html().replace(/<span class="alert-success">salvo!<\/span>/, ''));
+                // Adiciona "salvo" com a classe "alert-success"
+                label.append(' <span class="alert-success">salvo!</span>');
+            }
+        } catch (error) {
+            console.error("Erro ao chamar setConfig:", error);
+        }
+    });
 </script>

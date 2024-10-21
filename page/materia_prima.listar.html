@@ -1,20 +1,22 @@
 <h2>Tabela de Materia Prima</h2>
-<table id="tabela-materiaPrima" class="table table-striped table-bordered">
-  <thead>
-    <tr>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Os dados da tabela serão preenchidos dinamicamente pelo DataTable -->
-  </tbody>
-</table>
+<div class="table-responsive">
+  <table id="tabela-materiaPrima" class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Os dados da tabela serão preenchidos dinamicamente pelo DataTable -->
+    </tbody>
+  </table>
+</div>
 
 <!-- Modal -->
 <div class="modal modal-xl fade" id="detalhesModal" tabindex="-1" role="dialog">
@@ -250,11 +252,11 @@
 
       ///////////////EXCLUIR///////////////////////
       // Adicionar evento de clique para o botão "Excluir"
-     
+
       $('#tabela-materiaPrima').on('click', '.btn-excluir', function () {
         const id = $(this).data('id');
         const nome = $(this).data('nome');
-        
+
         // Faça algo com o ID, como confirmar a exclusão do materia_prima
         excluirMateriaPrima(id, nome);
       });
@@ -266,11 +268,11 @@
 
         // Evento ao clicar no botão "Confirmar Exclusão" no modal de confirmação
         $('#confirmarExclusao').on('click', function () {
-         
+
           req_DELETE(opt.urlMateriaPrima + "/" + id).then((result) => {
 
             if (!result.success) {
-              console.log("result",result)
+          
               // Tratamento de erro
               let errorMessage;
               errorMessage = `Não é possível excluir essa matéria prima pois ela está relacionada com algum nutriente ou algum projeto`;
@@ -324,7 +326,7 @@
     $('.modal').on('hidden.bs.modal', function () {
       if (alterado !== 0) {
         req_GET(opt.urlMateriaPrima).then((result) => {
-          
+
           if (!result.success) {
             // Tratamento de erro
             let errorMessage;

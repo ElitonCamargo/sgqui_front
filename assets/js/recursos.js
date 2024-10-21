@@ -215,6 +215,7 @@ const req_DELETE = async (url = '') => {
             throw new Error('Failed to fetch');
         }
         return await response.json();
+        
     } catch (error) {
         hidePreload(); // Garante que o preload será removido em caso de erro
         console.error('Erro ao tentar fazer fetch:', error);
@@ -255,6 +256,10 @@ const showErrorModal = (errorMessage) => {
     // Abre o modal
     const modal = new bootstrap.Modal(document.getElementById('errorModal'));
     modal.show();
+
+    $('#errorModal').on('hidden.bs.modal', function () {
+        $('.modal').modal('hide'); // Fecha todos os modais abertos
+    });
 };
 
 //Função para criar uma sessão com dados
@@ -378,6 +383,31 @@ const getConfig = async (key) => {
     } catch (error) {
         console.error('Erro ao obter config:', error);
         return null;
+    }
+};
+
+const setConfig = async (id, key, value) => {
+    const jsonData = {
+        "key": key,
+        "value": value
+    };
+
+    try {
+        const result = await req_UPDATE(opt.urlConfig + "/" + id, jsonData);
+        
+        if (!result.success) {
+            // Tratamento de erro
+            let errorMessage = `${result.message || 'Erro desconhecido.'}`;
+            showErrorModal(errorMessage);
+            return; // Retorna vazio em caso de erro
+        }
+        
+        return result.data[0]; // Retorna o valor esperado
+
+    } catch (error) {
+        // Tratamento de erro de rede ou erro inesperado
+        showErrorModal(`Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
+        return; // Retorna vazio em caso de erro
     }
 };
 
