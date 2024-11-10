@@ -1,5 +1,5 @@
-// const urlApi = "http://100.26.59.163:8080";
-const urlApi = "http://localhost:8080";
+const urlApi = "http://100.26.59.163:8080";
+// const urlApi = "http://localhost:8080";
 
 const opt = {
   "urlApi": urlApi,

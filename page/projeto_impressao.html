@@ -113,7 +113,7 @@
     </div>
     <table id="header">
         <tr>
-            <td style="width: 105px; text-align: center;"><img src="/assets/img/logo.jpg"></td>
+            <td style="width: 105px; text-align: center;"><img id="print-logo" src=""></td>
             <td style="text-align: center;">
                 <h2 class="titulo1">Acompanhamento de Projeto - Prova de Laboratório</h2>
                 <h3 class="titulo2">Desenvolvimento de Produto</h3>
@@ -227,14 +227,6 @@
                     <label for="analisesSelect">Selecione a Análise:</label>
                     <select id="analisesSelect">
                         <option value="">-- Selecione --</option>
-                        <option value="Cor">Cor</option>
-                        <option value="Densidade">Densidade</option>
-                        <option value="pH">pH</option>
-                        <option value="Solubilidade">Solubilidade</option>
-                        <option value="Viscosidade">Viscosidade</option>
-                        <option value="Supersensibilidade">Supersensibilidade</option>
-                        <option value="Índice Salino (IS)">Índice Salino (IS)</option>
-                        <option value="Condutividade Elétrica (CE)">Condutividade Elétrica (CE)</option>
                     </select>
 
                     <button id="adicionarBtn">Adicionar Análise</button>
@@ -317,11 +309,28 @@
             const responsavelArea = await getConfig('print-responsavel-area');
             const anexo = await getConfig('print-anexo');
 
+
+
+
             $("#print-procedimento").html(procedimento.value);
             $("#print-produzido-por").html(produzidoPor.value);
             $("#print-resultado-final").html(resultadoFinal.value);
             $("#print-responsavel-area").html(responsavelArea.value);
             $("#print-anexo").html(anexo.value);
+
+
+            //alimenta o select de analises
+            const analises = await getConfig('print-analises');
+            const analises_array = analises.value.split(',').map(item => item.trim());
+
+            // Itera sobre o array e adiciona cada item como uma option no select
+            $.each(analises_array, (k, v) => {
+                $('#analisesSelect').append($('<option>', {
+                    value: v, // Define o valor da option
+                    text: v   // Define o texto da option
+                }));
+            });
+
         })();
 
 
@@ -502,6 +511,21 @@
             window.history.back();
         }
 
+        async function loadImage() {
+            try {
+                // Supondo que getConfig seja uma função assíncrona que retorna uma Promise
+                const base64Image = await getConfig('print-logo');  // Espera o valor resolvido da Promise
+
+                if (base64Image) {
+                    $('#print-logo').attr('src', base64Image.value).show();  // Atribui o valor correto ao src
+                } else {
+                    alert('Imagem não encontrada no banco.');
+                }
+            } catch (error) {
+                console.error("Erro ao carregar a imagem:", error);
+            }
+        }
+        loadImage()
     </script>
 
     <div class="no-print" style="height: 300px;"></div>

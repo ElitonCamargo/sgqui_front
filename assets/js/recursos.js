@@ -215,7 +215,7 @@ const req_DELETE = async (url = '') => {
             throw new Error('Failed to fetch');
         }
         return await response.json();
-        
+
     } catch (error) {
         hidePreload(); // Garante que o preload será removido em caso de erro
         console.error('Erro ao tentar fazer fetch:', error);
@@ -371,15 +371,27 @@ const getAllUrlParams = () => {
 }
 
 // funções para a tabela de configurações
-const getConfig = async (key) => {
+const getConfig = async (key = null) => {
     try {
-        const result = await req_GET(`${opt.urlConfig}?key=${key}`);
+
+        let result = await req_GET(`${opt.urlConfig}`);
+
+        if (key != null) {
+            result = await req_GET(`${opt.urlConfig}?key=${key}`);
+        }
 
         if (result.success) {
-            return result.data[0];
+
+            if (key != null) {
+                return result.data[0];
+            }
+
+            return result.data;
+
         } else {
             return null; // ou outro valor padrão caso não haja sucesso
         }
+
     } catch (error) {
         console.error('Erro ao obter config:', error);
         return null;
@@ -394,14 +406,14 @@ const setConfig = async (id, key, value) => {
 
     try {
         const result = await req_UPDATE(opt.urlConfig + "/" + id, jsonData);
-        
+
         if (!result.success) {
             // Tratamento de erro
             let errorMessage = `${result.message || 'Erro desconhecido.'}`;
             showErrorModal(errorMessage);
             return; // Retorna vazio em caso de erro
         }
-        
+
         return result.data[0]; // Retorna o valor esperado
 
     } catch (error) {
