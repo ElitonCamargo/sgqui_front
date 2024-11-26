@@ -60,9 +60,9 @@ const logoff = () => {
     start();
 }
 
-const req_GET = async (url = "") => {
+const req_GET = async (url = "", preload = false) => {
     // Mostra o preload antes de fazer a requisição
-    showPreload();
+    preload && showPreload();
     try {
         const response = await fetch(url, {
             method: "GET",
@@ -77,7 +77,7 @@ const req_GET = async (url = "") => {
         });
 
         // Remove o preload após completar a requisição
-        hidePreload();
+        preload && hidePreload();
 
         if (response.status === 404) {
             return {
@@ -94,7 +94,7 @@ const req_GET = async (url = "") => {
         return await response.json();
 
     } catch (error) {
-        hidePreload(); // Garante que o preload será removido em caso de erro
+        preload && hidePreload(); // Garante que o preload será removido em caso de erro
 
         console.error('Erro ao tentar fazer fetch:', error);
 
@@ -107,9 +107,9 @@ const req_GET = async (url = "") => {
     }
 }
 
-const req_INSERT = async (url = "", data = {}) => {
+const req_INSERT = async (url = "", data = {}, preload = false) => {
     // Mostra o preload antes de fazer a requisição
-    showPreload();
+    preload && showPreload();
     try {
         const response = await fetch(url, {
             method: "POST",
@@ -126,7 +126,7 @@ const req_INSERT = async (url = "", data = {}) => {
         });
 
         // Remove o preload após completar a requisição
-        hidePreload();
+        preload && hidePreload();
 
         if (!response.ok) {
             // Retorna a resposta de erro como JSON
@@ -139,7 +139,7 @@ const req_INSERT = async (url = "", data = {}) => {
         }
         return await response.json();
     } catch (error) {
-        hidePreload(); // Garante que o preload será removido em caso de erro
+        preload && hidePreload(); // Garante que o preload será removido em caso de erro
         console.error('Erro ao tentar fazer fetch:', error);
 
         // Retorna o erro capturado para o frontend
@@ -151,9 +151,9 @@ const req_INSERT = async (url = "", data = {}) => {
     }
 }
 
-const req_UPDATE = async (url = "", data = {}) => {
+const req_UPDATE = async (url = "", data = {}, preload = false) => {
     // Mostra o preload antes de fazer a requisição
-    showPreload();
+    preload && showPreload();
     try {
         const response = await fetch(url, {
             method: "PUT",
@@ -170,7 +170,7 @@ const req_UPDATE = async (url = "", data = {}) => {
         });
 
         // Remove o preload após completar a requisição
-        hidePreload();
+        preload && hidePreload();
 
         if (!response.ok) {
             console.log(response);
@@ -178,7 +178,7 @@ const req_UPDATE = async (url = "", data = {}) => {
         }
         return await response.json();
     } catch (error) {
-        hidePreload(); // Garante que o preload será removido em caso de erro
+        preload && hidePreload(); // Garante que o preload será removido em caso de erro
         console.error('Erro ao tentar fazer fetch:', error);
 
         // Retorna o erro capturado para o frontend
@@ -190,9 +190,9 @@ const req_UPDATE = async (url = "", data = {}) => {
     }
 }
 
-const req_DELETE = async (url = '') => {
+const req_DELETE = async (url = '', preload = false) => {
     // Mostra o preload antes de fazer a requisição
-    showPreload();
+    preload && showPreload();
     try {
         const response = await fetch(url, {
             method: "DELETE",
@@ -208,7 +208,7 @@ const req_DELETE = async (url = '') => {
         });
 
         // Remove o preload após completar a requisição
-        hidePreload();
+        preload && hidePreload();
 
         if (!response.ok) {
             console.log(response);
@@ -217,7 +217,7 @@ const req_DELETE = async (url = '') => {
         return await response.json();
 
     } catch (error) {
-        hidePreload(); // Garante que o preload será removido em caso de erro
+        preload && hidePreload(); // Garante que o preload será removido em caso de erro
         console.error('Erro ao tentar fazer fetch:', error);
 
         // Retorna o erro capturado para o frontend

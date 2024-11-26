@@ -489,7 +489,7 @@
                                         <th>Percentual</th>
                                         <th>Peso g/ml</th>
                                         <th>Tempo de Agitação</th>
-                                        <th>Observação</th>
+                                      
                                         <th>Lote</th>
                                         <th>Ação</th>
                                     </tr>
@@ -525,7 +525,7 @@
                         <td><input type="text" class="percentualMp" value="${percentualMp.toFixed(4)}"></td>
                         <td><input type="text" class="percentualMp" value="${calculaPeso(percentualMp, densidade)}"></td>
                         <td><input type="text" class="tempoAgitacao" value="${tempoAgitacao}"></td>
-                        <td><input type="text" class="observacao" value="${observacao}"></td>
+                    
                         <td><input type="text" class="lote" value="${lote}"></td>
                         <td style="min-width: 100px">
                             <button type="button" class="btn btn-outline-secondary btn-sm salvarComposicao" title="salvar" data-id="${idMp}" data-pos="${ordem}" onclick="salvaComposicao(${idMp},${etapa_id})"><i class="far fa-save"></i></button>
@@ -744,18 +744,18 @@
         // Obtém os valores dos inputs na linha
         const percentualMp = row.querySelector('.percentualMp').value;
         const tempoAgitacao = row.querySelector('.tempoAgitacao').value;
-        const observacao = row.querySelector('.observacao').value;
+        // const observacao = row.querySelector('.observacao').value;
         const lote = row.querySelector('.lote').value;
 
         jsonData = {
             "percentual": percentualMp,
             "tempo_agitacao": tempoAgitacao,
-            "observacao": observacao,
+            "observacao": "",
             "lote": lote
         };
 
 
-        console.log("salva etapa", jsonData);
+        // console.log("salva etapa", jsonData);
 
 
         req_UPDATE(opt.urlEtapaMp + "/" + idMp, jsonData).then(result => {

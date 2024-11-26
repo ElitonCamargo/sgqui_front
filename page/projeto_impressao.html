@@ -23,6 +23,7 @@
             padding: 8px;
             text-align: left;
             vertical-align: top;
+            align-content: center;
         }
 
         #header th,
@@ -32,8 +33,8 @@
 
         th {
             background-color: #f2f2f2;
-            width: 25%;
-        }
+
+                   }
 
         h2,
         h3,
@@ -83,6 +84,7 @@
         #responsaveis td {
             border: none
         }
+        #descricao_producao th{text-align: center;}
 
         [contenteditable="true"] {
             background-color: yellow;
@@ -181,7 +183,7 @@
     <h3 class="titulo2">3 - Descrição de Produção</h3>
     <table id="quantidade">
         <tr>
-            <th>Quantidade kg/l (ex: 1.4)</th>
+            <th style="width: 175px;">Quantidade kg/l (ex: 1.4)</th>
             <td id="quantidadeVendida" contenteditable="true">1</td>
         </tr>
     </table>
@@ -193,7 +195,9 @@
                 <th>Código</th>
                 <th>% (sistema)</th>
                 <th>Quantidade (g/ml)</th>
-                <th>Tempo de Agitação (min)</th>
+                <th style="width: 50px;">Tempo de Agitação (min)</th>
+                <th>Lote</th>
+              
             </tr>
         </thead>
         <tbody>
@@ -202,8 +206,10 @@
         <tfoot>
             <tr class="total-row">
                 <td colspan="3" style="text-align:right;">Total:</td>
-                <td id="total_percentual">0,0000%</td>
-                <td id="total_quantidade">0,0000</td>
+                <td style="text-align:right" id="total_percentual">0,0000%</td>
+                <td style="text-align:right" id="total_quantidade">0,0000</td>
+                <td id="total_quantidade">&nbsp;</td>
+           
                 <td></td>
             </tr>
         </tfoot>
@@ -411,7 +417,7 @@
 
                 let row = document.createElement('tr');
                 row.innerHTML = `
-                                <td colspan=6 class="titulo3"><strong>${etapa.nome}</strong></td>
+                                <td colspan=7 class="titulo3"><strong>${etapa.nome} - ${etapa.descricao}</strong></td>
                                 `;
                 tableBody.appendChild(row);
 
@@ -420,13 +426,15 @@
                     let peso = calculaPeso(densidade, mp.percentual)
 
                     row = document.createElement('tr');
+             
                     row.innerHTML = `
-                                <td>${i}</td>
+                                <td style="text-align:center">${i}</td>
                                 <td>${mp.materia_prima}</td>
-                                <td>${mp.mp_codigo}</td>
-                                <td>${mp.percentual.toFixed(4)}%</td>
-                                <td>${peso}</td>
-                                <td>${mp.tempo_agitacao}</td>
+                                <td style="text-align:center">${mp.mp_codigo}</td>
+                                <td style="text-align:right">${mp.percentual.toFixed(4)}%</td>
+                                <td style="text-align:right">${peso}</td>
+                                <td style="text-align:center">${mp.tempo_agitacao}</td>
+                                <td>${mp.lote}</td>
                                 `;
 
                     somaPercentual += mp.percentual;
