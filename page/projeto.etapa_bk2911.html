@@ -67,10 +67,8 @@
     .etapa-list p {
         margin-top: 50px !important;
     }
+    .nutrientes-por-etapa input{width: 75%;}
 
-    .nutrientes-por-etapa input {
-        width: 75%;
-    }
 </style>
 
 <div class="row">
@@ -522,15 +520,16 @@
     const criarLinhaEtapaMp = (idMp, nomeMp, percentualMp, tempoAgitacao, observacao, lote, ordem, etapa_id) => {
         let densidade = parseFloat($("#detalhesProjeto_densidade").text());
         let cols = `
-                    <tr id="nutriente_${idMp}"  data-id="${idMp}">
+                    <tr id="nutriente_${idMp}" data-id="${idMp}">
                         <td><i class="fa fa-arrows moverNutriente"></i></td>
                         <td>${nomeMp}</td>
-                        <td><input type="text" class="percentual" value="${percentualMp.toFixed(4)}"  data-id="${idMp}"></td>
-                        <td><label class="peso">${calculaPeso(percentualMp, densidade)}</label></td>
-                        <td><input type="text" class="tempo_agitacao" value="${tempoAgitacao}"  data-id="${idMp}"></td>
+                        <td><input type="text" class="percentualMp" value="${percentualMp.toFixed(4)}"></td>
+                        <td><input type="text" class="percentualMp" value="${calculaPeso(percentualMp, densidade)}"></td>
+                        <td><input type="text" class="tempoAgitacao" value="${tempoAgitacao}"></td>
                     
-                        <td><input type="text" class="lote" value="${lote}"  data-id="${idMp}"></td>
+                        <td><input type="text" class="lote" value="${lote}"></td>
                         <td style="min-width: 100px">
+                            <button type="button" class="btn btn-outline-secondary btn-sm salvarComposicao" title="salvar" data-id="${idMp}" data-pos="${ordem}" onclick="salvaComposicao(${idMp},${etapa_id})"><i class="far fa-save"></i></button>
                             <button type="button" class="btn btn-outline-secondary btn-sm deleteComposicao" title="excluir" data-id="${idMp}" onclick="excluiComposicao(${idMp},${etapa_id})"><i class="fa fa-ban"></i></button>
                         </td>
                     </tr>`;
@@ -728,24 +727,30 @@
         });
     })();
 
-    //reseta background do input
-    $(document).on('click', '.percentual, .tempo_agitacao, .lote', function () {
-        const input = $(this);
-        input.css('background', '#3B3B3B')
-        
-    });
-    
-    
+
     // salva alteracao na materia prima adicionada
-    $(document).on('blur', '.percentual, .tempo_agitacao, .lote', function () {
-        const input = $(this);
-        const idMp = input.data('id'); // ID associado à linha
-        const field = input.attr('class'); // Campo a ser atualizado
-        const value = input.val(); // Valor digitado
+    function salvaComposicao(idMp, idEtapa) {
 
-        console.log(idMp, field, value);
+        // Encontra a linha (tr) correspondente ao idMp
+        const row = document.querySelector(`tr[data-id="${idMp}"]`);
 
-        jsonData = { [field]: value };
+        if (!row) {
+            console.error(`Linha com idMp ${idMp} não encontrada.`);
+            return;
+        }
+
+        // Obtém os valores dos inputs na linha
+        const percentualMp = row.querySelector('.percentualMp').value;
+        const tempoAgitacao = row.querySelector('.tempoAgitacao').value;
+        // const observacao = row.querySelector('.observacao').value;
+        const lote = row.querySelector('.lote').value;
+
+        jsonData = {
+            "percentual": percentualMp,
+            "tempo_agitacao": tempoAgitacao,
+            "observacao": "",
+            "lote": lote
+        };
 
         req_UPDATE(opt.urlEtapaMp + "/" + idMp, jsonData).then(result => {
 
@@ -756,17 +761,21 @@
                 // Usa a função showErrorModal para mostrar o erro
                 showErrorModal(errorMessage);
                 return;
-            } else {
-                input.css('background', 'green')
             }
+
+            projeto_detalhado(id_projeto)
+
         }).catch(error => {
             // Tratamento de erro de rede ou erro inesperado
             showErrorModal(`07 - Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
         });
 
+        setTimeout(() => {
+            $(`#etapa-${idEtapa}`).addClass('show');
+        }, 1000);
 
+    }
 
-    })
 
 
     // deleta materia prima adicionada

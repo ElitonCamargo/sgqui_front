@@ -44,14 +44,3 @@ const selectsProjeto = {
     "Semente"
   ]
 };
-
-
-// anotar e excluir materia prima dentro das etapas -- ok
-//crud das etapas ok
-//criar o PDF- ok
-//COLOCAR NOME LOGADO-ok
-//gravar video aulas
-
-
-
-
