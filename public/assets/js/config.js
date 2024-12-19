@@ -1,4 +1,4 @@
-const urlApi = "100.26.59.163:8080";
+const urlApi = "http://100.26.59.163:8080";
 // const urlApi = "192.168.15.4:8080";
 
 const opt = {
