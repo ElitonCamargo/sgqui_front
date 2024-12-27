@@ -1,4 +1,13 @@
-const urlApi = "http://192.168.15.4:8080";
+// Obter o protocolo (http ou https)
+let protocolo = window.location.protocol;
+
+// Obter o domínio (host)
+let dominio =  (window.location.host).split(':')[0];
+
+let porta = '8080';
+
+//const urlApi = "http://x.x.x.x:8080"; //ip do servidor
+const urlApi = `${protocolo}//${dominio}:${porta}`;
 
 const opt = {
   "urlApi": urlApi,
