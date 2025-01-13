@@ -80,7 +80,7 @@
 
                 $(".garantiaCadastra").on("click", "#btnGarantiaCadastra", function () {
                     let data = {};
-                    let garantia = parseInt($("#garantia").val());
+                    let garantia = parseFloat($("#garantia").val());
 
                     data = {
                         "materia_prima": ui.item.idMateriaPrima,
