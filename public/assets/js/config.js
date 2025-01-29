@@ -6,7 +6,7 @@ let dominio =  (window.location.host).split(':')[0];
 
 let porta = '8080';
 
-//const urlApi = "http://x.x.x.x:8080"; //ip do servidor
+// const urlApi = "http://x.x.x.x:8080"; //ip do servidor
 const urlApi = `${protocolo}//${dominio}:${porta}`;
 
 const opt = {
