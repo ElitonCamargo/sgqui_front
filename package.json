@@ -1,5 +1,19 @@
 {
+  "name": "sg_qui_frontend",
+  "version": "1.0.0",
+  "description": "Front sistema SG_QUI",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node .",
+    "dev": "nodemon ."
+  },
+  "keywords": [],
+  "author": "Eliton Camargo",
+  "license": "ISC",
   "dependencies": {
-    "express": "^4.21.2"
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.0"
   }
 }
