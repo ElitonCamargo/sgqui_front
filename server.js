@@ -2,9 +2,6 @@ import express from 'express';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import dotenv from 'dotenv';
-dotenv.config();
-
 // Emular __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,10 +25,8 @@ app.get('*', (req, res) => {
 });
 
 // Iniciar o servidor
-const PORT = 8080; // Use a porta definida no .env ou 8081 por padrão
-if (!process.env.PORT) {
-    console.warn('Aviso: A variável de ambiente PORT não está definida. Usando a porta 8080 por padrão.');
-}
+const PORT = 8080; // Use a porta definida por padrão
+
 app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
+    console.log(`WEB: Rodando - PORT: ${PORT}`);
 });
