@@ -1,4 +1,4 @@
-const urlApi = 'https://api.fertiglobalbrasil.com.br/';
+const urlApi = 'https://api.fertiglobalbrasil.com.br';
 
 const opt = {
   "urlApi": urlApi,
