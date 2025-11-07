@@ -125,7 +125,7 @@
                             </li>
                             <li class="list-group-item"><strong>Densidade:</strong> <span
                                     id="detalhesProjeto_densidade"></span></li>
-                            <li class="list-group-item"><strong>Descrição:</strong> <span
+                            <li class="list-group-item"><strong>Número do Registro - MAPA:</strong> <span
                                     id="detalhesProjeto_descricao"></span>
                             </li>
                         </ul>
@@ -271,7 +271,7 @@
             });
             // ************************************************** Chamando a função para executar a ação na API **********************************
 
-            console.log("ordem", etapa_ordem)
+            // console.log("ordem", etapa_ordem)
 
             req_UPDATE(opt.urlEtapa + "/projeto/ordenar", etapa_ordem).then(result => {
 
@@ -323,7 +323,7 @@
                     })
                 })
 
-                console.log('Mover nutriente entre etapas \n', arrayParaUpdate);
+                // console.log('Mover nutriente entre etapas \n', arrayParaUpdate);
                 // ************************************************** Chamando a função para executar a ação na API **********************************
                 // Alterar as matérias primas dentro das etapas
                 req_UPDATE(opt.urlEtapaMp + "/ordenar/m_p", arrayParaUpdate).then(result => {
@@ -379,6 +379,8 @@
             $('#detalhesProjeto_densidade').text(projeto.densidade.toFixed(2));
             $('#detalhesProjeto_ph').text(projeto.ph);
             exibirPercentualConcluido(projeto.percentual_concluido);
+
+            // console.log("percentual", projeto.percentual_concluido)
 
             // *************** Tabela de nutrientes *****************************************************************  
 
@@ -440,13 +442,14 @@
             percentual = 0;
         }
 
-        let cor = (percentual > 100) ? "bg-warning" : "bg-primary"; // Projeto estourado fica amarelo. 
+        // Projeto estourado fica vermelho. 
+        let cor = (percentual.toFixed(4) > 100.00) ? "bg-danger" : (parseFloat(percentual.toFixed(4)) == 100.00) ? "bg-success" : "bg-primary";
         let barraProgressoPrincipal = `
-        <div class="progress-bar progress-bar-striped ${cor}" role="progressbar" style="width: ${percentual.toFixed(2)}%;" aria-valuenow="${percentual.toFixed(2)}" aria-valuemin="0" aria-valuemax="100">${percentual.toFixed(2)}%</div>
+        <div class="progress-bar progress-bar-striped ${cor}" role="progressbar" style="width: ${percentual.toFixed(4)}%;" aria-valuenow="${percentual.toFixed(4)}" aria-valuemin="0" aria-valuemax="100">${percentual.toFixed(4)}%</div>
     `;
 
         let barraProgressoSecundaria = `
-        <div class="progress-bar bg-secondary" role="progressbar" style="width: ${(percentual === 0 ? 100 : (100 - percentual)).toFixed(2)}%;" aria-valuenow="${(percentual === 0 ? 100 : (100 - percentual)).toFixed(2)}" aria-valuemin="0" aria-valuemax="100">${percentual === 0 ? '0%' : (100 - percentual).toFixed(2) + '%'}</div>
+        <div class="progress-bar bg-secondary" role="progressbar" style="width: ${(percentual === 0 ? 100 : (100 - percentual)).toFixed(4)}%;" aria-valuenow="${(percentual === 0 ? 100 : (100 - percentual)).toFixed(4)}" aria-valuemin="0" aria-valuemax="100">${percentual === 0 ? '0%' : (100 - percentual).toFixed(4) + '%'}</div>
     `;
 
         let dados = barraProgressoPrincipal + barraProgressoSecundaria;
@@ -622,7 +625,7 @@
 
     const addOrigemComposicao = (origem) => {
         let li = '';
-        console.log(origem);
+        // console.log(origem);
         origem.forEach(nutri => {
             li += `<li>
                     <p>${nutri.percentual.toFixed(2)}%</p><p>-</p>
@@ -730,20 +733,23 @@
 
     //reseta background do input
     $(document).on('click', '.percentual, .tempo_agitacao, .lote', function () {
+        
         const input = $(this);
         input.css('background', '#3B3B3B')
-        
+
     });
-    
-    
-    // salva alteracao na materia prima adicionada
-    $(document).on('blur', '.percentual, .tempo_agitacao, .lote', function () {
+
+
+    // salva alteracao na materia prima, percentual, tempo_agitacao, lote adicionada
+    $(document).on('focusout', '.percentual, .tempo_agitacao, .lote', function () {
         const input = $(this);
+        const idEtapa = $(this).closest('li').data('id');
         const idMp = input.data('id'); // ID associado à linha
         const field = input.attr('class'); // Campo a ser atualizado
-        const value = input.val(); // Valor digitado
+        const value = input.val(); // Valor digitado        
+        const scrollPosition = window.scrollY;// Salvar a posição do scroll
 
-        console.log(idMp, field, value);
+        // console.log(idEtapa, idMp, field, value);
 
         jsonData = { [field]: value };
 
@@ -756,13 +762,30 @@
                 // Usa a função showErrorModal para mostrar o erro
                 showErrorModal(errorMessage);
                 return;
-            } else {
-                input.css('background', 'green')
             }
         }).catch(error => {
             // Tratamento de erro de rede ou erro inesperado
             showErrorModal(`07 - Erro de comunicação: ${error.message || 'Erro desconhecido.'}`);
         });
+
+        // atualiza dados
+        projeto_detalhado();
+
+        // abre a etapa alterada anteriormente
+        setTimeout(() => {
+            // Restaurar a posição do scroll após a atualização
+            window.scrollTo(0, scrollPosition);
+
+            // abre a etapa novamente
+            $(`#etapa-${idEtapa}`).addClass('show');
+
+            // Restaurar a posição do scroll após a atualização
+            window.scrollTo(0, scrollPosition);
+
+            //deixa o input verde
+            input.css('background', 'green');
+            
+        }, 90);
 
 
 
